@@ -64,6 +64,13 @@ project:
       children:
         - file: capitulos/simulacro-pcep.md
         - file: capitulos/simulacro-pcap.md
+    - title: El curso en 30 sesiones
+      children:
+        - file: capitulos/curso-mapa.md
+        - file: capitulos/curso-modulo-1.md
+        - file: capitulos/curso-modulo-2.md
+        - file: capitulos/curso-proyecto-1.md
+        - file: capitulos/curso-proyecto-2.md
 site:
   template: book-theme
   options:
