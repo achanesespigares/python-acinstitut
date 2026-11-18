@@ -23,7 +23,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import trazar                                    # noqa: E402
 
 RAIZ = Path(__file__).resolve().parent.parent
-BANCOS = {"pcep": RAIZ / "preguntas" / "pcep.py"}
+BANCOS = {"pcep": RAIZ / "preguntas" / "pcep.py", "pcap": RAIZ / "preguntas" / "pcap.py"}
 
 
 def carga(nombre):
@@ -140,7 +140,7 @@ def guarda(nombre, secciones, reparto, listas):
     destino = RAIZ / "datos" / f"{nombre}.json"
     destino.parent.mkdir(exist_ok=True)
     destino.write_text(json.dumps({"secciones": secciones, "reparto": reparto, "preguntas": listas},
-                                  ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+                                  ensure_ascii=False, separators=(",", ":"), allow_nan=False), encoding="utf-8")
     usados = set()
     for ruta in sorted((RAIZ / "capitulos").glob("*.md")):
         for w in trazar.WIDGET.finditer(ruta.read_text(encoding="utf-8")):

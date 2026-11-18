@@ -154,6 +154,8 @@ def marca(v, numeros):
         return {str(k): marca(x, numeros) for k, x in v.items()}
     if isinstance(v, BaseException):
         return {"__exc__": repr(v)}
+    if isinstance(v, float) and v != v or v in (float("inf"), float("-inf")) and isinstance(v, float):
+        return {"__txt__": repr(v)}               # inf y nan no existen en JSON
     if isinstance(v, (bool, int, float, str, type(None))):
         return v
     if isinstance(v, types.FunctionType):
@@ -499,7 +501,7 @@ def procesa(ruta):
         if not celdas:
             raise SystemExit(f"{ruta}: hay un visualizador sin celda de código antes.")
         codigo = "\n".join(l for l in celdas[-1].group(1).rstrip("\n").split("\n") if not l.startswith(":"))
-        nuevo = json.dumps({"config": cfg, "traza": traza(codigo, cfg)}, ensure_ascii=False, separators=(",", ":"), default=repr)
+        nuevo = json.dumps({"config": cfg, "traza": traza(codigo, cfg)}, ensure_ascii=False, separators=(",", ":"), default=repr, allow_nan=False)
         trozos += [texto[pos:w.start()], w.group(1), nuevo, "\n"]
         pos = w.end() - 3
         hechos += 1

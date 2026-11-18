@@ -139,6 +139,14 @@ La ventaja es que no fabrica la lista entera: calcula cada valor cuando hace fal
 
 Todo lo que hemos calculado se pierde al cerrar el programa. ¿Cómo guarda un programa sus datos para la próxima vez? Escribiéndolos en un fichero.
 
+## Preguntas tipo examen
+
+Preguntas como las del examen PCAP sobre lo que has visto en este capítulo. Se corrigen al momento, y las que tienen código se pueden ver ejecutándose paso a paso. Hay un simulacro completo al final del libro.
+
+```{anywidget} ../widgets/traza.mjs
+{"config":{"tipo":"preguntas","banco":"pcap","capitulo":"16","titulo":"Preguntas tipo examen","etiqueta":"PCAP"}}
+```
+
 ## Ejercicios
 
 1. **La más larga.** Usa `max` con `key` para encontrar la palabra más larga de `["sol", "camino", "luz"]`.

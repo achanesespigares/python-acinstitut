@@ -206,6 +206,14 @@ Un `if … elif` evalúa condiciones; un `match` compara **la forma** de un solo
 
 En `sorted(alumnos, key=…)` hay que pasar **una función** como dato, para decir por qué criterio ordenar. ¿Se puede guardar una función en una variable o pasarla a otra función, como si fuera un número? Sí, y eso abre una puerta enorme.
 
+## Preguntas tipo examen
+
+Preguntas como las del examen PCAP sobre lo que has visto en este capítulo. Se corrigen al momento, y las que tienen código se pueden ver ejecutándose paso a paso. Hay un simulacro completo al final del libro.
+
+```{anywidget} ../widgets/traza.mjs
+{"config":{"tipo":"preguntas","banco":"pcap","capitulo":"15","titulo":"Preguntas tipo examen","etiqueta":"PCAP"}}
+```
+
 ## Ejercicios
 
 1. **Del bucle a la comprensión.** Reescribe en una línea:

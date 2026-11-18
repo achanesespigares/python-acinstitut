@@ -152,6 +152,14 @@ print(frase.split(), "-".join(["a", "b", "c"]))
 
 Ya escribes programas largos con clases, ficheros y funciones. ¿Cómo sabes que funcionan? ¿Y qué haces cuando no funcionan? Probar y depurar es la otra mitad de programar.
 
+## Preguntas tipo examen
+
+Preguntas como las del examen PCAP sobre lo que has visto en este capítulo. Se corrigen al momento, y las que tienen código se pueden ver ejecutándose paso a paso. Hay un simulacro completo al final del libro.
+
+```{anywidget} ../widgets/traza.mjs
+{"config":{"tipo":"preguntas","banco":"pcap","capitulo":"19","titulo":"Preguntas tipo examen","etiqueta":"PCAP"}}
+```
+
 ## Ejercicios
 
 1. **Descifrar.** Escribe el programa que deshace el cifrado César del apartado 1 a partir de `cifrado = "krod"`.

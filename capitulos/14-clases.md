@@ -158,6 +158,14 @@ print(isinstance(ah, Cuenta))           # True: una CuentaAhorro también es una
 
 Hemos encapsulado los datos, pero nada impide escribir `c.saldo = -1000000` desde fuera. ¿Cómo protege un objeto sus propios datos? Python tiene una convención para eso: los atributos que empiezan por `_` o por `__`, y las propiedades. Ese es el siguiente nivel.
 
+## Preguntas tipo examen
+
+Preguntas como las del examen PCAP sobre lo que has visto en este capítulo. Se corrigen al momento, y las que tienen código se pueden ver ejecutándose paso a paso. Hay un simulacro completo al final del libro.
+
+```{anywidget} ../widgets/traza.mjs
+{"config":{"tipo":"preguntas","banco":"pcap","capitulo":"14","titulo":"Preguntas tipo examen","etiqueta":"PCAP"}}
+```
+
 ## Ejercicios
 
 1. **Añade un método** `retirar(self, cantidad)` a `Cuenta` que reste la cantidad solo si hay saldo suficiente, y que lance un `ValueError` si no lo hay.

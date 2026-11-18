@@ -202,6 +202,12 @@ Preguntas como las del examen PCEP sobre lo que has visto en este capítulo. Se 
 {"config":{"tipo":"preguntas","banco":"pcep","capitulo":"17","titulo":"Preguntas tipo examen","etiqueta":"PCEP"}}
 ```
 
+Y estas, como las del examen PCAP, que va más a fondo:
+
+```{anywidget} ../widgets/traza.mjs
+{"config":{"tipo":"preguntas","banco":"pcap","capitulo":"17","titulo":"Preguntas tipo examen","etiqueta":"PCAP"}}
+```
+
 ## Ejercicios
 
 1. **El diario.** Escribe un programa que añada la línea `"hoy he aprendido ficheros"` al final de `diario.txt` cada vez que se ejecute, sin borrar lo anterior.

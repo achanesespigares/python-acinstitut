@@ -269,6 +269,14 @@ print(p, [p], p.x)
 
 Las cadenas parecían sencillas: letras en fila. Pero, ¿qué es *de verdad* una letra para el ordenador? ¿Por qué `"Zorro" < "abeja"` da `True`? Hay que mirar debajo de los caracteres.
 
+## Preguntas tipo examen
+
+Preguntas como las del examen PCAP sobre lo que has visto en este capítulo. Se corrigen al momento, y las que tienen código se pueden ver ejecutándose paso a paso. Hay un simulacro completo al final del libro.
+
+```{anywidget} ../widgets/traza.mjs
+{"config":{"tipo":"preguntas","banco":"pcap","capitulo":"18","titulo":"Preguntas tipo examen","etiqueta":"PCAP"}}
+```
+
 ## Ejercicios
 
 1. **¿Qué imprime?**

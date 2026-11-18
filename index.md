@@ -30,7 +30,7 @@ Para crear un programa seguimos siempre el mismo camino:
 | 3+ · Todo el PCEP | [Cómo funciona Python](capitulos/21-como-funciona-python.md) · [Listas a fondo](capitulos/22-listas-a-fondo.md) · [Tuplas y conjuntos](capitulos/23-tuplas-y-conjuntos.md) · [Funciones a fondo](capitulos/24-funciones-a-fondo.md) · [Bucles a fondo](capitulos/25-bucles-a-fondo.md) · [Cadenas y formato](capitulos/26-cadenas-y-formato.md) · [CSV, math y random](capitulos/27-csv-math-random.md) | Listo |
 | 4 · Hacia el PCAP | [Módulos](capitulos/12-modulos.md) · [Excepciones](capitulos/13-excepciones.md) · [Clases y objetos](capitulos/14-clases.md) | Listo |
 | 5 · PCAP a fondo | [Comprensiones y match](capitulos/15-comprensiones.md) · [Funciones como valores](capitulos/16-funciones-valores.md) · [Ficheros](capitulos/17-ficheros.md) · [Clases a fondo](capitulos/18-clases-a-fondo.md) · [Cadenas a fondo](capitulos/19-cadenas-a-fondo.md) · [Probar y depurar](capitulos/20-probar-y-depurar.md) | Listo |
-| Examen | [Simulacro PCEP](capitulos/simulacro-pcep.md), y preguntas tipo examen al final de cada capítulo | Listo |
+| Examen | [Simulacro PCEP](capitulos/simulacro-pcep.md) · [Simulacro PCAP](capitulos/simulacro-pcap.md), y preguntas tipo examen al final de cada capítulo | Listo |
 
 :::{tip} Sobre el código de este libro
 Todas las celdas se pueden ejecutar aquí mismo, sin instalar nada: Python funciona dentro del navegador. Las ejecuciones paso a paso las ha generado Python real.

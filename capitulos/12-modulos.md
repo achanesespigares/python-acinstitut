@@ -130,6 +130,15 @@ print(sys.path[0])
 
 Los módulos que no vienen con Python, como `numpy` o `matplotlib`, se instalan con **pip**: `pip install numpy`.
 
+Cuando un proyecto usa paquetes externos, conviene **documentar sus dependencias** para que cualquiera pueda reproducirlo. Lo habitual es un fichero `requirements.txt` con un paquete por línea, a veces con su versión:
+
+```text
+numpy==2.1.3
+matplotlib>=3.9
+```
+
+`pip freeze > requirements.txt` lo genera con lo que tienes instalado, y `pip install -r requirements.txt` instala todo lo que lista. `pip list` enseña lo instalado y `pip show numpy`, los datos de un paquete.
+
 ## Conexiones
 
 - Un módulo es la versión grande de una función: una caja con nombre, que se usa sin mirar dentro.
@@ -145,6 +154,12 @@ Preguntas como las del examen PCEP sobre lo que has visto en este capítulo. Se 
 
 ```{anywidget} ../widgets/traza.mjs
 {"config":{"tipo":"preguntas","banco":"pcep","capitulo":"12","titulo":"Preguntas tipo examen","etiqueta":"PCEP"}}
+```
+
+Y estas, como las del examen PCAP, que va más a fondo:
+
+```{anywidget} ../widgets/traza.mjs
+{"config":{"tipo":"preguntas","banco":"pcap","capitulo":"12","titulo":"Preguntas tipo examen","etiqueta":"PCAP"}}
 ```
 
 ## Ejercicios

@@ -182,6 +182,14 @@ Si la respuesta no convence, se afina la petición o se piden alternativas y se 
 
 Con esto se cierra el temario del PCAP. El siguiente paso ya no es aprender piezas sueltas, sino construir: un proyecto propio, con sus módulos, sus clases, sus ficheros y sus pruebas, en un repositorio de verdad.
 
+## Preguntas tipo examen
+
+Preguntas como las del examen PCAP sobre lo que has visto en este capítulo. Se corrigen al momento, y las que tienen código se pueden ver ejecutándose paso a paso. Hay un simulacro completo al final del libro.
+
+```{anywidget} ../widgets/traza.mjs
+{"config":{"tipo":"preguntas","banco":"pcap","capitulo":"20","titulo":"Preguntas tipo examen","etiqueta":"PCAP"}}
+```
+
 ## Ejercicios
 
 1. **Clasifica el error.** Di si es de sintaxis, de ejecución o de lógica:

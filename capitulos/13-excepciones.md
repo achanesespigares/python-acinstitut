@@ -183,6 +183,12 @@ Preguntas como las del examen PCEP sobre lo que has visto en este capítulo. Se 
 {"config":{"tipo":"preguntas","banco":"pcep","capitulo":"13","titulo":"Preguntas tipo examen","etiqueta":"PCEP"}}
 ```
 
+Y estas, como las del examen PCAP, que va más a fondo:
+
+```{anywidget} ../widgets/traza.mjs
+{"config":{"tipo":"preguntas","banco":"pcap","capitulo":"13","titulo":"Preguntas tipo examen","etiqueta":"PCAP"}}
+```
+
 ## Ejercicios
 
 1. **¿Qué imprime?**
