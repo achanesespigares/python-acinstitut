@@ -41,7 +41,7 @@ pre.tz-codigo{ margin:0; font:400 14px/1.85 var(--mono); overflow-x:auto; backgr
 .tz .num{ color:#1E4A6B; }
 .tz-leyenda{ font-size:12.5px; color:var(--banda); display:flex; gap:12px; }
 .tz-leyenda b{ color:var(--acento); }
-.tz-narr{ min-height:4.4em; padding:10px 12px; background:var(--suave); border-left:4px solid var(--acento); font-size:15px; }
+.tz-narr{ white-space:pre-wrap; min-height:4.4em; padding:10px 12px; background:var(--suave); border-left:4px solid var(--acento); font-size:15px; }
 .tz-narr code{ font:500 13px/1 var(--mono); background:#fff; padding:2px 5px; border-radius:4px; }
 
 .tz-mem{ padding:12px; display:flex; flex-direction:column; gap:16px; }
@@ -64,7 +64,7 @@ pre.tz-codigo{ margin:0; font:400 14px/1.85 var(--mono); overflow-x:auto; backgr
 .tz .var{ border:1.5px solid var(--fila); border-radius:6px; padding:7px 11px; min-width:72px; display:flex; flex-direction:column; gap:2px; }
 .tz .var .k{ font:500 12px/1 var(--mono); color:var(--banda); display:flex; gap:6px; align-items:center; }
 .tz .var .tipo{ font:600 9.5px/1 var(--titulo); letter-spacing:.06em; text-transform:uppercase; color:var(--acento); border:1px solid var(--acento); border-radius:3px; padding:2px 4px; }
-.tz .var .val{ font:600 19px/1.15 var(--mono); }
+.tz .var .val{ font:600 19px/1.15 var(--mono); white-space:pre-wrap; }
 .tz .var .val.largo{ font:500 14px/1.35 var(--mono); }
 .tz .var.cambia{ border:2px solid var(--acento); background:var(--suave); }
 .tz .var .antes{ font:400 11px/1 var(--mono); color:var(--banda); text-decoration:line-through; }
@@ -110,6 +110,11 @@ pre.tz-codigo{ margin:0; font:400 14px/1.85 var(--mono); overflow-x:auto; backgr
 .tz .fic pre .fin{ color:var(--filete); }
 .tz .fic.cambia{ border-color:var(--acento); }
 .tz .fic.cambia .fic-cab{ background:var(--suave); color:var(--acento); }
+.tz-matriz{ border-collapse:collapse; font:600 16px/1 var(--mono); margin:4px 0 0; }
+.tz-matriz td{ width:46px; height:42px; text-align:center; border:2px solid var(--tinta); padding:0; background:#fff; }
+.tz-matriz td.fila{ background:var(--fondo); }
+.tz-matriz td.foco{ background:var(--suave); outline:3px solid var(--acento); outline-offset:-3px; }
+.tz-matriz th{ font:500 12px/1 var(--mono); color:var(--banda); padding:4px 6px; border:0; background:none; }
 .tz-consola{ background:var(--tinta); color:#EDEDED; font:400 14px/1.6 var(--mono); padding:10px 12px; min-height:2.6em; white-space:pre-wrap; }
 .tz-consola .pr{ color:#9A9A9A; }
 
@@ -201,6 +206,7 @@ const PLANTILLA = `
             <div class="tz-casillas"></div>
             <p class="tz-consulta"></p>
           </div>
+          <div class="tz-mat-bloque"><p class="tz-micro"><span class="tz-mat-nom"></span> · lista de listas (fila, columna)</p><table class="tz-matriz"></table><p class="tz-consulta tz-mat-consulta"></p></div>
           <div class="tz-dic-bloque"><p class="tz-micro"><span class="tz-dic-nom"></span> · diccionario</p><table class="tz-dic"></table></div>
           <div class="tz-clases-bloque"><p class="tz-micro">Clases · atributos de clase</p><div class="tz-clases"></div></div>
           <div><p class="tz-micro tz-vars-tit">Variables</p><div class="tz-vars"></div></div>
@@ -322,7 +328,10 @@ function render({ model, el }) {
   if (!C.diccionario) q(".tz-dic-bloque").style.display = "none"; else q(".tz-dic-nom").textContent = C.diccionario;
   const ocultas = new Set(C.diccionario ? [C.diccionario] : []);
   const marco = p => (p.pila && p.pila.length) ? p.pila[p.pila.length - 1] : null;
-  const firma = m => m.nombre + "(" + m.args.map(a => a + "=" + (m.repr[a] ?? "?")).join(", ") + ")";
+  const parametros = m => m.args.concat(Object.keys(m.estrella || {}));
+  const firma = m => m.nombre + "(" + parametros(m).map(a => ((m.estrella || {})[a] || "") + a + "=" + (m.repr[a] ?? "?")).join(", ") + ")";
+  const EXPLICA_ESTRELLA = { "*": "el <code>*</code> junta todos los argumentos sueltos en una tupla", "**": "el <code>**</code> junta los argumentos con nombre en un diccionario" };
+  if (!C.matriz) q(".tz-mat-bloque").style.display = "none"; else q(".tz-mat-nom").textContent = C.matriz;
   if (!lista) q(".tz-lista-bloque").style.display = "none";
   q(".tz-tabla-sub").textContent = porLinea ? "una fila por línea ejecutada" : "una fila por vuelta";
   q(".tz-nota-tabla").textContent = porLinea
@@ -383,7 +392,8 @@ function render({ model, el }) {
         if (antes) recibe = Object.keys(mp.vars).filter(n => !igual(mp.vars[n], antes.vars[n]));
       }
       return "La función <code>" + p.devuelve.funcion + "</code> termina y <b>devuelve " + esc(p.devuelve.valor) + "</b>. Su marco desaparece: sus variables locales ya no existen." +
-        (recibe.length ? " El resultado se guarda en <code>" + recibe[0] + "</code>." : mp ? " La función <code>" + mp.nombre + "</code> recibe el valor y sigue con su cálculo." : "");
+        (recibe.length > 1 && /^\(/.test(p.devuelve.valor) ? " Devuelve varios valores juntos, en una tupla, y la tupla se <b>desempaqueta</b>: " + recibe.map(r => "<code>" + r + "</code> = " + esc(rep(p, r))).join(" y ") + "."
+          : recibe.length ? " El resultado se guarda en <code>" + recibe[0] + "</code>." : mp ? " La función <code>" + mp.nombre + "</code> recibe el valor y sigue con su cálculo." : "");
     }
     if (L[p.linea - 1].trim().startsWith("def ")) {
       const nom = L[p.linea - 1].trim().slice(4).split("(")[0];
@@ -447,12 +457,12 @@ function render({ model, el }) {
       return (quien ? "<code>" + quien + "</code> llama a la lambda" : "Se llama a la lambda") + " con " + mp.args.map(a => "<code>" + a + "</code> = " + esc(mp.repr[a])).join(" y ") + ".";
     }
     if ((p.pila || []).length > (prev.pila || []).length && mp) {
-      const recuerda = Object.keys(mp.vars).filter(n => !mp.args.includes(n));
+      const recuerda = Object.keys(mp.vars).filter(n => !parametros(mp).includes(n));
       if (recuerda.length) return "Se llama a la función <code>" + mp.nombre + "</code> con " +
         mp.args.map(a => "<code>" + a + "</code> = " + esc(mp.repr[a])).join(" y ") + ". En su marco aparece también " +
         recuerda.map(n => "<code>" + n + "</code> = " + esc(mp.repr[n])).join(" y ") + ": no es un parámetro, es lo que la función <b>recuerda</b> del sitio donde se creó (un cierre).";
       return "Se llama a la función <code>" + mp.nombre + "</code>: se crea su marco, con " +
-        (mp.args.length ? mp.args.map(a => "<code>" + a + "</code> = " + esc(mp.repr[a])).join(" y ") : "ningún parámetro") +
+        (parametros(mp).length ? parametros(mp).map(a => "<code>" + a + "</code> = " + esc(mp.repr[a]) + ((mp.estrella || {})[a] ? " (" + EXPLICA_ESTRELLA[mp.estrella[a]] + ")" : "")).join(" y ") : "ningún parámetro") +
         ". Ahora se ejecuta el cuerpo de la función.";
     }
     if (mp && mprev && mp.nombre === "<lambda>" && mprev.nombre === "<lambda>" && mp.expr)
@@ -466,7 +476,8 @@ function render({ model, el }) {
           if (h) return h;
         }
         return mprev.vars[n] === undefined
-          ? "Dentro de la función se crea la variable local <code>" + n + "</code> y vale " + esc(mp.repr[n]) + "."
+          ? "Dentro de la función se crea la variable local <code>" + n + "</code> y vale " + esc(mp.repr[n]) + "." +
+            (n in p.estado ? " Fuera hay una variable global que también se llama <code>" + n + "</code> y vale " + esc(rep(p, n)) + ": esta es otra, local, que la tapa mientras dura la función." : "")
           : "La variable local <code>" + n + "</code> cambia: valía " + esc(mprev.repr[n]) + " y ahora vale " + esc(mp.repr[n]) + ".";
       }
     }
@@ -569,9 +580,34 @@ function render({ model, el }) {
     if (devFun && mp && mp.vars[devFun] && mp.vars[devFun].__txt__ && /^(función|lambda)/.test(mp.vars[devFun].__txt__))
       return "Se devuelve <code>" + devFun + "</code> sin paréntesis: no se llama a la función, se entrega <b>la función misma</b>, que se lleva lo que recuerda.";
     if (txt.startsWith("return ") && mp) return "Se calcula el valor de <code>" + esc(txt.slice(7)) + "</code>. En el paso siguiente, la función lo devuelve a quien la llamó.";
+    const aum = txt.match(/^(\w+)\s*(\*\*|\/\/|[+\-*/%])=\s*(.+)$/);
+    if (aum && cambios.includes(aum[1]) && !mp) return "<code>" + esc(txt) + "</code> es la forma corta de <code>" + aum[1] + " = " + aum[1] + " " + aum[2] + " " + esc(aum[3]) + "</code>: <code>" + aum[1] + "</code> valía " + esc(rep(prev, aum[1])) + " y ahora vale " + esc(rep(p, aum[1])) + ".";
+    if (/\.pop\(/.test(txt) && lista && Array.isArray(casillasDe(p.estado[lista])) && Array.isArray(casillasDe(prev.estado[lista])) && casillasDe(p.estado[lista]).length === casillasDe(prev.estado[lista]).length - 1) {
+      const la0 = casillasDe(p.estado[lista]), lb0 = casillasDe(prev.estado[lista]);
+      let i = 0; while (i < la0.length && igual(la0[i], lb0[i])) i++;
+      const quien = cambios.find(x => x !== lista);
+      return "<code>pop(" + (/\.pop\(\s*\)/.test(txt) ? "" : i) + ")</code> saca la casilla " + i + " de <code>" + lista + "</code>, que valía " + esc(pyVal(lb0[i])) + ", y además la <b>devuelve</b>" + (quien ? ": se guarda en <code>" + quien + "</code>." : ".");
+    }
+    if (/\.writerow\(/.test(txt)) return "<code>writerow</code> convierte la lista en una línea de texto, con las columnas separadas por comas, y la escribe en el fichero" + (discoIgual(p.disco, prev.disco) ? ". De momento espera en el búfer: llegará al disco al cerrar el fichero." : ".");
+    if (txt === "pass") return "<code>pass</code> no hace nada. Está porque Python no admite un bloque vacío: ocupa el hueco.";
+    if (/\binput\(/.test(txt) && cambios.length) {
+      const n = cambios[0], ult = salida(p.salida).slice(-1)[0] || "";
+      const msj = (txt.match(/input\(\s*(['"])(.*?)\1/) || [])[2] || "";
+      const tecleado = ult.startsWith(msj) ? ult.slice(msj.length) : ult;
+      const conv = (txt.match(/\b(int|float)\(\s*input\(/) || [])[1];
+      return "<code>input()</code> escribe " + (msj ? "el mensaje y " : "") + "espera a que teclees algo. Aquí el visualizador teclea por ti: <code>" + esc(tecleado) + "</code>. " +
+        "<code>input()</code> siempre devuelve <b>texto</b>" + (conv ? ", así que <code>" + conv + "()</code> lo convierte en el número " + esc(rep(p, n)) + ", que se guarda en <code>" + n + "</code>."
+          : ": <code>" + n + "</code> vale " + esc(rep(p, n)) + (p.tipos && p.tipos[n] === "str" && /^'\d+(\.\d+)?'$/.test(rep(p, n)) ? ", que parece un número pero es una cadena." : "."));
+    }
     if (txt.startsWith("print")) return "Se muestra en pantalla: <code>" + esc(salida(p.salida).slice(-1)[0] || "") + "</code>";
     if (cambios.length) {
+      const nombrada = x => new RegExp("(^|[^\\w.])" + x + "\\b").test(txt);
+      if (!nombrada(cambios[0]) && cambios.some(nombrada)) cambios.sort((x, y) => nombrada(y) - nombrada(x));
+      const callados = cambios.filter(x => !nombrada(x));
       const n = cambios[0], a = prev.estado[n];
+      const alias = nombrada(n) && callados.length && Array.isArray(p.estado[callados[0]]) && igual(p.estado[callados[0]], p.estado[n])
+        ? " ¡Ojo! También cambia <code>" + callados[0] + "</code>, y la línea ni la nombra: <code>" + callados[0] + "</code> y <code>" + n + "</code> son <b>la misma lista</b> con dos etiquetas." : "";
+      const desdeFuncion = mp && new RegExp("\\bglobal\\s+[\\w, ]*\\b" + n + "\\b").test(D.codigo) ? " La función puede cambiar esta variable global porque la ha declarado con <code>global</code>." : "";
       const lee = p.lee && p.foco !== null ? " Para ello se consulta la casilla " + p.foco + " de la lista, que vale " + fmtVal(p.estado[lista][p.foco]) + "." : "";
       const tipo = C.mostrar_tipos && p.tipos ? " (tipo <code>" + p.tipos[n] + "</code>)" : "";
       const otras = cambios.length > 1 ? " También cambia <code>" + cambios.slice(1).join("</code>, <code>") + "</code>." : "";
@@ -583,8 +619,14 @@ function render({ model, el }) {
         const otrasEt = etiquetas(prev, p.estado[n].__obj__);
         if (otrasEt.length) return "Se crea la variable <code>" + n + "</code>, pero no se fabrica ningún objeto: <code>" + n + "</code> es otra etiqueta pegada al objeto " + esc(rep(p, n)) + ", el mismo que " + codigos(otrasEt) + ".";
       }
+      const forVar = (txt.match(/^for\s+(\w+)\s+in\s/) || [])[1];
+      if (forVar && cambios.includes(forVar) && p.linea !== cab)
+        return a === undefined && forVar === n
+          ? "Empieza el <code>for</code>: <code>" + forVar + "</code> toma su primer valor, " + esc(rep(p, forVar)) + "."
+          : "Siguiente vuelta del <code>for</code>: <code>" + forVar + "</code> pasa a valer " + esc(rep(p, forVar)) + ".";
+      if (alias) return "<code>" + n + "</code> cambia: valía " + esc(rep(prev, n)) + " y ahora vale " + esc(rep(p, n)) + "." + alias;
       if (a === undefined) return "Se crea la variable <code>" + n + "</code> y vale " + esc(rep(p, n)) + tipo + "." + lee + otras;
-      return "<code>" + n + "</code> cambia: valía " + esc(rep(prev, n)) + " y ahora vale " + esc(rep(p, n)) + tipo + "." + lee + otras;
+      return "<code>" + n + "</code> cambia: valía " + esc(rep(prev, n)) + " y ahora vale " + esc(rep(p, n)) + tipo + "." + lee + otras + desdeFuncion;
     }
     const la = lista && casillasDe(p.estado[lista]), lb = lista && casillasDe(prev.estado[lista]);
     if (Array.isArray(la) && Array.isArray(lb) && la.length === lb.length) {
@@ -594,6 +636,13 @@ function render({ model, el }) {
     }
     if (Array.isArray(la) && Array.isArray(lb) && la.length === lb.length + 1 && igual(la.slice(0, -1), lb))
       return "Se añade " + esc(pyVal(la[la.length - 1])) + " al final de <code>" + lista + "</code>: ahora tiene " + la.length + (la.length === 1 ? " casilla." : " casillas.");
+    if (Array.isArray(la) && Array.isArray(lb) && Math.abs(la.length - lb.length) === 1) {
+      const corta = la.length < lb.length ? la : lb, larga = la.length < lb.length ? lb : la;
+      let i = 0; while (i < corta.length && igual(corta[i], larga[i])) i++;
+      if (la.length > lb.length) return "Se inserta " + esc(pyVal(la[i])) + " en la posición " + i + " de <code>" + lista + "</code>: las casillas de detrás se corren un sitio a la derecha.";
+      return "Se quita la casilla " + i + " de <code>" + lista + "</code>, que valía " + esc(pyVal(lb[i])) + ": las de detrás se corren un sitio a la izquierda y la lista queda con " + la.length + (la.length === 1 ? " casilla." : " casillas.");
+    }
+    if (/^for\s/.test(txt) && p.linea !== cab) return "El <code>for</code> no tiene más elementos que recorrer: termina, y el programa sigue por la primera línea de después del bucle.";
     if (/\.seed\(/.test(txt)) return "Se fija la semilla de los números al azar: a partir de aquí, la secuencia que salga será siempre la misma.";
     return "Se ejecuta la línea " + p.linea + ".";
   }
@@ -611,6 +660,14 @@ function render({ model, el }) {
 
     const arr0 = p.estado[lista], arr = casillasDe(arr0);
     const foco = saleDelBucle(p, sig) ? null : p.foco;
+    if (C.matriz) {
+      const m = p.estado[C.matriz], fi = p.estado[C.fila], co = p.estado[C.col];
+      const ok = Array.isArray(m) && Number.isInteger(fi) && fi >= 0 && fi < m.length && Array.isArray(m[fi]) && Number.isInteger(co) && co >= 0 && co < m[fi].length && !saleDelBucle(p, sig);
+      q(".tz-matriz").innerHTML = !Array.isArray(m) ? '<tr><td class="tz-vacio" style="border:0;width:auto">Todavía no existe.</td></tr>'
+        : "<tr><th></th>" + (m[0] || []).map((_, j) => "<th>" + j + "</th>").join("") + "</tr>" + m.map((fila, i) => "<tr><th>" + i + "</th>" + (Array.isArray(fila) ? fila : [fila]).map((v, j) =>
+            '<td class="' + (ok && i === fi && j === co ? "foco" : ok && i === fi ? "fila" : "") + '">' + esc(pyVal(v)) + "</td>").join("") + "</tr>").join("");
+      q(".tz-mat-consulta").textContent = ok ? C.matriz + "[" + fi + "][" + co + "] → " + (oculto ? "?" : pyVal(m[fi][co])) + "   (fila " + fi + ", columna " + co + ")" : "";
+    }
     const cas = q(".tz-casillas");
     if (!arr) { cas.innerHTML = '<span class="tz-vacio">Todavía no existe.</span>'; q(".tz-consulta").textContent = ""; }
     else {
@@ -638,7 +695,7 @@ function render({ model, el }) {
           return '<span class="attr' + (cambia ? " cambia" : "") + '"><span class="an">.' + esc(a) + " =</span> " + esc(oculto && cambia ? "?" : pyVal(cl[c][a])) + "</span>";
         }).join("") + "</span></span></div>").join("") || '<span class="tz-vacio">Todavía no hay clases.</span>';
     }
-    const nombres = Object.keys(p.estado).filter(n => n !== lista && !ocultas.has(n));
+    const nombres = Object.keys(p.estado).filter(n => n !== lista && n !== C.matriz && !ocultas.has(n));
     q(".tz-vars").innerHTML = nombres.length ? nombres.map(n => {
       const cambia = k > 0 && !igual(p.estado[n], prev.estado[n]);
       if (esObj(p.estado[n])) {
@@ -694,7 +751,7 @@ function render({ model, el }) {
       const d = p.disco || [], dprev = prev.disco || [];
       q(".tz-disco").innerHTML = d.length ? d.map(f => {
         const a = dprev.find(x => x.nombre === f.nombre), cambia = k > 0 && (!a || a.contenido !== f.contenido);
-        const cont = f.binario ? f.contenido : f.contenido.replace(/\n/g, "↵\n");
+        const cont = f.binario ? f.contenido : f.contenido.replace(/\r/g, "␍").replace(/\n/g, "↵\n");
         return '<div class="fic' + (cambia ? " cambia" : "") + '"><div class="fic-cab"><span>' + esc(f.nombre) + '</span><span class="tam">' + f.tam + (f.tam === 1 ? " byte" : " bytes") + (f.binario ? " · binario" : "") +
           "</span></div><pre>" + (oculto && cambia ? "?" : f.contenido === "" ? '<span class="fin">(vacío)</span>' : esc(cont)) + "</pre></div>";
       }).join("") : '<span class="tz-vacio">Todavía no hay ficheros.</span>';

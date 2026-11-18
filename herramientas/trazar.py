@@ -21,6 +21,9 @@ Claves de "config":
   mostrar_tipos               (opcional) true para enseñar el tipo de cada variable (int, str…)
   diccionario                 (opcional) nombre de un diccionario que se dibuja como tabla clave → valor
   foco: "ninguno"             (opcional) dibuja la lista sin señalar ninguna casilla
+  entradas                    (opcional) lo que se «teclea» en cada input(), p. ej. ["7", "3"]
+  matriz, fila, col           (opcional) una lista de listas que se dibuja como tabla, con la
+                              casilla [fila][col] señalada
 
 La "lista" también puede ser una cadena: cada carácter es una casilla.
 Si el programa define funciones, cada llamada aparece como un marco con sus
@@ -37,7 +40,7 @@ Para programas sin lista ni bucle: omite "lista" y "cabecera", y usa
   fila_en: "cada_linea"       una fila de la tabla por cada línea ejecutada
   columnas: ["a", "b"]        variables que aparecen en la tabla
 """
-import ast, contextlib, copy, dis, inspect, io, json, linecache, os, re, shutil, sys, tempfile, traceback, types
+import ast, builtins, contextlib, copy, dis, inspect, io, json, linecache, os, re, shutil, sys, tempfile, traceback, types
 from pathlib import Path, PurePath
 
 ENTORNO = {"len": len, "range": range, "sum": sum, "max": max, "min": min, "abs": abs}
@@ -166,7 +169,7 @@ def marca(v, numeros):
         return {"__bytes__": list(v), "repr": repr(v)}
     if isinstance(v, (set, frozenset)):
         return {"__txt__": ("{" + ", ".join(sorted(repr(x) for x in v)) + "}") if v else "set()"}
-    return {"__txt__": repr(v)}
+    return {"__txt__": re.sub(r" at 0x[0-9a-fA-F]+", "", repr(v))}
 
 
 def muestra(v):
@@ -214,6 +217,17 @@ def disco():
 CO_GENERATOR = inspect.CO_GENERATOR
 
 
+def estrellas(code):
+    """Los parámetros *args y **kwargs de una función: {"notas": "*", "datos": "**"}."""
+    r, i = {}, code.co_argcount + code.co_kwonlyargcount
+    if code.co_flags & inspect.CO_VARARGS:
+        r[code.co_varnames[i]] = "*"
+        i += 1
+    if code.co_flags & inspect.CO_VARKEYWORDS:
+        r[code.co_varnames[i]] = "**"
+    return r
+
+
 def clases_de(g, numeros):
     """Atributos de clase (datos, no métodos) de las clases que define el alumno."""
     r = {}
@@ -226,11 +240,18 @@ def clases_de(g, numeros):
     return r
 
 
-def ejecuta(codigo):
+def ejecuta(codigo, entradas=()):
     """Ejecuta el código y devuelve un evento por cada línea (y por cada return de función),
     con las variables globales, la pila de marcos de función, lo impreso y los errores."""
     CODIGO["texto"] = codigo
     eventos, salida, numeros = [], io.StringIO(), {}
+    pendientes = list(entradas)
+
+    def entrada_simulada(mensaje=""):
+        """input() de mentira: escribe el mensaje y «teclea» la siguiente entrada de la lista."""
+        valor = pendientes.pop(0) if pendientes else ""
+        salida.write(f"{mensaje}{valor}\n")
+        return valor
     estado_error = {"propagando": False}
 
     def tracer(frame, evento, arg):
@@ -255,6 +276,7 @@ def ejecuta(codigo):
             modulo = cadena[0]
             pila = [{"nombre": nombre_de(fr.f_code),
                      "args": list(fr.f_code.co_varnames[:fr.f_code.co_argcount]),
+                     "estrella": estrellas(fr.f_code),
                      "vars": {k: marca(v, numeros) for k, v in fr.f_locals.items() if visible(k, v)},
                      "real": foto(fr.f_locals), "gen": bool(fr.f_code.co_flags & CO_GENERATOR),
                      "expr": cuerpo_lambda(fr.f_code) if fr.f_code.co_name == "<lambda>" else None} for fr in cadena[1:]]
@@ -283,7 +305,8 @@ def ejecuta(codigo):
         with contextlib.redirect_stdout(salida), contextlib.redirect_stderr(salida):
             sys.settrace(tracer)
             try:
-                exec(compile(codigo, ARCHIVO, "exec"), {"__name__": "__main__"})
+                mios = {**vars(builtins), "input": entrada_simulada}
+                exec(compile(codigo, ARCHIVO, "exec"), {"__name__": "__main__", "__builtins__": mios})
             except BaseException as e:          # error que nadie atiende: el programa se detiene
                 sys.settrace(None)
                 tb = e.__traceback__.tb_next     # sin el marco de este script
@@ -323,7 +346,7 @@ def contexto(ev):
 def traza(codigo, cfg):
     lineas = codigo.split("\n")
     lista, cab = cfg.get("lista"), cfg.get("cabecera")
-    eventos = ejecuta(codigo)
+    eventos = ejecuta(codigo, cfg.get("entradas", ()))
     pasos = [{"linea": None, "estado": {}, "salida": "", "foco": None, "lee": False, "cond": None, "vuelta": 0,
               "fila": None, "repr": {}, "tipos": {}, "pila": [], "devuelve": None, "excepcion": None}]
     filas, vueltas = [], 0
@@ -439,7 +462,7 @@ def traza(codigo, cfg):
 
         pila = [{"nombre": m["nombre"], "args": m["args"], "vars": m["vars"],
                  "repr": {k: muestra(v) for k, v in m["vars"].items()}, **({"gen": True} if m["gen"] else {}),
-                **({"expr": m["expr"]} if m["expr"] else {})}
+                **({"expr": m["expr"]} if m["expr"] else {}), **({"estrella": m["estrella"]} if m["estrella"] else {})}
                 for m in tras["pila"]]
         if devuelve and ejec["pausa"]:
             devuelve["pausa"] = True

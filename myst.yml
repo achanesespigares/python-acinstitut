@@ -38,6 +38,15 @@ project:
         - file: capitulos/09-funciones.md
         - file: capitulos/10-cadenas.md
         - file: capitulos/11-diccionarios.md
+    - title: Bloque 3+ · Todo el PCEP
+      children:
+        - file: capitulos/21-como-funciona-python.md
+        - file: capitulos/22-listas-a-fondo.md
+        - file: capitulos/23-tuplas-y-conjuntos.md
+        - file: capitulos/24-funciones-a-fondo.md
+        - file: capitulos/25-bucles-a-fondo.md
+        - file: capitulos/26-cadenas-y-formato.md
+        - file: capitulos/27-csv-math-random.md
     - title: Bloque 4 · Hacia el PCAP
       children:
         - file: capitulos/12-modulos.md

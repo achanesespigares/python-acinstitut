@@ -13,6 +13,9 @@ capitulos/
   04-variables-asignacion.md · 05-tipos-de-datos.md · 06-condicionales.md   bloque 1
   07-bucles.md · 08-recorrer-listas.md                                     bloque 2
   09-funciones.md · 10-cadenas.md · 11-diccionarios.md                     bloque 3
+  21-como-funciona-python.md · 22-listas-a-fondo.md · 23-tuplas-y-conjuntos.md
+  24-funciones-a-fondo.md · 25-bucles-a-fondo.md · 26-cadenas-y-formato.md
+  27-csv-math-random.md                                                    bloque 3+ (todo el PCEP)
   12-modulos.md · 13-excepciones.md · 14-clases.md                         bloque 4
   15-comprensiones.md · 16-funciones-valores.md · 17-ficheros.md
   18-clases-a-fondo.md · 19-cadenas-a-fondo.md · 20-probar-y-depurar.md    bloque 5
