@@ -27,6 +27,8 @@ herramientas/trazar.py      genera las trazas ejecutando el código con sys.sett
 herramientas/preguntas.py   comprueba el banco de preguntas ejecutándolo y lo coloca en el libro
 preguntas/pcep.py           banco de preguntas tipo examen PCEP (original), con su sección y su capítulo
 preguntas/pcap.py           banco de preguntas tipo examen PCAP (original)
+pdf/                        la guía del curso en PDF: md2typ.py convierte las páginas curso-*.md a Typst (paquete ac-institut)
+descargas/                  los PDF ya generados, enlazados desde la portada
 estilo/ac-institut.css      piel AC Institut (vino, Montserrat, Arimo, IBM Plex Mono)
 .github/workflows/          publicación automática en GitHub Pages
 ```
