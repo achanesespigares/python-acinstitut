@@ -1,0 +1,30 @@
+# Programación en Python · AC Institut
+# Jupyter Book 2 (motor MyST). Construir:  jupyter book build --html   (o  npx myst build --html)
+version: 1
+project:
+  id: python-acinstitut
+  title: Programación en Python
+  subtitle: Ver el código pensar
+  authors:
+    - name: Antonio Chanes Espigares
+  license: CC-BY-NC-SA-4.0
+  github: https://github.com/antonychanes/python-acinstitut
+  # Las celdas de código se pueden ejecutar en el propio navegador (JupyterLite + Pyodide)
+  jupyter:
+    lite: true
+  exclude:
+    - herramientas/**
+    - README.md
+    - node_modules/**
+  toc:
+    - file: index.md
+    - file: capitulos/00-como-leer.md
+    - title: Bloque 2 · Repetir
+      children:
+        - file: capitulos/07-recorrer-listas.md
+site:
+  template: book-theme
+  options:
+    logo_text: ac | institut · Python
+    style: estilo/ac-institut.css
+    folders: true
