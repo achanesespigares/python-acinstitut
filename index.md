@@ -24,8 +24,8 @@ Para crear un programa seguimos siempre el mismo camino:
 | Bloque | Capítulos | Estado |
 |---|---|---|
 | 0 · Pensar antes de programar | Especificación, algoritmo, trazas a mano | En preparación |
-| 1 · Guardar y decidir | Variables y asignación · Tipos · Condicionales | En preparación |
-| 2 · Repetir | Bucles `while` y `for` · [Recorrer listas](capitulos/07-recorrer-listas.md) | Capítulo piloto listo |
+| 1 · Guardar y decidir | [Variables y asignación](capitulos/04-variables-asignacion.md) · [Tipos de datos](capitulos/05-tipos-de-datos.md) · [Condicionales](capitulos/06-condicionales.md) | Listo |
+| 2 · Repetir | [Bucles `while` y `for`](capitulos/07-bucles.md) · [Recorrer listas](capitulos/08-recorrer-listas.md) | Listo |
 | 3 · Organizar | Funciones · Cadenas · Diccionarios | En preparación |
 | 4 · PCAP | Módulos · Excepciones · Clases | En preparación |
 

@@ -62,7 +62,8 @@ pre.tz-codigo{ margin:0; font:400 14px/1.85 var(--mono); overflow-x:auto; backgr
 .tz-consulta{ font:500 14px/1.3 var(--mono); color:var(--acento); min-height:1.3em; margin-top:6px !important; }
 .tz-vars{ display:flex; flex-wrap:wrap; gap:8px; }
 .tz .var{ border:1.5px solid var(--fila); border-radius:6px; padding:7px 11px; min-width:72px; display:flex; flex-direction:column; gap:2px; }
-.tz .var .k{ font:500 12px/1 var(--mono); color:var(--banda); }
+.tz .var .k{ font:500 12px/1 var(--mono); color:var(--banda); display:flex; gap:6px; align-items:center; }
+.tz .var .tipo{ font:600 9.5px/1 var(--titulo); letter-spacing:.06em; text-transform:uppercase; color:var(--acento); border:1px solid var(--acento); border-radius:3px; padding:2px 4px; }
 .tz .var .val{ font:600 19px/1.15 var(--mono); }
 .tz .var.cambia{ border:2px solid var(--acento); background:var(--suave); }
 .tz .var .antes{ font:400 11px/1 var(--mono); color:var(--banda); text-decoration:line-through; }
@@ -136,7 +137,7 @@ const PLANTILLA = `
       <div class="tz-caja">
         <div class="tz-barra negro"><span>Memoria</span><span>lo que hay ahora</span></div>
         <div class="tz-mem">
-          <div>
+          <div class="tz-lista-bloque">
             <p class="tz-lnom"><span class="tz-nom"></span> <span class="tz-nota">(posiciones desde 0)</span></p>
             <div class="tz-casillas"></div>
             <p class="tz-consulta"></p>
@@ -149,7 +150,7 @@ const PLANTILLA = `
     </div>
   </div>
   <div class="tz-caja">
-    <div class="tz-barra"><span>Tabla de traza</span><span>una fila por vuelta</span></div>
+    <div class="tz-barra"><span>Tabla de traza</span><span class="tz-tabla-sub">una fila por vuelta</span></div>
     <div class="tz-tabla-wrap"><table class="tz-tabla"></table></div>
     <p class="tz-nota-tabla"></p>
   </div>
@@ -171,15 +172,33 @@ function render({ model, el }) {
   const q = s => el.querySelector(s);
   const P = D.pasos, L = D.codigo.split("\n"), lista = C.lista, cab = C.cabecera;
   const columnas = C.columnas.concat(C.fila_en === "comprobacion" ? ["¿sigue?"] : []);
+  // valor tal como lo escribe Python (True, 4.0, 'texto'), si la traza lo trae
+  const rep = (p, n) => (p.repr && n in p.repr) ? p.repr[n] : fmtVal(p.estado[n]);
+  // ¿este if tiene más ramas (elif / else) detrás?
+  function tieneRamas(nLinea) {
+    const sangria = l => l.length - l.trimStart().length;
+    const s0 = sangria(L[nLinea - 1]);
+    for (let j = nLinea; j < L.length; j++) {
+      if (!L[j].trim()) continue;
+      if (sangria(L[j]) < s0) return false;
+      if (sangria(L[j]) === s0) return /^(elif|else)\b/.test(L[j].trim());
+    }
+    return false;
+  }
   let k = 0, oculto = false, timer = null;
 
   q(".tz-tit").textContent = C.titulo || "";
   q(".tz-etq").textContent = C.etiqueta || "";
   q(".tz-idea").textContent = C.idea || "";
   q(".tz-nom").textContent = lista;
-  q(".tz-nota-tabla").textContent = C.fila_en === "comprobacion"
-    ? "En el while, la fila se escribe cada vez que se comprueba la condición."
-    : "La fila de cada vuelta se escribe al terminarla, cuando el for vuelve a la cabecera.";
+  const porLinea = C.fila_en === "cada_linea";
+  if (!lista) q(".tz-lista-bloque").style.display = "none";
+  q(".tz-tabla-sub").textContent = porLinea ? "una fila por línea ejecutada" : "una fila por vuelta";
+  q(".tz-nota-tabla").textContent = porLinea
+    ? "Cada fila es el estado de las variables justo después de ejecutar esa línea: así se hace una traza a mano."
+    : C.fila_en === "comprobacion"
+      ? "En el while, la fila se escribe cada vez que se comprueba la condición."
+      : "La fila de cada vuelta se escribe al terminarla, cuando el for vuelve a la cabecera.";
 
   const salida = t => t.split("\n").filter(Boolean);
   const saleDelBucle = (p, sig) => p.linea === cab && !p.cond && (!sig || sig.linea !== cab + 1);
@@ -188,24 +207,31 @@ function render({ model, el }) {
     if (p.linea === null) return "El programa está listo. Pulsa «Paso» para ejecutar la primera línea.";
     const txt = L[p.linea - 1].trim();
     const cambios = Object.keys(p.estado).filter(n => n !== lista && !igual(p.estado[n], prev.estado[n]));
-    if (!(lista in prev.estado) && (lista in p.estado))
+    if (lista && !(lista in prev.estado) && (lista in p.estado))
       return "Se crea la lista <code>" + lista + "</code> con " + p.estado[lista].length + " casillas, numeradas de 0 a " + (p.estado[lista].length - 1) + ".";
     if (p.cond) {
       const r = p.cond.valor;
       if (txt.startsWith("while")) return "Se comprueba la condición del <code>while</code>: " + (r ? "es <b>True</b>, así que da otra vuelta." : "es <b>False</b>, así que sale del bucle.");
-      return "Se evalúa la condición del <code>if</code>: " + (r ? "es <b>True</b>, así que entra en el bloque." : "es <b>False</b>, así que se salta el bloque.");
+      const kw = txt.startsWith("elif") ? "elif" : "if";
+      const sigTxt = sig && sig.linea ? L[sig.linea - 1].trim() : "";
+      if (r) return "Se evalúa la condición del <code>" + kw + "</code>: es <b>True</b>, así que entra en esta rama." + (tieneRamas(p.linea) ? " Las ramas que quedan ya no se comprueban." : "");
+      if (sigTxt.startsWith("elif")) return "Se evalúa la condición del <code>" + kw + "</code>: es <b>False</b>, así que pasa a comprobar la siguiente condición.";
+      if (tieneRamas(p.linea)) return "Se evalúa la condición del <code>" + kw + "</code>: es <b>False</b>, así que salta a la rama <code>else</code>.";
+      return "Se evalúa la condición del <code>" + kw + "</code>: es <b>False</b>, así que se salta el bloque.";
     }
     if (p.linea === cab) {
       if (saleDelBucle(p, sig)) return "No quedan " + (txt.includes("range") ? "posiciones" : "elementos") + " por recorrer: el bucle <code>for</code> termina.";
-      if (txt.includes("range")) return "Vuelta " + p.vuelta + ": <code>" + C.puntero + "</code> pasa a valer " + p.estado[C.puntero] + ". Es la siguiente posición que se va a consultar.";
+      if (txt.includes("range")) return "Vuelta " + p.vuelta + ": <code>" + C.puntero + "</code> pasa a valer " + p.estado[C.puntero] + "." + (lista ? " Es la siguiente posición que se va a consultar." : "");
       return "Vuelta " + p.vuelta + ": Python toma el siguiente elemento, el de la posición " + p.foco + ", y lo guarda en <code>" + C.puntero + "</code> = " + fmtVal(p.estado[C.puntero]) + ".";
     }
     if (txt.startsWith("print")) return "Se muestra en pantalla: <code>" + esc(salida(p.salida).slice(-1)[0] || "") + "</code>";
     if (cambios.length) {
       const n = cambios[0], a = prev.estado[n];
       const lee = p.lee && p.foco !== null ? " Para ello se consulta la casilla " + p.foco + " de la lista, que vale " + fmtVal(p.estado[lista][p.foco]) + "." : "";
-      if (a === undefined) return "Se crea la variable <code>" + n + "</code> y vale " + fmtVal(p.estado[n]) + "." + lee;
-      return "<code>" + n + "</code> cambia: valía " + fmtVal(a) + " y ahora vale " + fmtVal(p.estado[n]) + "." + lee;
+      const tipo = C.mostrar_tipos && p.tipos ? " (tipo <code>" + p.tipos[n] + "</code>)" : "";
+      const otras = cambios.length > 1 ? " También cambia <code>" + cambios.slice(1).join("</code>, <code>") + "</code>." : "";
+      if (a === undefined) return "Se crea la variable <code>" + n + "</code> y vale " + esc(rep(p, n)) + tipo + "." + lee + otras;
+      return "<code>" + n + "</code> cambia: valía " + esc(rep(prev, n)) + " y ahora vale " + esc(rep(p, n)) + tipo + "." + lee + otras;
     }
     return "Se ejecuta la línea " + p.linea + ".";
   }
@@ -242,9 +268,10 @@ function render({ model, el }) {
     const nombres = Object.keys(p.estado).filter(n => n !== lista);
     q(".tz-vars").innerHTML = nombres.length ? nombres.map(n => {
       const cambia = k > 0 && !igual(p.estado[n], prev.estado[n]);
-      const antes = cambia && prev.estado[n] !== undefined ? '<span class="antes">' + esc(fmtVal(prev.estado[n])) + "</span>" : "";
-      return '<div class="var' + (cambia ? " cambia" : "") + '"><span class="k">' + n + '</span><span class="val">' +
-        (oculto && cambia ? "?" : esc(fmtVal(p.estado[n]))) + "</span>" + antes + "</div>";
+      const antes = cambia && prev.estado[n] !== undefined ? '<span class="antes">' + esc(rep(prev, n)) + "</span>" : "";
+      const tipo = C.mostrar_tipos && p.tipos && p.tipos[n] ? '<span class="tipo">' + p.tipos[n] + "</span>" : "";
+      return '<div class="var' + (cambia ? " cambia" : "") + '"><span class="k">' + n + tipo + '</span><span class="val">' +
+        (oculto && cambia ? "?" : esc(rep(p, n))) + "</span>" + antes + "</div>";
     }).join("") : '<span class="tz-vacio">Aún no hay variables.</span>';
 
     if (p.cond) {
@@ -260,10 +287,11 @@ function render({ model, el }) {
       : '<span class="pr">(nada todavía)</span>';
 
     const vis = P.slice(0, k + 1).filter(x => x.fila !== null && x.fila !== undefined).map(x => x.fila);
-    let t = "<thead><tr><th>" + (C.fila_en === "comprobacion" ? "Comprobación" : "Vuelta") + "</th>" + columnas.map(c => "<th>" + esc(c) + "</th>").join("") + "</tr></thead><tbody>";
-    D.filas.forEach((f, i) => {
+    let t = "<thead><tr><th>" + (porLinea ? "Línea" : C.fila_en === "comprobacion" ? "Comprobación" : "Vuelta") + "</th>" + columnas.map(c => "<th>" + esc(c) + "</th>").join("") + "</tr></thead><tbody>";
+    D.filas.forEach((f0, i) => {
       const v = vis.includes(i), nv = v && p.fila === i;
-      t += '<tr class="' + (nv ? "nueva" : "") + (v ? "" : " fantasma") + '"><td>' + (i + 1) + "</td>" + f.map(c => {
+      const primera = porLinea ? f0[0] : (i + 1), f = porLinea ? f0.slice(1) : f0;
+      t += '<tr class="' + (nv ? "nueva" : "") + (v ? "" : " fantasma") + '"><td>' + (porLinea && !v ? "·" : primera) + "</td>" + f.map(c => {
         if (!v) return "<td>·</td>";
         const cls = oculto && nv ? "" : (c === "Sí" ? "si" : c === "No" ? "no" : "");
         return '<td class="' + cls + '">' + esc(oculto && nv ? "?" : c) + "</td>";

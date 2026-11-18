@@ -9,7 +9,8 @@ myst.yml                    configuración del libro (índice, tema, JupyterLite
 index.md                    portada y hoja de ruta
 capitulos/
   00-como-leer.md           cómo usar el libro y los visualizadores
-  07-recorrer-listas.md     capítulo piloto (4 programas visualizados + ejercicios)
+  04-variables-asignacion.md · 05-tipos-de-datos.md · 06-condicionales.md   bloque 1
+  07-bucles.md · 08-recorrer-listas.md                                     bloque 2
 widgets/traza.mjs           el visualizador (anywidget), con sus estilos dentro
 herramientas/trazar.py      genera las trazas ejecutando el código con sys.settrace
 estilo/ac-institut.css      piel AC Institut (vino, Montserrat, Arimo, IBM Plex Mono)

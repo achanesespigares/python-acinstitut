@@ -19,9 +19,15 @@ project:
   toc:
     - file: index.md
     - file: capitulos/00-como-leer.md
+    - title: Bloque 1 · Guardar y decidir
+      children:
+        - file: capitulos/04-variables-asignacion.md
+        - file: capitulos/05-tipos-de-datos.md
+        - file: capitulos/06-condicionales.md
     - title: Bloque 2 · Repetir
       children:
-        - file: capitulos/07-recorrer-listas.md
+        - file: capitulos/07-bucles.md
+        - file: capitulos/08-recorrer-listas.md
 site:
   template: book-theme
   options:

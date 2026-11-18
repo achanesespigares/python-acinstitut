@@ -1,6 +1,6 @@
 """trazar.py · genera las trazas de los visualizadores de un capítulo.
 
-Uso:   python herramientas/trazar.py capitulos/07-recorrer-listas.md
+Uso:   python herramientas/trazar.py capitulos/08-recorrer-listas.md
 
 Busca en el capítulo cada directiva {anywidget} que carga traza.mjs, toma la
 celda {code-cell} que la precede, ejecuta ese código con sys.settrace y escribe
@@ -18,6 +18,11 @@ Claves de "config":
   columnas                    expresiones de la tabla de traza, p. ej. ["i", "notas[i]", "total"]
   fila_en                     "fin_iteracion" (for) o "comprobacion" (while)
   soltar                      (opcional) línea a partir de la cual se deja de señalar casilla
+  mostrar_tipos               (opcional) true para enseñar el tipo de cada variable (int, str…)
+
+Para programas sin lista ni bucle: omite "lista" y "cabecera", y usa
+  fila_en: "cada_linea"       una fila de la tabla por cada línea ejecutada
+  columnas: ["a", "b"]        variables que aparecen en la tabla
 """
 import ast, contextlib, copy, io, json, re, sys
 from pathlib import Path
@@ -71,12 +76,15 @@ def ejecuta(codigo):
 
 def traza(codigo, cfg):
     lineas = codigo.split("\n")
-    lista, cab = cfg["lista"], cfg["cabecera"]
+    lista, cab = cfg.get("lista"), cfg.get("cabecera")
     eventos = ejecuta(codigo)
-    pasos = [{"linea": None, "estado": {}, "salida": "", "foco": None, "lee": False, "cond": None, "vuelta": 0, "fila": None}]
+    pasos = [{"linea": None, "estado": {}, "salida": "", "foco": None, "lee": False, "cond": None, "vuelta": 0,
+              "fila": None, "repr": {}, "tipos": {}}]
     filas, vueltas = [], 0
 
     def foco(estado):
+        if not lista:
+            return None
         arr = estado.get(lista)
         if not isinstance(arr, list):
             return None
@@ -94,7 +102,7 @@ def traza(codigo, cfg):
         f = foco(estado)
         if cfg.get("soltar") and n >= cfg["soltar"]:
             f = None
-        lee = f is not None and (f"{lista}[" in texto or (n == cab and " in " in texto and lista in texto))
+        lee = bool(lista) and f is not None and (f"{lista}[" in texto or (n == cab and " in " in texto and lista in texto))
 
         cond = None
         for clave in ("if ", "elif ", "while "):
@@ -105,7 +113,12 @@ def traza(codigo, cfg):
                         "valor": bool(eval(expr, dict(ENTORNO), dict(antes)))}
 
         fila = None
-        if n == cab and (cfg["fila_en"] == "comprobacion" or vueltas > 1):
+        if cfg["fila_en"] == "cada_linea":
+            valores = [str(n)] + [repr(estado[c]) if c in estado else "—" for c in cfg["columnas"]]
+            if any(c in estado for c in cfg["columnas"]) or despues["salida"] != ejec["salida"]:
+                filas.append(valores)
+                fila = len(filas) - 1
+        elif n == cab and (cfg["fila_en"] == "comprobacion" or vueltas > 1):
             valores = []
             for c in cfg["columnas"]:
                 try:
@@ -119,7 +132,9 @@ def traza(codigo, cfg):
             fila = len(filas) - 1
 
         pasos.append({"linea": n, "estado": estado, "salida": despues["salida"], "foco": f,
-                      "lee": lee, "cond": cond, "vuelta": vueltas, "fila": fila})
+                      "lee": lee, "cond": cond, "vuelta": vueltas, "fila": fila,
+                      "repr": {k: repr(v) for k, v in estado.items()},
+                      "tipos": {k: type(v).__name__ for k, v in estado.items()}})
     return {"codigo": codigo, "pasos": pasos, "filas": filas}
 
 
@@ -137,7 +152,7 @@ def procesa(ruta):
         codigo = "\n".join(l for l in celdas[-1].group(1).rstrip("\n").split("\n") if not l.startswith(":"))
         cuerpo = json.loads(w.group(2))
         cfg = cuerpo["config"]
-        nuevo = json.dumps({"config": cfg, "traza": traza(codigo, cfg)}, ensure_ascii=False, separators=(",", ":"))
+        nuevo = json.dumps({"config": cfg, "traza": traza(codigo, cfg)}, ensure_ascii=False, separators=(",", ":"), default=repr)
         trozos += [texto[pos:w.start()], w.group(1), nuevo, "\n"]
         pos = w.end() - 3
         hechos += 1
