@@ -23,10 +23,10 @@ Para crear un programa seguimos siempre el mismo camino:
 
 | Bloque | Capítulos | Estado |
 |---|---|---|
-| 0 · Pensar antes de programar | Especificación, algoritmo, trazas a mano | En preparación |
+| 0 · Pensar antes de programar | [Especificar el problema](capitulos/01-especificacion.md) · [Diseñar el algoritmo](capitulos/02-algoritmo.md) · [Trazas a mano](capitulos/03-trazas.md) | Listo |
 | 1 · Guardar y decidir | [Variables y asignación](capitulos/04-variables-asignacion.md) · [Tipos de datos](capitulos/05-tipos-de-datos.md) · [Condicionales](capitulos/06-condicionales.md) | Listo |
 | 2 · Repetir | [Bucles `while` y `for`](capitulos/07-bucles.md) · [Recorrer listas](capitulos/08-recorrer-listas.md) | Listo |
-| 3 · Organizar | Funciones · Cadenas · Diccionarios | En preparación |
+| 3 · Organizar | [Funciones](capitulos/09-funciones.md) · [Cadenas](capitulos/10-cadenas.md) · [Diccionarios](capitulos/11-diccionarios.md) | Listo |
 | 4 · PCAP | Módulos · Excepciones · Clases | En preparación |
 
 :::{tip} Sobre el código de este libro

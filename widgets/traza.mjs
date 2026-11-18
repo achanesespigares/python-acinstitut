@@ -75,6 +75,17 @@ pre.tz-codigo{ margin:0; font:400 14px/1.85 var(--mono); overflow-x:auto; backgr
 .tz .cond .res.si{ background:var(--si); }
 .tz .cond .res.no{ background:var(--acento); }
 .tz .cond .res.oculto{ background:var(--banda); }
+.tz-dic{ border-collapse:collapse; font:500 15px/1.2 var(--mono); margin:0; min-width:60%; }
+.tz-dic th{ font:600 10.5px/1.2 var(--titulo); letter-spacing:.08em; text-transform:uppercase; color:var(--banda); text-align:left; padding:4px 10px; border:0; border-bottom:1.5px solid var(--tinta); background:none; }
+.tz-dic td{ padding:7px 10px; border:0; border-bottom:1px solid var(--fila); }
+.tz-dic tr.cambia td{ background:var(--suave); }
+.tz-dic tr.cambia td:first-child{ box-shadow:inset 3px 0 0 var(--acento); }
+.tz-pila{ display:flex; flex-direction:column; gap:10px; }
+.tz-pila:empty{ display:none; }
+.tz .marco{ border:2px solid var(--acento); border-radius:8px; padding:10px; display:flex; flex-direction:column; gap:8px; background:#fff; }
+.tz .marco-cab{ display:flex; gap:8px; align-items:baseline; flex-wrap:wrap; font:600 10.5px/1.2 var(--titulo); letter-spacing:.1em; text-transform:uppercase; color:var(--acento); }
+.tz .marco-cab code{ font:500 13px/1.2 var(--mono); letter-spacing:0; text-transform:none; color:var(--tinta); background:none; }
+.tz .devuelve{ font:500 14px/1.3 var(--mono); color:var(--acento); padding:6px 10px; border-left:4px solid var(--acento); background:var(--suave); }
 .tz-consola{ background:var(--tinta); color:#EDEDED; font:400 14px/1.6 var(--mono); padding:10px 12px; min-height:2.6em; white-space:pre-wrap; }
 .tz-consola .pr{ color:#9A9A9A; }
 
@@ -110,7 +121,8 @@ table.tz-tabla tr.fantasma td{ color:var(--fila); }
 `;
 
 const esc = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;");
-const fmtVal = v => (typeof v === "string" ? '"' + v + '"' : String(v));
+// valores con la escritura de Python: 'texto', True, False, None
+const fmtVal = v => typeof v === "string" ? "'" + v + "'" : v === true ? "True" : v === false ? "False" : v === null ? "None" : String(v);
 const igual = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 
 function colorea(linea) {
@@ -142,7 +154,9 @@ const PLANTILLA = `
             <div class="tz-casillas"></div>
             <p class="tz-consulta"></p>
           </div>
-          <div><p class="tz-micro">Variables</p><div class="tz-vars"></div></div>
+          <div class="tz-dic-bloque"><p class="tz-micro"><span class="tz-dic-nom"></span> · diccionario</p><table class="tz-dic"></table></div>
+          <div><p class="tz-micro tz-vars-tit">Variables</p><div class="tz-vars"></div></div>
+          <div class="tz-pila"></div>
           <div class="tz-cond"></div>
         </div>
       </div>
@@ -192,6 +206,12 @@ function render({ model, el }) {
   q(".tz-idea").textContent = C.idea || "";
   q(".tz-nom").textContent = lista;
   const porLinea = C.fila_en === "cada_linea";
+  const conMarcos = P.some(x => x.pila && x.pila.length);
+  if (conMarcos) q(".tz-vars-tit").textContent = "Variables globales";
+  if (!C.diccionario) q(".tz-dic-bloque").style.display = "none"; else q(".tz-dic-nom").textContent = C.diccionario;
+  const ocultas = new Set(C.diccionario ? [C.diccionario] : []);
+  const marco = p => (p.pila && p.pila.length) ? p.pila[p.pila.length - 1] : null;
+  const firma = m => m.nombre + "(" + m.args.map(a => a + "=" + (m.repr[a] ?? "?")).join(", ") + ")";
   if (!lista) q(".tz-lista-bloque").style.display = "none";
   q(".tz-tabla-sub").textContent = porLinea ? "una fila por línea ejecutada" : "una fila por vuelta";
   q(".tz-nota-tabla").textContent = porLinea
@@ -205,10 +225,47 @@ function render({ model, el }) {
 
   function narra(p, prev, sig) {
     if (p.linea === null) return "El programa está listo. Pulsa «Paso» para ejecutar la primera línea.";
+    const mp = marco(p), mprev = marco(prev);
+    if (p.devuelve) {
+      let recibe = Object.keys(p.estado).filter(n => !igual(p.estado[n], prev.estado[n]));
+      if (!recibe.length && mp) {
+        const antes = (prev.pila || [])[p.pila.length - 1];
+        if (antes) recibe = Object.keys(mp.vars).filter(n => !igual(mp.vars[n], antes.vars[n]));
+      }
+      return "La función <code>" + p.devuelve.funcion + "</code> termina y <b>devuelve " + esc(p.devuelve.valor) + "</b>. Su marco desaparece: sus variables locales ya no existen." +
+        (recibe.length ? " El resultado se guarda en <code>" + recibe[0] + "</code>." : mp ? " La función <code>" + mp.nombre + "</code> recibe el valor y sigue con su cálculo." : "");
+    }
+    if (L[p.linea - 1].trim().startsWith("def ")) {
+      const nom = L[p.linea - 1].trim().slice(4).split("(")[0];
+      return "Se define la función <code>" + nom + "</code>: Python la guarda con ese nombre, pero todavía no ejecuta su cuerpo. Eso pasará cuando alguien la llame.";
+    }
+    if ((p.pila || []).length > (prev.pila || []).length && mp) {
+      return "Se llama a la función <code>" + mp.nombre + "</code>: se crea su marco, con " +
+        (mp.args.length ? mp.args.map(a => "<code>" + a + "</code> = " + esc(mp.repr[a])).join(" y ") : "ningún parámetro") +
+        ". Ahora se ejecuta el cuerpo de la función.";
+    }
+    if (mp && mprev && mp.nombre === mprev.nombre && (p.pila || []).length === (prev.pila || []).length) {
+      const cl = Object.keys(mp.vars).filter(n => !igual(mp.vars[n], mprev.vars[n]));
+      if (cl.length && !p.cond) {
+        const n = cl[0];
+        return mprev.vars[n] === undefined
+          ? "Dentro de la función se crea la variable local <code>" + n + "</code> y vale " + esc(mp.repr[n]) + "."
+          : "La variable local <code>" + n + "</code> cambia: valía " + esc(mprev.repr[n]) + " y ahora vale " + esc(mp.repr[n]) + ".";
+      }
+    }
     const txt = L[p.linea - 1].trim();
-    const cambios = Object.keys(p.estado).filter(n => n !== lista && !igual(p.estado[n], prev.estado[n]));
-    if (lista && !(lista in prev.estado) && (lista in p.estado))
-      return "Se crea la lista <code>" + lista + "</code> con " + p.estado[lista].length + " casillas, numeradas de 0 a " + (p.estado[lista].length - 1) + ".";
+    const cambios = Object.keys(p.estado).filter(n => n !== lista && !ocultas.has(n) && !igual(p.estado[n], prev.estado[n]));
+    if (lista && !(lista in prev.estado) && (lista in p.estado)) {
+      const L0 = p.estado[lista].length, cad = typeof p.estado[lista] === "string";
+      return "Se crea " + (cad ? "la cadena" : "la lista") + " <code>" + lista + "</code> con " + L0 + (cad ? " caracteres" : " casillas") + ", numerados de 0 a " + (L0 - 1) + ".";
+    }
+    if (C.diccionario && !igual(p.estado[C.diccionario], prev.estado[C.diccionario]) && !p.cond) {
+      const a = prev.estado[C.diccionario], b = p.estado[C.diccionario];
+      if (a === undefined) return "Se crea el diccionario <code>" + C.diccionario + "</code>" + (Object.keys(b).length ? " con " + Object.keys(b).length + " parejas clave → valor." : ", vacío.");
+      const nueva = Object.keys(b).find(k => !(k in a)), cambiada = Object.keys(b).find(k => (k in a) && !igual(a[k], b[k]));
+      if (nueva !== undefined) return "La clave <code>" + esc(JSON.stringify(nueva)) + "</code> no estaba: se añade al diccionario con el valor " + esc(fmtVal(b[nueva])) + ".";
+      if (cambiada !== undefined) return "La clave <code>" + esc(JSON.stringify(cambiada)) + "</code> ya estaba: su valor pasa de " + esc(fmtVal(a[cambiada])) + " a " + esc(fmtVal(b[cambiada])) + ".";
+    }
     if (p.cond) {
       const r = p.cond.valor;
       if (txt.startsWith("while")) return "Se comprueba la condición del <code>while</code>: " + (r ? "es <b>True</b>, así que da otra vuelta." : "es <b>False</b>, así que sale del bucle.");
@@ -222,8 +279,10 @@ function render({ model, el }) {
     if (p.linea === cab) {
       if (saleDelBucle(p, sig)) return "No quedan " + (txt.includes("range") ? "posiciones" : "elementos") + " por recorrer: el bucle <code>for</code> termina.";
       if (txt.includes("range")) return "Vuelta " + p.vuelta + ": <code>" + C.puntero + "</code> pasa a valer " + p.estado[C.puntero] + "." + (lista ? " Es la siguiente posición que se va a consultar." : "");
-      return "Vuelta " + p.vuelta + ": Python toma el siguiente elemento, el de la posición " + p.foco + ", y lo guarda en <code>" + C.puntero + "</code> = " + fmtVal(p.estado[C.puntero]) + ".";
+      if (!lista || p.foco === null) return "Vuelta " + p.vuelta + ": <code>" + C.puntero + "</code> toma el siguiente valor, " + esc(rep(p, C.puntero)) + (C.diccionario && txt.includes(C.diccionario) ? ", que es la siguiente clave del diccionario." : ".");
+      return "Vuelta " + p.vuelta + ": Python toma el siguiente elemento, el de la posición " + p.foco + ", y lo guarda en <code>" + C.puntero + "</code> = " + esc(rep(p, C.puntero)) + ".";
     }
+    if (txt.startsWith("return ") && mp) return "Se calcula el valor de <code>" + esc(txt.slice(7)) + "</code>. En el paso siguiente, la función lo devuelve a quien la llamó.";
     if (txt.startsWith("print")) return "Se muestra en pantalla: <code>" + esc(salida(p.salida).slice(-1)[0] || "") + "</code>";
     if (cambios.length) {
       const n = cambios[0], a = prev.estado[n];
@@ -236,6 +295,7 @@ function render({ model, el }) {
     return "Se ejecuta la línea " + p.linea + ".";
   }
 
+  const k0 = () => k;
   function pinta() {
     const p = P[k], prev = P[Math.max(0, k - 1)], sig = P[k + 1];
     q(".tz-linea").textContent = p.linea === null ? "listo" : "línea " + p.linea;
@@ -246,7 +306,7 @@ function render({ model, el }) {
         '</span><span class="no">' + n + "</span><span>" + colorea(l) + "</span></div>";
     }).join("");
 
-    const arr = p.estado[lista];
+    const arr0 = p.estado[lista], arr = typeof arr0 === "string" ? Array.from(arr0) : arr0;
     const foco = saleDelBucle(p, sig) ? null : p.foco;
     const cas = q(".tz-casillas");
     if (!arr) { cas.innerHTML = '<span class="tz-vacio">Todavía no existe: se crea en la línea 1.</span>'; q(".tz-consulta").textContent = ""; }
@@ -254,7 +314,7 @@ function render({ model, el }) {
       let h = "";
       arr.forEach((v, i) => {
         h += '<div class="cas' + (i === foco ? " foco" : "") + (foco !== null && i < foco ? " visitada" : "") + (i === foco && p.lee ? " lee" : "") +
-          '"><span class="v">' + esc(fmtVal(v)) + '</span><span class="idx">' + i + "</span></div>";
+          '"><span class="v">' + esc(typeof arr0 === "string" ? v : fmtVal(v)) + '</span><span class="idx">' + i + "</span></div>";
       });
       if (foco !== null) h += '<div class="puntero"><span class="et">' + (C.puntero === "i" || /range/.test(L[cab - 1]) ? C.puntero + " = " + p.estado[C.puntero] : C.puntero) + '</span><span class="flecha"></span></div>';
       cas.innerHTML = h;
@@ -265,7 +325,7 @@ function render({ model, el }) {
       q(".tz-consulta").textContent = (p.lee && foco !== null) ? "Se consulta " + lista + "[" + foco + "] → " + (oculto ? "?" : fmtVal(arr[foco])) : "";
     }
 
-    const nombres = Object.keys(p.estado).filter(n => n !== lista);
+    const nombres = Object.keys(p.estado).filter(n => n !== lista && !ocultas.has(n));
     q(".tz-vars").innerHTML = nombres.length ? nombres.map(n => {
       const cambia = k > 0 && !igual(p.estado[n], prev.estado[n]);
       const antes = cambia && prev.estado[n] !== undefined ? '<span class="antes">' + esc(rep(prev, n)) + "</span>" : "";
@@ -273,6 +333,28 @@ function render({ model, el }) {
       return '<div class="var' + (cambia ? " cambia" : "") + '"><span class="k">' + n + tipo + '</span><span class="val">' +
         (oculto && cambia ? "?" : esc(rep(p, n))) + "</span>" + antes + "</div>";
     }).join("") : '<span class="tz-vacio">Aún no hay variables.</span>';
+
+    if (C.diccionario) {
+      const d = p.estado[C.diccionario], dprev = prev.estado[C.diccionario] || {};
+      q(".tz-dic").innerHTML = d === undefined ? '<tr><td class="tz-vacio">Todavía no existe.</td></tr>'
+        : Object.keys(d).length === 0 ? '<tr><td class="tz-vacio">{ } vacío</td></tr>'
+        : '<tr><th>clave</th><th>valor</th></tr>' + Object.keys(d).map(k => {
+            const cambia = k0() > 0 && (!(k in dprev) || !igual(dprev[k], d[k]));
+            return '<tr class="' + (cambia ? "cambia" : "") + '"><td>' + esc(fmtVal(k)) + "</td><td>" + (oculto && cambia ? "?" : esc(fmtVal(d[k]))) + "</td></tr>";
+          }).join("");
+    }
+
+    const pila = p.pila || [];
+    q(".tz-pila").innerHTML = pila.map((mm, i) => {
+      const anterior = (prev.pila || [])[i];
+      const vars = Object.keys(mm.vars).map(n => {
+        const cambia = !anterior || anterior.nombre !== mm.nombre || !igual(anterior.vars[n], mm.vars[n]);
+        return '<div class="var' + (cambia && k > 0 ? " cambia" : "") + '"><span class="k">' + n + '</span><span class="val">' +
+          (oculto && cambia ? "?" : esc(mm.repr[n])) + "</span></div>";
+      }).join("");
+      return '<div class="marco"><div class="marco-cab"><span>Marco</span><code>' + esc(firma(mm)) + "</code></div>" +
+        '<div class="tz-vars">' + (vars || '<span class="tz-vacio">sin variables locales</span>') + "</div></div>";
+    }).join("") + (p.devuelve ? '<div class="devuelve">↩ ' + esc(p.devuelve.funcion) + " devuelve <b>" + esc(oculto ? "?" : p.devuelve.valor) + "</b></div>" : "");
 
     if (p.cond) {
       const r = p.cond.valor;
@@ -313,7 +395,7 @@ function render({ model, el }) {
     if (k < P.length - 1) {
       k++;
       const p = P[k], prev = P[k - 1];
-      const novedad = p.cond || (p.fila !== null && p.fila !== undefined) || p.salida !== prev.salida ||
+      const novedad = p.cond || p.devuelve || !igual(p.pila || [], prev.pila || []) || (p.fila !== null && p.fila !== undefined) || p.salida !== prev.salida ||
         Object.keys(p.estado).some(n => n !== lista && !igual(p.estado[n], prev.estado[n]));
       oculto = q(".tz-pred").checked && !!novedad;
       pinta();

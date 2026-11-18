@@ -19,6 +19,11 @@ project:
   toc:
     - file: index.md
     - file: capitulos/00-como-leer.md
+    - title: Bloque 0 · Pensar antes de programar
+      children:
+        - file: capitulos/01-especificacion.md
+        - file: capitulos/02-algoritmo.md
+        - file: capitulos/03-trazas.md
     - title: Bloque 1 · Guardar y decidir
       children:
         - file: capitulos/04-variables-asignacion.md
@@ -28,6 +33,11 @@ project:
       children:
         - file: capitulos/07-bucles.md
         - file: capitulos/08-recorrer-listas.md
+    - title: Bloque 3 · Organizar
+      children:
+        - file: capitulos/09-funciones.md
+        - file: capitulos/10-cadenas.md
+        - file: capitulos/11-diccionarios.md
 site:
   template: book-theme
   options:

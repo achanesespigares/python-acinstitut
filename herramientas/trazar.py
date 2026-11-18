@@ -19,12 +19,17 @@ Claves de "config":
   fila_en                     "fin_iteracion" (for) o "comprobacion" (while)
   soltar                      (opcional) línea a partir de la cual se deja de señalar casilla
   mostrar_tipos               (opcional) true para enseñar el tipo de cada variable (int, str…)
+  diccionario                 (opcional) nombre de un diccionario que se dibuja como tabla clave → valor
+
+La "lista" también puede ser una cadena: cada carácter es una casilla.
+Si el programa define funciones, cada llamada aparece como un marco con sus
+variables locales, y el paso del return muestra el valor devuelto.
 
 Para programas sin lista ni bucle: omite "lista" y "cabecera", y usa
   fila_en: "cada_linea"       una fila de la tabla por cada línea ejecutada
   columnas: ["a", "b"]        variables que aparecen en la tabla
 """
-import ast, contextlib, copy, io, json, re, sys
+import ast, contextlib, copy, io, json, re, sys, types
 from pathlib import Path
 
 ENTORNO = {"len": len, "range": range, "sum": sum, "max": max, "min": min, "abs": abs}
@@ -52,17 +57,36 @@ def sustituye(expr, estado):
     return ast.unparse(Sustituto().visit(ast.parse(expr, mode="eval")))
 
 
+def foto(d):
+    """Copia de las variables visibles: sin funciones, módulos ni nombres internos."""
+    return {k: copy.deepcopy(v) for k, v in d.items()
+            if not k.startswith("__") and not callable(v) and not isinstance(v, types.ModuleType)}
+
+
 def ejecuta(codigo):
-    """Ejecuta el código y devuelve, por cada evento de línea, la línea y el estado."""
+    """Ejecuta el código y devuelve un evento por cada línea (y por cada return de función),
+    con las variables globales, la pila de marcos de función y lo impreso hasta entonces."""
     eventos, salida = [], io.StringIO()
 
     def tracer(frame, evento, arg):
         if frame.f_code.co_filename != "<alumno>":
             return tracer
         if evento in ("line", "return"):
-            estado = {k: copy.deepcopy(v) for k, v in frame.f_locals.items()
-                      if not k.startswith("__") and not callable(v)}
-            eventos.append({"linea": frame.f_lineno, "estado": estado, "salida": salida.getvalue()})
+            cadena, f = [], frame
+            while f is not None and f.f_code.co_filename == "<alumno>":
+                cadena.append(f)
+                f = f.f_back
+            cadena.reverse()                       # de fuera hacia dentro: módulo, función, función…
+            modulo = cadena[0]
+            pila = [{"nombre": fr.f_code.co_name,
+                     "args": list(fr.f_code.co_varnames[:fr.f_code.co_argcount]),
+                     "vars": foto(fr.f_locals)} for fr in cadena[1:]]
+            es_funcion = frame is not modulo
+            eventos.append({"ev": evento, "linea": frame.f_lineno, "glob": foto(modulo.f_locals),
+                            "local": foto(frame.f_locals) if es_funcion else {}, "pila": pila,
+                            "marco": frame.f_code.co_name, "funcion": es_funcion,
+                            "retorno": arg if (evento == "return" and es_funcion) else None,
+                            "salida": salida.getvalue()})
         return tracer
 
     with contextlib.redirect_stdout(salida):
@@ -74,55 +98,79 @@ def ejecuta(codigo):
     return eventos
 
 
+def contexto(ev):
+    """Variables que ve la línea que se ejecuta: globales más las locales de su función."""
+    return {**ev["glob"], **ev["local"]}
+
+
 def traza(codigo, cfg):
     lineas = codigo.split("\n")
     lista, cab = cfg.get("lista"), cfg.get("cabecera")
     eventos = ejecuta(codigo)
     pasos = [{"linea": None, "estado": {}, "salida": "", "foco": None, "lee": False, "cond": None, "vuelta": 0,
-              "fila": None, "repr": {}, "tipos": {}}]
+              "fila": None, "repr": {}, "tipos": {}, "pila": [], "devuelve": None}]
     filas, vueltas = [], 0
 
     def foco(estado):
         if not lista:
             return None
         arr = estado.get(lista)
-        if not isinstance(arr, list):
+        if not isinstance(arr, (list, str)):
             return None
         if cfg.get("foco", "vuelta") == "vuelta":
             return vueltas - 1 if 0 < vueltas <= len(arr) and cfg["puntero"] in estado else None
         idx = estado.get(cfg["foco"])
         return idx if isinstance(idx, int) and 0 <= idx < len(arr) else None
 
+    def evalua(expr, ctx):
+        try:
+            return repr(eval(expr, dict(ENTORNO), dict(ctx)))
+        except Exception:
+            return "—"
+
     for ejec, despues in zip(eventos, eventos[1:]):
         n = ejec["linea"]
         texto = lineas[n - 1].strip()
-        if n == cab:
+        devuelve = None
+        if ejec["ev"] == "return":
+            if not ejec["funcion"]:
+                continue
+            devuelve = {"funcion": ejec["marco"], "valor": repr(ejec["retorno"])}
+        elif n == cab:
             vueltas += 1
-        estado = despues["estado"]
+        # Tras un return, si lo siguiente es otra llamada (no la vuelta al que llamó),
+        # se enseña el instante justo después de devolver: la pila sin el marco que acaba.
+        tras = despues
+        if devuelve and len(despues["pila"]) >= len(ejec["pila"]):
+            tras = {**ejec, "pila": ejec["pila"][:-1], "salida": despues["salida"]}
+        estado = tras["glob"]
+        ctx_despues = {**tras["glob"], **(tras["pila"][-1]["vars"] if tras["pila"] else {})}
         f = foco(estado)
         if cfg.get("soltar") and n >= cfg["soltar"]:
             f = None
-        lee = bool(lista) and f is not None and (f"{lista}[" in texto or (n == cab and " in " in texto and lista in texto))
+        lee = bool(lista) and devuelve is None and f is not None and (
+            f"{lista}[" in texto or (n == cab and " in " in texto and lista in texto))
 
         cond = None
-        for clave in ("if ", "elif ", "while "):
-            if texto.startswith(clave):
-                expr = texto[len(clave):].rstrip(":").strip()
-                antes = ejec["estado"]
-                cond = {"expr": expr, "sust": sustituye(expr, antes),
-                        "valor": bool(eval(expr, dict(ENTORNO), dict(antes)))}
+        if devuelve is None:
+            for clave in ("if ", "elif ", "while "):
+                if texto.startswith(clave):
+                    expr = texto[len(clave):].rstrip(":").strip()
+                    antes = contexto(ejec)
+                    cond = {"expr": expr, "sust": sustituye(expr, antes),
+                            "valor": bool(eval(expr, dict(ENTORNO), dict(antes)))}
 
         fila = None
         if cfg["fila_en"] == "cada_linea":
-            valores = [str(n)] + [repr(estado[c]) if c in estado else "—" for c in cfg["columnas"]]
-            if any(c in estado for c in cfg["columnas"]) or despues["salida"] != ejec["salida"]:
+            valores = [f"{n} ↩" if devuelve else str(n)] + [evalua(c, ctx_despues) for c in cfg["columnas"]]
+            if any(v != "—" for v in valores[1:]) or despues["salida"] != ejec["salida"]:
                 filas.append(valores)
                 fila = len(filas) - 1
-        elif n == cab and (cfg["fila_en"] == "comprobacion" or vueltas > 1):
+        elif devuelve is None and n == cab and (cfg["fila_en"] == "comprobacion" or vueltas > 1):
             valores = []
             for c in cfg["columnas"]:
                 try:
-                    v = eval(c, dict(ENTORNO), dict(ejec["estado"]))
+                    v = eval(c, dict(ENTORNO), dict(contexto(ejec)))
                     valores.append(repr(v) if isinstance(v, str) else str(v))
                 except Exception:
                     valores.append("—")
@@ -131,10 +179,13 @@ def traza(codigo, cfg):
             filas.append(valores)
             fila = len(filas) - 1
 
+        pila = [{"nombre": m["nombre"], "args": m["args"], "vars": m["vars"],
+                 "repr": {k: repr(v) for k, v in m["vars"].items()}} for m in tras["pila"]]
         pasos.append({"linea": n, "estado": estado, "salida": despues["salida"], "foco": f,
                       "lee": lee, "cond": cond, "vuelta": vueltas, "fila": fila,
                       "repr": {k: repr(v) for k, v in estado.items()},
-                      "tipos": {k: type(v).__name__ for k, v in estado.items()}})
+                      "tipos": {k: type(v).__name__ for k, v in estado.items()},
+                      "pila": pila, "devuelve": devuelve})
     return {"codigo": codigo, "pasos": pasos, "filas": filas}
 
 
