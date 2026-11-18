@@ -13,6 +13,7 @@ capitulos/
   04-variables-asignacion.md · 05-tipos-de-datos.md · 06-condicionales.md   bloque 1
   07-bucles.md · 08-recorrer-listas.md                                     bloque 2
   09-funciones.md · 10-cadenas.md · 11-diccionarios.md                     bloque 3
+  12-modulos.md · 13-excepciones.md · 14-clases.md                         bloque 4
 widgets/traza.mjs           el visualizador (anywidget), con sus estilos dentro
 herramientas/trazar.py      genera las trazas ejecutando el código con sys.settrace
 estilo/ac-institut.css      piel AC Institut (vino, Montserrat, Arimo, IBM Plex Mono)

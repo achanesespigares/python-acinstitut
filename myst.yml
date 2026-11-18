@@ -38,6 +38,11 @@ project:
         - file: capitulos/09-funciones.md
         - file: capitulos/10-cadenas.md
         - file: capitulos/11-diccionarios.md
+    - title: Bloque 4 · Hacia el PCAP
+      children:
+        - file: capitulos/12-modulos.md
+        - file: capitulos/13-excepciones.md
+        - file: capitulos/14-clases.md
 site:
   template: book-theme
   options:

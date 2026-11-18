@@ -27,7 +27,7 @@ Para crear un programa seguimos siempre el mismo camino:
 | 1 · Guardar y decidir | [Variables y asignación](capitulos/04-variables-asignacion.md) · [Tipos de datos](capitulos/05-tipos-de-datos.md) · [Condicionales](capitulos/06-condicionales.md) | Listo |
 | 2 · Repetir | [Bucles `while` y `for`](capitulos/07-bucles.md) · [Recorrer listas](capitulos/08-recorrer-listas.md) | Listo |
 | 3 · Organizar | [Funciones](capitulos/09-funciones.md) · [Cadenas](capitulos/10-cadenas.md) · [Diccionarios](capitulos/11-diccionarios.md) | Listo |
-| 4 · PCAP | Módulos · Excepciones · Clases | En preparación |
+| 4 · Hacia el PCAP | [Módulos](capitulos/12-modulos.md) · [Excepciones](capitulos/13-excepciones.md) · [Clases y objetos](capitulos/14-clases.md) | Listo |
 
 :::{tip} Sobre el código de este libro
 Todas las celdas se pueden ejecutar aquí mismo, sin instalar nada: Python funciona dentro del navegador. Las ejecuciones paso a paso las ha generado Python real.
