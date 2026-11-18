@@ -14,6 +14,8 @@ capitulos/
   07-bucles.md · 08-recorrer-listas.md                                     bloque 2
   09-funciones.md · 10-cadenas.md · 11-diccionarios.md                     bloque 3
   12-modulos.md · 13-excepciones.md · 14-clases.md                         bloque 4
+  15-comprensiones.md · 16-funciones-valores.md · 17-ficheros.md
+  18-clases-a-fondo.md · 19-cadenas-a-fondo.md · 20-probar-y-depurar.md    bloque 5
 widgets/traza.mjs           el visualizador (anywidget), con sus estilos dentro
 herramientas/trazar.py      genera las trazas ejecutando el código con sys.settrace
 estilo/ac-institut.css      piel AC Institut (vino, Montserrat, Arimo, IBM Plex Mono)

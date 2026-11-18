@@ -60,11 +60,12 @@ pre.tz-codigo{ margin:0; font:400 14px/1.85 var(--mono); overflow-x:auto; backgr
 .tz .puntero .et{ font:600 13px/1 var(--mono); color:#fff; background:var(--acento); padding:5px 8px; border-radius:4px; white-space:nowrap; }
 .tz .puntero .flecha{ width:0; height:0; border-left:7px solid transparent; border-right:7px solid transparent; border-top:9px solid var(--acento); }
 .tz-consulta{ font:500 14px/1.3 var(--mono); color:var(--acento); min-height:1.3em; margin-top:6px !important; }
-.tz-vars{ display:flex; flex-wrap:wrap; gap:8px; }
+.tz-vars,.tz-clases{ display:flex; flex-wrap:wrap; gap:8px; }
 .tz .var{ border:1.5px solid var(--fila); border-radius:6px; padding:7px 11px; min-width:72px; display:flex; flex-direction:column; gap:2px; }
 .tz .var .k{ font:500 12px/1 var(--mono); color:var(--banda); display:flex; gap:6px; align-items:center; }
 .tz .var .tipo{ font:600 9.5px/1 var(--titulo); letter-spacing:.06em; text-transform:uppercase; color:var(--acento); border:1px solid var(--acento); border-radius:3px; padding:2px 4px; }
 .tz .var .val{ font:600 19px/1.15 var(--mono); }
+.tz .var .val.largo{ font:500 14px/1.35 var(--mono); }
 .tz .var.cambia{ border:2px solid var(--acento); background:var(--suave); }
 .tz .var .antes{ font:400 11px/1 var(--mono); color:var(--banda); text-decoration:line-through; }
 .tz-vacio{ font-size:14px; color:var(--banda); font-style:italic; }
@@ -96,6 +97,19 @@ pre.tz-codigo{ margin:0; font:400 14px/1.85 var(--mono); overflow-x:auto; backgr
 .tz .exc{ border:2px solid var(--acento); border-radius:8px; padding:10px 12px; display:flex; flex-direction:column; gap:6px; background:var(--suave); }
 .tz .exc code{ font:600 14px/1.35 var(--mono); color:var(--oscuro); background:none; white-space:pre-wrap; }
 .tz .ln.hecha.error{ background:#F3E3E6; }
+.tz .compr{ border:1.5px dashed var(--acento); border-radius:8px; padding:10px 12px; display:flex; flex-direction:column; gap:6px; font:500 14.5px/1.35 var(--mono); }
+.tz .compr .fila-c{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+.tz .compr .gris{ color:var(--banda); }
+.tz .compr .parcial{ color:var(--acento); font-weight:600; }
+.tz .devuelve.pausa{ border-left-color:var(--si); color:var(--si); background:#EEF3F0; }
+.tz-disco{ display:flex; flex-direction:column; gap:8px; }
+.tz .fic{ border:2px solid var(--tinta); background:#fff; }
+.tz .fic-cab{ display:flex; justify-content:space-between; gap:8px; padding:5px 10px; background:var(--fondo); border-bottom:1px solid var(--fila); font:600 13px/1.2 var(--mono); }
+.tz .fic-cab .tam{ font:500 11.5px/1.2 var(--mono); color:var(--banda); }
+.tz .fic pre{ margin:0; padding:8px 10px; font:400 13.5px/1.5 var(--mono); white-space:pre-wrap; word-break:break-all; background:#fff; border:0; min-height:1.5em; }
+.tz .fic pre .fin{ color:var(--filete); }
+.tz .fic.cambia{ border-color:var(--acento); }
+.tz .fic.cambia .fic-cab{ background:var(--suave); color:var(--acento); }
 .tz-consola{ background:var(--tinta); color:#EDEDED; font:400 14px/1.6 var(--mono); padding:10px 12px; min-height:2.6em; white-space:pre-wrap; }
 .tz-consola .pr{ color:#9A9A9A; }
 
@@ -140,6 +154,9 @@ const pyVal = v => v === null || typeof v !== "object" ? fmtVal(v)
   : Array.isArray(v) ? "[" + v.map(pyVal).join(", ") + "]"
   : "__obj__" in v ? v.__clase__ + " nº" + v.__obj__
   : "__exc__" in v ? v.__exc__
+  : "__txt__" in v ? v.__txt__
+  : "__bytes__" in v ? v.repr
+  : "__tupla__" in v ? "(" + v.__tupla__.map(pyVal).join(", ") + (v.__tupla__.length === 1 ? ",)" : ")")
   : "{" + Object.keys(v).map(c => fmtVal(c) + ": " + pyVal(v[c])).join(", ") + "}";
 // todos los objetos que hay en memoria en un paso, por su número
 function objetosDe(p) {
@@ -158,7 +175,7 @@ function objetosDe(p) {
 function colorea(linea) {
   return esc(linea).split(/("[^"]*")/).map(p => p.startsWith('"')
     ? '<span class="str">' + p + "</span>"
-    : p.replace(/\b(for|in|while|if|elif|else|and|or|not|print|range|len|def|return|try|except|finally|raise|class|import|from|as|pass)\b/g, '<span class="kw">$1</span>')
+    : p.replace(/\b(for|in|while|if|elif|else|and|or|not|print|range|len|def|return|try|except|finally|raise|class|import|from|as|pass|yield|lambda|with|match|case|break|continue|assert|is|None|True|False)\b/g, '<span class="kw">$1</span>')
        .replace(/\b(\d+)\b/g, '<span class="num">$1</span>')).join("");
 }
 
@@ -185,13 +202,16 @@ const PLANTILLA = `
             <p class="tz-consulta"></p>
           </div>
           <div class="tz-dic-bloque"><p class="tz-micro"><span class="tz-dic-nom"></span> · diccionario</p><table class="tz-dic"></table></div>
+          <div class="tz-clases-bloque"><p class="tz-micro">Clases · atributos de clase</p><div class="tz-clases"></div></div>
           <div><p class="tz-micro tz-vars-tit">Variables</p><div class="tz-vars"></div></div>
           <div class="tz-pila"></div>
           <div class="tz-cond"></div>
+          <div class="tz-compr"></div>
           <div class="tz-exc"></div>
         </div>
       </div>
       <div><p class="tz-micro">Pantalla</p><div class="tz-consola" aria-live="polite"></div></div>
+      <div class="tz-disco-bloque"><p class="tz-micro">Disco · carpeta del programa</p><div class="tz-disco"></div></div>
     </div>
   </div>
   <div class="tz-caja">
@@ -220,6 +240,34 @@ function render({ model, el }) {
   // valor tal como lo escribe Python (True, 4.0, 'texto'), si la traza lo trae
   const rep = (p, n) => (p.repr && n in p.repr) ? p.repr[n] : pyVal(p.estado[n]);
   const sangria = l => l.length - l.trimStart().length;
+  // ¿el bucle de la línea n tiene else? (la línea con su misma sangría tras el cuerpo)
+  function tieneElse(nLinea) {
+    const s0 = sangria(L[nLinea - 1]);
+    for (let j = nLinea; j < L.length; j++) {
+      if (!L[j].trim()) continue;
+      if (sangria(L[j]) <= s0) return sangria(L[j]) === s0 && /^else\s*:/.test(L[j].trim());
+    }
+    return false;
+  }
+  // el for / while que contiene la línea n
+  function bucleDe(nLinea) {
+    let s0 = sangria(L[nLinea - 1]);
+    for (let j = nLinea - 2; j >= 0; j--) {
+      if (!L[j].trim() || sangria(L[j]) >= s0) continue;
+      s0 = sangria(L[j]);
+      if (/^(for|while)\b/.test(L[j].trim())) return j + 1;
+    }
+    return null;
+  }
+  // ¿qué función de Python ha llamado a la lambda? (sorted, map, filter…)
+  const quienLlama = t => (t.match(/\b(sorted|map|filter|max|min|sort)\(/) || [])[1];
+  const PAPEL = { sorted: "sorted lo usa como clave para ordenar", sort: "sort lo usa como clave para ordenar",
+    map: "map lo guarda para el resultado", filter: "filter lo usa para decidir si el elemento se queda (True) o no (False)",
+    max: "max lo usa como clave para comparar", min: "min lo usa como clave para comparar" };
+  const MODOS = { r: "para leer", w: "para escribir (si ya existía, se vacía)", a: "para añadir al final", x: "para crearlo (falla si ya existe)",
+    rb: "para leer bytes (modo binario)", wb: "para escribir bytes (modo binario)", ab: "para añadir bytes al final" };
+  const esFichero = v => v && typeof v === "object" && typeof v.__txt__ === "string" && v.__txt__.startsWith("fichero");
+  const discoIgual = (a, b) => igual(a || [], b || []);
   // variables globales que apuntan al objeto nº n
   const etiquetas = (p, n) => Object.keys(p.estado).filter(c => esObj(p.estado[c]) && p.estado[c].__obj__ === n);
   const codigos = ns => "<code>" + ns.join("</code> y <code>") + "</code>";
@@ -239,6 +287,9 @@ function render({ model, el }) {
     const obj = b.__clase__ + " nº" + b.__obj__;
     const et = etiquetas(p, b.__obj__);
     const comparten = et.length > 1 ? " Como " + codigos(et) + " son etiquetas de ese mismo objeto, " + (et.length === 2 ? "las dos ven" : "todas ven") + " el cambio." : "";
+    const mangle = nuevo !== undefined && nuevo.match(/^_(\w+?)__(\w+)$/);
+    if (mangle) return "En el código pone <code>" + prefijo + ".__" + mangle[2] + "</code>, pero Python lo guarda como <code>" + nuevo + "</code> = " + esc(pyVal(b.attrs[nuevo])) +
+      ". Es la <b>desfiguración de nombres</b> (name mangling): un atributo que empieza por dos guiones bajos se rebautiza con el nombre de la clase, y desde fuera <code>.__" + mangle[2] + "</code> ya no existe.";
     if (nuevo !== undefined) return "Se crea el atributo <code>" + prefijo + "." + nuevo + "</code> = " + esc(pyVal(b.attrs[nuevo])) + ": queda guardado dentro del objeto " + obj + "." + comparten;
     if (camb !== undefined) return "El atributo <code>" + prefijo + "." + camb + "</code> del objeto " + obj + " cambia: valía " + esc(pyVal(a.attrs[camb])) + " y ahora vale " + esc(pyVal(b.attrs[camb])) + "." + comparten;
     return null;
@@ -261,6 +312,12 @@ function render({ model, el }) {
   q(".tz-nom").textContent = lista;
   const porLinea = C.fila_en === "cada_linea";
   const conMarcos = P.some(x => x.pila && x.pila.length);
+  const hayDisco = P.some(x => x.disco);
+  const hayClases = P.some(x => x.clases && Object.keys(x.clases).length);
+  if (!hayClases) q(".tz-clases-bloque").style.display = "none";
+  const hayHerencia = /^class\s+\w+\s*\(\s*\w/m.test(D.codigo);
+  const casillasDe = v => typeof v === "string" ? Array.from(v) : (v && v.__bytes__) ? v.__bytes__ : v;
+  if (!hayDisco) q(".tz-disco-bloque").style.display = "none";
   if (conMarcos) q(".tz-vars-tit").textContent = "Variables globales";
   if (!C.diccionario) q(".tz-dic-bloque").style.display = "none"; else q(".tz-dic-nom").textContent = C.diccionario;
   const ocultas = new Set(C.diccionario ? [C.diccionario] : []);
@@ -286,18 +343,35 @@ function render({ model, el }) {
       let h = txt0.startsWith("raise")
         ? "<code>raise</code> lanza una excepción a propósito: <code>" + esc(p.excepcion) + "</code>."
         : "⚠ Esta línea produce un error: <code>" + esc(p.excepcion) + "</code>.";
+      if (txt0.startsWith("assert")) h = "<code>assert</code> comprueba <code>" + esc(txt0.slice(7).split(/,\s*["']/)[0]) + "</code> y resulta <b>False</b>: lanza <code>" + esc(p.excepcion) + "</code>.";
       if (sig && sig.devuelve && sig.devuelve.error) h += " La función se interrumpe aquí: lo que queda de ella ya no se ejecuta.";
+      else if (!sig) h += " Nadie atiende el error: el programa se detiene aquí y Python escribe el <b>traceback</b> en la pantalla.";
       else if (sigTxt.startsWith("except")) h += " Python abandona el resto del <code>try</code> y busca un <code>except</code> que encaje.";
       return h;
     }
     if (p.devuelve && p.devuelve.error) {
-      return "La función <code>" + p.devuelve.funcion + "</code> se interrumpe por el error: no llega al <code>return</code> y no devuelve nada. Su marco desaparece y la excepción sale hacia la línea que la llamó.";
+      return "La función <code>" + p.devuelve.funcion + "</code> se interrumpe por el error: no llega al <code>return</code> y no devuelve nada. Su marco desaparece y la excepción sale hacia la línea que la llamó." +
+        (!sig ? " Allí tampoco la atiende nadie: el programa se detiene y en la pantalla aparece el <b>traceback</b>. Se lee de abajo arriba: la última línea dice qué error ha sido, y las de encima, por dónde ha pasado." : "");
+    }
+    if (p.devuelve && p.devuelve.pausa) {
+      const recibe = Object.keys(p.estado).filter(n => !igual(p.estado[n], prev.estado[n]));
+      return "<code>yield</code> entrega " + esc(p.devuelve.valor) + (recibe.length ? ", que llega a <code>" + recibe[0] + "</code>" : "") +
+        ". El generador <code>" + p.devuelve.funcion + "</code> no termina: se queda <b>en pausa</b> justo aquí, guardando sus variables, hasta que le pidan el siguiente valor.";
+    }
+    if (p.devuelve && p.devuelve.gen) {
+      return "El generador <code>" + p.devuelve.funcion + "</code> llega al final sin otro <code>yield</code>: ya no le quedan valores. Quien lo recorría (el <code>for</code>) se da cuenta y termina.";
+    }
+    if (p.devuelve && p.devuelve.funcion === "<lambda>") {
+      const quien = quienLlama(txt0);
+      const recibe = Object.keys(p.estado).filter(n => !igual(p.estado[n], prev.estado[n]));
+      return "La lambda devuelve " + esc(p.devuelve.valor) + (quien ? ": " + PAPEL[quien] + "." : ".") +
+        (recibe.length ? " Ya no quedan elementos: " + (quien ? "<code>" + quien + "</code>" : "la función") + " termina y el resultado se guarda en <code>" + recibe[0] + "</code>." : "");
     }
     if (p.devuelve && p.devuelve.funcion.endsWith(".__init__")) {
       const recibe = Object.keys(p.estado).filter(n => !igual(p.estado[n], prev.estado[n]) && esObj(p.estado[n]));
       const ob = recibe.length ? p.estado[recibe[0]] : null;
       return "<code>__init__</code> termina: el objeto" + (ob ? " " + ob.__clase__ + " nº" + ob.__obj__ : "") + " ya tiene sus atributos. Su marco desaparece" +
-        (recibe.length ? " y el objeto queda guardado en <code>" + recibe[0] + "</code>." : ".");
+        (recibe.length ? " y el objeto queda guardado en <code>" + recibe[0] + "</code>." : /\[/.test(txt0) ? ". El objeto queda en la lista que se está construyendo." : ".");
     }
     if (p.devuelve && p.devuelve.valor === "None" && p.devuelve.funcion.includes(".")) {
       return "El método <code>" + p.devuelve.funcion.split(".").pop() + "</code> termina. No tiene <code>return</code>, así que devuelve None: lo que cuenta es el cambio que ha dejado en el objeto. Su marco desaparece.";
@@ -313,6 +387,13 @@ function render({ model, el }) {
     }
     if (L[p.linea - 1].trim().startsWith("def ")) {
       const nom = L[p.linea - 1].trim().slice(4).split("(")[0];
+      if (mp && mp.vars[nom]) {
+        const externas = Object.keys(mp.vars).filter(n => n !== nom);
+        return "Dentro de <code>" + mp.nombre + "</code> se define otra función, <code>" + nom + "</code>." +
+          (externas.length ? " Se lleva consigo las variables de fuera que usa (" + externas.map(n => "<code>" + n + "</code> = " + esc(mp.repr[n])).join(", ") + "): eso es un <b>cierre</b>." : "");
+      }
+      const esGen = (() => { const s0 = sangria(L[p.linea - 1]); for (let j = p.linea; j < L.length; j++) { if (!L[j].trim()) continue; if (sangria(L[j]) <= s0) break; if (/\byield\b/.test(L[j])) return true; } return false; })();
+      if (esGen) return "Se define <code>" + nom + "</code>. Como dentro tiene <code>yield</code>, no es una función normal: es un <b>generador</b>. Llamarla no ejecuta nada todavía; irá entregando valores de uno en uno cuando se los pidan.";
       return "Se define la función <code>" + nom + "</code>: Python la guarda con ese nombre, pero todavía no ejecuta su cuerpo. Eso pasará cuando alguien la llame.";
     }
     if (txt0.startsWith("class ")) {
@@ -339,20 +420,43 @@ function render({ model, el }) {
       if (m) return "Del módulo <code>" + m[1] + "</code> se traen " + codigos(m[2].split(",").map(x => x.trim())) + ": se usan directamente, sin prefijo.";
     }
     if ((p.pila || []).length > (prev.pila || []).length && mp && mp.nombre.endsWith(".__init__") && esObj(mp.vars.self)) {
-      const otros = mp.args.filter(a => a !== "self");
+      const otros = mp.args.filter(a => a !== "self"), deClase = mp.nombre.split(".")[0];
       return "Se fabrica un objeto nuevo de la clase <code>" + mp.vars.self.__clase__ + "</code>: el <b>nº" + mp.vars.self.__obj__ + "</b>, todavía vacío. Python llama a <code>__init__</code> para rellenarlo: <code>self</code> es ese objeto nuevo" +
-        (otros.length ? ", y llegan " + otros.map(a => "<code>" + a + "</code> = " + esc(mp.repr[a])).join(" y ") : "") + ".";
+        (otros.length ? ", y llegan " + otros.map(a => "<code>" + a + "</code> = " + esc(mp.repr[a])).join(" y ") : "") + "." +
+        (deClase !== mp.vars.self.__clase__ ? " <code>" + mp.vars.self.__clase__ + "</code> no tiene <code>__init__</code> propio: usa el que hereda de <code>" + deClase + "</code>." : "");
     }
     if ((p.pila || []).length > (prev.pila || []).length && mp && mp.args[0] === "self" && esObj(mp.vars.self)) {
       const ob = mp.vars.self, et = etiquetas(prev, ob.__obj__), otros = mp.args.filter(a => a !== "self");
       return "Se llama al método <code>" + mp.nombre.split(".").pop() + "</code> del objeto " + ob.__clase__ + " nº" + ob.__obj__ + (et.length ? " (el de " + codigos(et) + ")" : "") +
-        ". Dentro del método, <code>self</code> es ese mismo objeto" + (otros.length ? ", y " + otros.map(a => "<code>" + a + "</code> = " + esc(mp.repr[a])).join(" y ") : "") + ".";
+        ". Dentro del método, <code>self</code> es ese mismo objeto" + (otros.length ? ", y " + otros.map(a => "<code>" + a + "</code> = " + esc(mp.repr[a])).join(" y ") : "") + "." +
+        (hayHerencia ? (mp.nombre.split(".")[0] !== ob.__clase__
+          ? " <code>" + ob.__clase__ + "</code> no tiene su propio <code>" + mp.nombre.split(".").pop() + "</code>: Python sube a la clase madre y usa el de <code>" + mp.nombre.split(".")[0] + "</code>."
+          : " Python busca el método primero en la clase del objeto, <code>" + ob.__clase__ + "</code>, y ahí lo encuentra.") : "");
+    }
+    if ((p.pila || []).length > (prev.pila || []).length && mp && mp.gen) {
+      const pausas = P.slice(0, k0()).filter(x => x.devuelve && x.devuelve.pausa && x.devuelve.funcion === mp.nombre);
+      const ultimaPausa = [...P.slice(0, k0())].reverse().find(x => x.devuelve && x.devuelve.funcion === mp.nombre);
+      if (ultimaPausa && ultimaPausa.devuelve.pausa)
+        return "El <code>for</code> pide el siguiente valor: el generador <code>" + mp.nombre + "</code> <b>se reanuda</b> justo después de su <code>yield</code>, con sus variables tal como las dejó (" +
+          Object.keys(mp.vars).map(n => "<code>" + n + "</code> = " + esc(mp.repr[n])).join(", ") + ").";
+      return "El <code>for</code> pide el primer valor: el generador <code>" + mp.nombre + "</code> empieza a ejecutarse por primera vez, con " +
+        mp.args.map(a => "<code>" + a + "</code> = " + esc(mp.repr[a])).join(" y ") + "." + (pausas.length ? "" : "");
+    }
+    if ((p.pila || []).length > (prev.pila || []).length && mp && mp.nombre === "<lambda>") {
+      const quien = quienLlama(txt0);
+      return (quien ? "<code>" + quien + "</code> llama a la lambda" : "Se llama a la lambda") + " con " + mp.args.map(a => "<code>" + a + "</code> = " + esc(mp.repr[a])).join(" y ") + ".";
     }
     if ((p.pila || []).length > (prev.pila || []).length && mp) {
+      const recuerda = Object.keys(mp.vars).filter(n => !mp.args.includes(n));
+      if (recuerda.length) return "Se llama a la función <code>" + mp.nombre + "</code> con " +
+        mp.args.map(a => "<code>" + a + "</code> = " + esc(mp.repr[a])).join(" y ") + ". En su marco aparece también " +
+        recuerda.map(n => "<code>" + n + "</code> = " + esc(mp.repr[n])).join(" y ") + ": no es un parámetro, es lo que la función <b>recuerda</b> del sitio donde se creó (un cierre).";
       return "Se llama a la función <code>" + mp.nombre + "</code>: se crea su marco, con " +
         (mp.args.length ? mp.args.map(a => "<code>" + a + "</code> = " + esc(mp.repr[a])).join(" y ") : "ningún parámetro") +
         ". Ahora se ejecuta el cuerpo de la función.";
     }
+    if (mp && mprev && mp.nombre === "<lambda>" && mprev.nombre === "<lambda>" && mp.expr)
+      return "La lambda calcula <code>" + esc(mp.expr) + "</code> con " + mp.args.map(a => "<code>" + a + "</code> = " + esc(mp.repr[a])).join(" y ") + ".";
     if (mp && mprev && mp.nombre === mprev.nombre && (p.pila || []).length === (prev.pila || []).length) {
       const cl = Object.keys(mp.vars).filter(n => !igual(mp.vars[n], mprev.vars[n]));
       if (cl.length && !p.cond) {
@@ -366,10 +470,21 @@ function render({ model, el }) {
           : "La variable local <code>" + n + "</code> cambia: valía " + esc(mprev.repr[n]) + " y ahora vale " + esc(mp.repr[n]) + ".";
       }
     }
+    if (p.clases && prev.clases) {
+      for (const c of Object.keys(p.clases)) for (const a of Object.keys(p.clases[c])) {
+        const antes = (prev.clases[c] || {})[a];
+        if (!igual(antes, p.clases[c][a]))
+          return antes === undefined
+            ? "La clase <code>" + c + "</code> tiene el atributo de clase <code>" + a + "</code> = " + esc(pyVal(p.clases[c][a])) + ". Es uno solo para toda la clase: lo comparten todos sus objetos."
+            : "El atributo de clase <code>" + c + "." + a + "</code> cambia: valía " + esc(pyVal(antes)) + " y ahora vale " + esc(pyVal(p.clases[c][a])) + ". Hay uno solo, compartido por todos los objetos de <code>" + c + "</code>.";
+      }
+    }
     const txt = L[p.linea - 1].trim();
+    if (txt.startsWith("assert ") && !p.excepcion) return "<code>assert</code> comprueba <code>" + esc(txt.slice(7).split(/,\s*["']/)[0]) + "</code>: se cumple, así que el programa sigue como si nada.";
     const cambios = Object.keys(p.estado).filter(n => n !== lista && !ocultas.has(n) && !igual(p.estado[n], prev.estado[n]));
     if (lista && !(lista in prev.estado) && (lista in p.estado)) {
-      const L0 = p.estado[lista].length, cad = typeof p.estado[lista] === "string";
+      const L0 = casillasDe(p.estado[lista]).length, cad = typeof p.estado[lista] === "string";
+      if (p.estado[lista].__bytes__) return "Se crea <code>" + lista + "</code>, un <code>bytearray</code> de " + L0 + " bytes, todos a 0. A diferencia de <code>bytes</code>, se puede modificar casilla a casilla.";
       if (L0 === 0) return "Se crea " + (cad ? "la cadena" : "la lista") + " <code>" + lista + "</code>, vacía: todavía no tiene " + (cad ? "caracteres." : "casillas.");
       return "Se crea " + (cad ? "la cadena" : "la lista") + " <code>" + lista + "</code> con " + L0 + (cad ? " caracteres" : " casillas") + ", numerados de 0 a " + (L0 - 1) + ".";
     }
@@ -380,6 +495,47 @@ function render({ model, el }) {
       if (nueva !== undefined) return "La clave <code>" + esc(JSON.stringify(nueva)) + "</code> no estaba: se añade al diccionario con el valor " + esc(fmtVal(b[nueva])) + ".";
       if (cambiada !== undefined) return "La clave <code>" + esc(JSON.stringify(cambiada)) + "</code> ya estaba: su valor pasa de " + esc(fmtVal(a[cambiada])) + " a " + esc(fmtVal(b[cambiada])) + ".";
     }
+    if (p.compr) {
+      const c = p.compr;
+      let h = "La comprensión toma <code>" + c.var + "</code> = " + esc(c.valor);
+      if (c.cond && !c.pasa) return h + ". No cumple <code>" + esc(c.cond) + "</code>, así que no se añade nada.";
+      return h + (c.cond ? ", cumple <code>" + esc(c.cond) + "</code>" : "") + ", calcula <code>" + esc(c.expr) + "</code> → " + esc(c.res) + " y lo añade: " + esc(c.parcial) + ".";
+    }
+    if (/^with\s/.test(txt)) {
+      const sale = prev.linea !== null && prev.linea > p.linea;
+      const m = txt.match(/open\(\s*(['"])(.+?)\1(?:\s*,\s*(['"])(\w+)\3)?.*?\)\s+as\s+(\w+)/);
+      if (sale) {
+        const modo = m ? (m[4] || "r") : "r";
+        return "Termina el bloque <code>with</code>: Python <b>cierra el fichero</b> automáticamente, aunque nadie escriba <code>close()</code>." +
+          (/[wax]/.test(modo) ? (discoIgual(p.disco, prev.disco) ? "" : " Al cerrarlo, lo que esperaba en el búfer se escribe de verdad en el disco.") : "");
+      }
+      if (m) return "Se abre el fichero <code>" + esc(m[2]) + "</code> " + (MODOS[m[4] || "r"] || "en modo '" + m[4] + "'") + ". La variable <code>" + m[5] + "</code> es el objeto fichero: por ella se lee o se escribe." +
+        (m[4] && /[wx]/.test(m[4]) && p.disco && !(prev.disco || []).some(f => f.nombre === m[2]) ? " En el disco aparece el fichero, de momento vacío." : "");
+    }
+    if (/\.write\(/.test(txt)) {
+      const arg = (txt.match(/\.write\((.*)\)\s*$/) || [])[1] || "";
+      return "Se escribe <code>" + esc(arg) + "</code> en el fichero." + (discoIgual(p.disco, prev.disco)
+        ? " Pero fíjate en el disco: todavía no aparece. Python lo guarda en un <b>búfer</b> y lo vuelca de golpe al cerrar el fichero."
+        : " Ya se ve en el disco.");
+    }
+    if (/^match\s/.test(txt)) {
+      const sujeto = txt.slice(6).replace(/:$/, "").trim();
+      return "Empieza un <code>match</code>: Python compara " + (sujeto in p.estado ? "<code>" + sujeto + "</code>, que vale " + esc(rep(p, sujeto)) : "<code>" + esc(sujeto) + "</code>") + ", con cada <code>case</code>, de arriba abajo, hasta que uno encaje.";
+    }
+    if (/^case\s/.test(txt)) {
+      const dentro = sig && sig.linea && sig.linea > p.linea && sangria(L[sig.linea - 1]) > sangria(L[p.linea - 1]);
+      const patron = txt.slice(5).replace(/:$/, "").trim();
+      if (!dentro) return "El patrón <code>" + esc(patron) + "</code> no encaja: Python prueba el siguiente <code>case</code>.";
+      const capt = Object.keys(p.estado).filter(n => !(n in prev.estado));
+      if (patron === "_") return "Ningún <code>case</code> anterior ha encajado: <code>case _</code> es el comodín, encaja siempre.";
+      return "El patrón <code>" + esc(patron) + "</code> encaja: se ejecuta este <code>case</code> y los demás ya no se miran." +
+        (capt.length ? " Además, el patrón captura " + capt.map(n => "<code>" + n + "</code> = " + esc(rep(p, n))).join(" y ") + "." : "");
+    }
+    if (/^break\b/.test(txt)) {
+      const b = bucleDe(p.linea);
+      return "<code>break</code> sale del bucle de golpe, sin esperar a que se acabe." + (b && tieneElse(b) ? " Como el bucle termina por un <code>break</code>, su <code>else</code> <b>no</b> se ejecuta." : "");
+    }
+    if (/^continue\b/.test(txt)) return "<code>continue</code> se salta el resto de esta vuelta y pasa directamente a la siguiente.";
     if (txt.startsWith("try")) return "Empieza un bloque <code>try</code>: Python intenta ejecutar lo que hay dentro. Si algo falla, saltará a su <code>except</code>.";
     if (txt.startsWith("except")) {
       const dentro = sig && sig.linea && sig.linea > p.linea && sangria(L[sig.linea - 1]) > sangria(L[p.linea - 1]);
@@ -398,11 +554,20 @@ function render({ model, el }) {
       return "Se evalúa la condición del <code>" + kw + "</code>: es <b>False</b>, así que se salta el bloque.";
     }
     if (p.linea === cab) {
-      if (saleDelBucle(p, sig)) return "No quedan " + (txt.includes("range") ? "posiciones" : "elementos") + " por recorrer: el bucle <code>for</code> termina.";
+      const iter = (txt.match(/\sin\s+(\w+)\s*:$/) || [])[1];
+      const deFichero = iter && esFichero(p.estado[iter]);
+      if (saleDelBucle(p, sig)) return "No quedan " + (deFichero ? "líneas por leer" : txt.includes("range") ? "posiciones por recorrer" : "elementos por recorrer") + ": el bucle <code>" + (txt.startsWith("while") ? "while" : "for") + "</code> termina." +
+        (tieneElse(p.linea) ? " Ha terminado por sí solo, sin <code>break</code>, así que ahora se ejecuta su <code>else</code>." : "");
+      if (deFichero) return "Vuelta " + p.vuelta + ": Python lee la siguiente línea del fichero y la guarda en <code>" + C.puntero + "</code> = " + esc(rep(p, C.puntero)) + "." +
+        (p.vuelta === 1 && /\\n'$/.test(rep(p, C.puntero)) ? " Fíjate en el <code>\\n</code> del final: cada línea llega con su salto de línea." : "");
       if (txt.includes("range")) return "Vuelta " + p.vuelta + ": <code>" + C.puntero + "</code> pasa a valer " + p.estado[C.puntero] + "." + (lista && p.foco !== null ? " Es la siguiente posición que se va a consultar." : "");
       if (!lista || p.foco === null) return "Vuelta " + p.vuelta + ": <code>" + C.puntero + "</code> toma el siguiente valor, " + esc(rep(p, C.puntero)) + (C.diccionario && txt.includes(C.diccionario) ? ", que es la siguiente clave del diccionario." : ".");
       return "Vuelta " + p.vuelta + ": Python toma el siguiente elemento, el de la posición " + p.foco + ", y lo guarda en <code>" + C.puntero + "</code> = " + esc(rep(p, C.puntero)) + ".";
     }
+    if (/^yield\s/.test(txt) && mp) return "El generador llega al <code>yield</code>: va a entregar <code>" + esc(txt.slice(6)) + "</code>" + (txt.slice(6).trim() in mp.vars ? ", que ahora vale " + esc(mp.repr[txt.slice(6).trim()]) : "") + ".";
+    const devFun = (txt.match(/^return\s+(\w+)$/) || [])[1];
+    if (devFun && mp && mp.vars[devFun] && mp.vars[devFun].__txt__ && /^(función|lambda)/.test(mp.vars[devFun].__txt__))
+      return "Se devuelve <code>" + devFun + "</code> sin paréntesis: no se llama a la función, se entrega <b>la función misma</b>, que se lleva lo que recuerda.";
     if (txt.startsWith("return ") && mp) return "Se calcula el valor de <code>" + esc(txt.slice(7)) + "</code>. En el paso siguiente, la función lo devuelve a quien la llamó.";
     if (txt.startsWith("print")) return "Se muestra en pantalla: <code>" + esc(salida(p.salida).slice(-1)[0] || "") + "</code>";
     if (cambios.length) {
@@ -421,7 +586,12 @@ function render({ model, el }) {
       if (a === undefined) return "Se crea la variable <code>" + n + "</code> y vale " + esc(rep(p, n)) + tipo + "." + lee + otras;
       return "<code>" + n + "</code> cambia: valía " + esc(rep(prev, n)) + " y ahora vale " + esc(rep(p, n)) + tipo + "." + lee + otras;
     }
-    const la = lista && p.estado[lista], lb = lista && prev.estado[lista];
+    const la = lista && casillasDe(p.estado[lista]), lb = lista && casillasDe(prev.estado[lista]);
+    if (Array.isArray(la) && Array.isArray(lb) && la.length === lb.length) {
+      const i = la.findIndex((x, j) => !igual(x, lb[j]));
+      if (i >= 0) return "La casilla " + i + " de <code>" + lista + "</code> cambia: valía " + esc(pyVal(lb[i])) + " y ahora vale " + esc(pyVal(la[i])) + "." +
+        (p.estado[lista] && p.estado[lista].__bytes__ ? " En un <code>bytearray</code> cada casilla es un byte, un número de 0 a 255." : "");
+    }
     if (Array.isArray(la) && Array.isArray(lb) && la.length === lb.length + 1 && igual(la.slice(0, -1), lb))
       return "Se añade " + esc(pyVal(la[la.length - 1])) + " al final de <code>" + lista + "</code>: ahora tiene " + la.length + (la.length === 1 ? " casilla." : " casillas.");
     if (/\.seed\(/.test(txt)) return "Se fija la semilla de los números al azar: a partir de aquí, la secuencia que salga será siempre la misma.";
@@ -439,7 +609,7 @@ function render({ model, el }) {
         '</span><span class="no">' + n + "</span><span>" + colorea(l) + "</span></div>";
     }).join("");
 
-    const arr0 = p.estado[lista], arr = typeof arr0 === "string" ? Array.from(arr0) : arr0;
+    const arr0 = p.estado[lista], arr = casillasDe(arr0);
     const foco = saleDelBucle(p, sig) ? null : p.foco;
     const cas = q(".tz-casillas");
     if (!arr) { cas.innerHTML = '<span class="tz-vacio">Todavía no existe.</span>'; q(".tz-consulta").textContent = ""; }
@@ -447,7 +617,7 @@ function render({ model, el }) {
       let h = "";
       arr.forEach((v, i) => {
         h += '<div class="cas' + (i === foco ? " foco" : "") + (foco !== null && i < foco ? " visitada" : "") + (i === foco && p.lee ? " lee" : "") +
-          '"><span class="v">' + esc(typeof arr0 === "string" ? v : fmtVal(v)) + '</span><span class="idx">' + i + "</span></div>";
+          '"><span class="v">' + esc(typeof arr0 === "string" ? v : pyVal(v)) + '</span><span class="idx">' + i + "</span></div>";
       });
       if (foco !== null) h += '<div class="puntero"><span class="et">' + (C.puntero === "i" || /range/.test(L[cab - 1]) ? C.puntero + " = " + p.estado[C.puntero] : C.puntero) + '</span><span class="flecha"></span></div>';
       cas.innerHTML = h;
@@ -455,11 +625,19 @@ function render({ model, el }) {
         const c = cas.children[foco], pu = cas.querySelector(".puntero");
         requestAnimationFrame(() => { pu.style.transform = "translateX(" + (c.offsetLeft + c.offsetWidth / 2 - pu.offsetWidth / 2) + "px)"; });
       }
-      q(".tz-consulta").textContent = (p.lee && foco !== null) ? "Se consulta " + lista + "[" + foco + "] → " + (oculto ? "?" : fmtVal(arr[foco])) : "";
+      q(".tz-consulta").textContent = (p.lee && foco !== null) ? "Se consulta " + lista + "[" + foco + "] → " + (oculto ? "?" : pyVal(arr[foco])) : "";
     }
 
     const objPrev = k > 0 ? objetosDe(prev) : {};
     const valorHtml = (v, texto, ocultar) => esObj(v) ? tarjeta(v, objPrev[v.__obj__], ocultar) : esc(ocultar ? "?" : texto);
+    if (hayClases) {
+      const cl = p.clases || {}, clp = prev.clases || {};
+      q(".tz-clases").innerHTML = Object.keys(cl).map(c => '<div class="var"><span class="k">clase</span><span class="val"><span class="obj"><span class="obj-n">' + esc(c) + "</span>" +
+        Object.keys(cl[c]).map(a => {
+          const cambia = k > 0 && !igual((clp[c] || {})[a], cl[c][a]);
+          return '<span class="attr' + (cambia ? " cambia" : "") + '"><span class="an">.' + esc(a) + " =</span> " + esc(oculto && cambia ? "?" : pyVal(cl[c][a])) + "</span>";
+        }).join("") + "</span></span></div>").join("") || '<span class="tz-vacio">Todavía no hay clases.</span>';
+    }
     const nombres = Object.keys(p.estado).filter(n => n !== lista && !ocultas.has(n));
     q(".tz-vars").innerHTML = nombres.length ? nombres.map(n => {
       const cambia = k > 0 && !igual(p.estado[n], prev.estado[n]);
@@ -470,7 +648,8 @@ function render({ model, el }) {
       }
       const antes = cambia && prev.estado[n] !== undefined ? '<span class="antes">' + esc(rep(prev, n)) + "</span>" : "";
       const tipo = C.mostrar_tipos && p.tipos && p.tipos[n] ? '<span class="tipo">' + p.tipos[n] + "</span>" : "";
-      return '<div class="var' + (cambia ? " cambia" : "") + '"><span class="k">' + n + tipo + '</span><span class="val">' +
+      const largo = p.estado[n] !== null && typeof p.estado[n] === "object" && ("__txt__" in p.estado[n] || "__bytes__" in p.estado[n]);
+      return '<div class="var' + (cambia ? " cambia" : "") + '"><span class="k">' + n + tipo + '</span><span class="val' + (largo ? " largo" : "") + '">' +
         (oculto && cambia ? "?" : esc(rep(p, n))) + "</span>" + antes + "</div>";
     }).join("") : '<span class="tz-vacio">Aún no hay variables.</span>';
 
@@ -496,6 +675,8 @@ function render({ model, el }) {
         '<div class="tz-vars">' + (vars || '<span class="tz-vacio">sin variables locales</span>') + "</div></div>";
     }).join("") + (!p.devuelve ? ""
       : p.devuelve.error ? '<div class="devuelve error">⚠ ' + esc(p.devuelve.funcion) + " se interrumpe: no devuelve nada, el error sale hacia fuera</div>"
+      : p.devuelve.pausa ? '<div class="devuelve pausa">⏸ ' + esc(p.devuelve.funcion) + " entrega <b>" + esc(oculto ? "?" : p.devuelve.valor) + "</b> y se queda en pausa</div>"
+      : p.devuelve.gen ? '<div class="devuelve">■ el generador ' + esc(p.devuelve.funcion) + " se ha agotado</div>"
       : p.devuelve.funcion.endsWith(".__init__") ? '<div class="devuelve">↩ ' + esc(p.devuelve.funcion) + " termina: el objeto está listo</div>"
       : '<div class="devuelve">↩ ' + esc(p.devuelve.funcion) + " devuelve <b>" + esc(oculto ? "?" : p.devuelve.valor) + "</b></div>");
 
@@ -505,6 +686,19 @@ function render({ model, el }) {
         '</div><div class="fila-c"><span class="gris">→</span><span>' + esc(p.cond.sust) + '</span><span class="gris">→</span><span class="res ' +
         (oculto ? "oculto" : (r ? "si" : "no")) + '">' + (oculto ? "¿True o False?" : (r ? "True" : "False")) + "</span></div></div>";
     } else q(".tz-cond").innerHTML = "";
+    q(".tz-compr").innerHTML = p.compr ? '<div class="compr"><span class="tz-micro acento">Comprensión</span><div class="fila-c"><span>' + esc(p.compr.var) + " = " + esc(p.compr.valor) + "</span>" +
+      (p.compr.cond ? '<span class="gris">→</span><span>' + esc(p.compr.cond) + '</span><span class="gris">→</span><span class="res">' + (oculto ? "?" : p.compr.pasa ? "✓ True" : "✗ False") + "</span>" : "") +
+      (p.compr.pasa ? '<span class="gris">→</span><span>' + esc(p.compr.expr) + " = " + esc(oculto ? "?" : p.compr.res) + "</span>" : "") +
+      '</div><div class="fila-c"><span class="gris">lista en construcción</span><span class="parcial">' + esc(oculto ? "?" : p.compr.parcial) + "</span></div></div>" : "";
+    if (hayDisco) {
+      const d = p.disco || [], dprev = prev.disco || [];
+      q(".tz-disco").innerHTML = d.length ? d.map(f => {
+        const a = dprev.find(x => x.nombre === f.nombre), cambia = k > 0 && (!a || a.contenido !== f.contenido);
+        const cont = f.binario ? f.contenido : f.contenido.replace(/\n/g, "↵\n");
+        return '<div class="fic' + (cambia ? " cambia" : "") + '"><div class="fic-cab"><span>' + esc(f.nombre) + '</span><span class="tam">' + f.tam + (f.tam === 1 ? " byte" : " bytes") + (f.binario ? " · binario" : "") +
+          "</span></div><pre>" + (oculto && cambia ? "?" : f.contenido === "" ? '<span class="fin">(vacío)</span>' : esc(cont)) + "</pre></div>";
+      }).join("") : '<span class="tz-vacio">Todavía no hay ficheros.</span>';
+    }
     q(".tz-exc").innerHTML = p.excepcion ? '<div class="exc"><span class="tz-micro acento">⚠ Excepción</span><code>' +
       (oculto ? "¿Funciona esta línea?" : esc(p.excepcion)) + "</code></div>" : "";
 
@@ -540,7 +734,7 @@ function render({ model, el }) {
     if (k < P.length - 1) {
       k++;
       const p = P[k], prev = P[k - 1];
-      const novedad = p.cond || p.devuelve || p.excepcion || !igual(p.pila || [], prev.pila || []) || (p.fila !== null && p.fila !== undefined) || p.salida !== prev.salida ||
+      const novedad = p.cond || p.devuelve || p.excepcion || p.compr || !igual(p.clases || {}, prev.clases || {}) || !discoIgual(p.disco, prev.disco) || !igual(p.pila || [], prev.pila || []) || (p.fila !== null && p.fila !== undefined) || p.salida !== prev.salida ||
         Object.keys(p.estado).some(n => n !== lista && !igual(p.estado[n], prev.estado[n]));
       oculto = q(".tz-pred").checked && !!novedad;
       pinta();

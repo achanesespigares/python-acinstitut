@@ -28,6 +28,7 @@ Para crear un programa seguimos siempre el mismo camino:
 | 2 · Repetir | [Bucles `while` y `for`](capitulos/07-bucles.md) · [Recorrer listas](capitulos/08-recorrer-listas.md) | Listo |
 | 3 · Organizar | [Funciones](capitulos/09-funciones.md) · [Cadenas](capitulos/10-cadenas.md) · [Diccionarios](capitulos/11-diccionarios.md) | Listo |
 | 4 · Hacia el PCAP | [Módulos](capitulos/12-modulos.md) · [Excepciones](capitulos/13-excepciones.md) · [Clases y objetos](capitulos/14-clases.md) | Listo |
+| 5 · PCAP a fondo | [Comprensiones y match](capitulos/15-comprensiones.md) · [Funciones como valores](capitulos/16-funciones-valores.md) · [Ficheros](capitulos/17-ficheros.md) · [Clases a fondo](capitulos/18-clases-a-fondo.md) · [Cadenas a fondo](capitulos/19-cadenas-a-fondo.md) · [Probar y depurar](capitulos/20-probar-y-depurar.md) | Listo |
 
 :::{tip} Sobre el código de este libro
 Todas las celdas se pueden ejecutar aquí mismo, sin instalar nada: Python funciona dentro del navegador. Las ejecuciones paso a paso las ha generado Python real.

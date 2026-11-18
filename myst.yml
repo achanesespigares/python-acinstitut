@@ -43,6 +43,14 @@ project:
         - file: capitulos/12-modulos.md
         - file: capitulos/13-excepciones.md
         - file: capitulos/14-clases.md
+    - title: Bloque 5 · PCAP a fondo
+      children:
+        - file: capitulos/15-comprensiones.md
+        - file: capitulos/16-funciones-valores.md
+        - file: capitulos/17-ficheros.md
+        - file: capitulos/18-clases-a-fondo.md
+        - file: capitulos/19-cadenas-a-fondo.md
+        - file: capitulos/20-probar-y-depurar.md
 site:
   template: book-theme
   options:
