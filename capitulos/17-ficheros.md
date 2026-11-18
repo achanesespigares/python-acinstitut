@@ -194,6 +194,14 @@ print("Y esto sale por el canal de errores", file=sys.stderr)
 
 Ya sabemos fabricar clases sencillas. Pero, ¿cómo protege una clase sus datos? ¿Qué pasa cuando una clase hereda de dos a la vez? Toca entrar en las clases a fondo.
 
+## Preguntas tipo examen
+
+Preguntas como las del examen PCEP sobre lo que has visto en este capítulo. Se corrigen al momento, y las que tienen código se pueden ver ejecutándose paso a paso. Hay un simulacro completo al final del libro.
+
+```{anywidget} ../widgets/traza.mjs
+{"config":{"tipo":"preguntas","banco":"pcep","capitulo":"17","titulo":"Preguntas tipo examen","etiqueta":"PCEP"}}
+```
+
 ## Ejercicios
 
 1. **El diario.** Escribe un programa que añada la línea `"hoy he aprendido ficheros"` al final de `diario.txt` cada vez que se ejecute, sin borrar lo anterior.

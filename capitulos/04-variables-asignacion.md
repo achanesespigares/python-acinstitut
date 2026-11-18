@@ -102,6 +102,14 @@ print(a, b)
 
 Hemos imaginado las variables como cajas con un número dentro. Con números funciona, pero no es exactamente lo que hace Python: una variable es una **etiqueta** pegada a un valor. La diferencia no se nota con números, y sí con listas. Lo verás cuando dos nombres compartan la misma lista y cambiar una «cambie las dos».
 
+## Preguntas tipo examen
+
+Preguntas como las del examen PCEP sobre lo que has visto en este capítulo. Se corrigen al momento, y las que tienen código se pueden ver ejecutándose paso a paso. Hay un simulacro completo al final del libro.
+
+```{anywidget} ../widgets/traza.mjs
+{"config":{"tipo":"preguntas","banco":"pcep","capitulo":"04","titulo":"Preguntas tipo examen","etiqueta":"PCEP"}}
+```
+
 ## Ejercicios
 
 1. **Traza a mano.** Haz la tabla de traza de este programa. ¿Qué imprime?

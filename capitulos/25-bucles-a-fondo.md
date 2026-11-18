@@ -145,6 +145,14 @@ print(calcular_nota())
 
 Muchos datos llegan como texto que hay que limpiar y presentar: nombres con espacios de más, mayúsculas desordenadas, números con demasiados decimales. Toca mirar las herramientas de formato de las cadenas.
 
+## Preguntas tipo examen
+
+Preguntas como las del examen PCEP sobre lo que has visto en este capítulo. Se corrigen al momento, y las que tienen código se pueden ver ejecutándose paso a paso. Hay un simulacro completo al final del libro.
+
+```{anywidget} ../widgets/traza.mjs
+{"config":{"tipo":"preguntas","banco":"pcep","capitulo":"25","titulo":"Preguntas tipo examen","etiqueta":"PCEP"}}
+```
+
 ## Ejercicios
 
 1. **¿Qué imprime?**

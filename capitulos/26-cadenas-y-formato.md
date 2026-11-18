@@ -134,6 +134,14 @@ En el estilo `%`, `%s` es una cadena, `%d` un entero y `%.1f` un decimal con una
 
 Partir líneas por comas con `split(",")` funciona… hasta que un dato lleva una coma dentro, como `"García, Ana"`. Para las tablas guardadas en ficheros existe un formato estándar y un módulo que lo resuelve: CSV.
 
+## Preguntas tipo examen
+
+Preguntas como las del examen PCEP sobre lo que has visto en este capítulo. Se corrigen al momento, y las que tienen código se pueden ver ejecutándose paso a paso. Hay un simulacro completo al final del libro.
+
+```{anywidget} ../widgets/traza.mjs
+{"config":{"tipo":"preguntas","banco":"pcep","capitulo":"26","titulo":"Preguntas tipo examen","etiqueta":"PCEP"}}
+```
+
 ## Ejercicios
 
 1. **Escapes.** Escribe con un solo `print` y una sola cadena:

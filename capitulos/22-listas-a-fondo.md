@@ -167,6 +167,14 @@ Parece un tablero de 3 × 3, pero son **tres etiquetas de la misma fila**: al ca
 
 Una lista se puede cambiar en cualquier momento, y a veces eso es un peligro. ¿Hay una lista que no se pueda tocar? ¿Y una colección que no admita repetidos? Son las tuplas y los conjuntos.
 
+## Preguntas tipo examen
+
+Preguntas como las del examen PCEP sobre lo que has visto en este capítulo. Se corrigen al momento, y las que tienen código se pueden ver ejecutándose paso a paso. Hay un simulacro completo al final del libro.
+
+```{anywidget} ../widgets/traza.mjs
+{"config":{"tipo":"preguntas","banco":"pcep","capitulo":"22","titulo":"Preguntas tipo examen","etiqueta":"PCEP"}}
+```
+
 ## Ejercicios
 
 1. **Índices negativos.** Con `dias = ["lun", "mar", "mié", "jue", "vie"]`, escribe las expresiones que dan: el último, los dos últimos y la lista al revés.

@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "Programación en Python · AC Institut (Jupyter Book 2 / MyST)",
   "scripts": {
-    "trazas": "python3 herramientas/trazar.py capitulos/*.md",
+    "trazas": "python3 herramientas/trazar.py capitulos/*.md && python3 herramientas/preguntas.py",
     "build": "myst build --html",
     "start": "myst start"
   },

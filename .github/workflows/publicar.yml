@@ -38,6 +38,8 @@ jobs:
         run: npm run trazas
       - name: Construir el libro
         run: npx myst build --html
+      - name: Copiar los bancos de preguntas a la web
+        run: cp -r datos _build/html/datos
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

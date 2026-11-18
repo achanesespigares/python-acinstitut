@@ -109,6 +109,14 @@ for nombre, nota in notas.items():    # claves y valores a la vez
 
 ¿Y si quisieras guardar varias notas por alumno? El valor de un diccionario puede ser cualquier cosa, también una lista: `{"Ana": [7, 8, 6]}`. ¿Cómo calcularías entonces la media de cada alumno? Ahí se juntan las funciones, los bucles, las listas y los diccionarios: ya tienes todas las piezas.
 
+## Preguntas tipo examen
+
+Preguntas como las del examen PCEP sobre lo que has visto en este capítulo. Se corrigen al momento, y las que tienen código se pueden ver ejecutándose paso a paso. Hay un simulacro completo al final del libro.
+
+```{anywidget} ../widgets/traza.mjs
+{"config":{"tipo":"preguntas","banco":"pcep","capitulo":"11","titulo":"Preguntas tipo examen","etiqueta":"PCEP"}}
+```
+
 ## Ejercicios
 
 1. **¿Qué imprime?**

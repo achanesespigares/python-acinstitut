@@ -122,6 +122,14 @@ Aquí el bucle es un `while`, porque no sabemos de antemano cuántas casillas ha
 
 Para buscar el 6 hemos mirado las casillas una a una. Si la lista estuviera **ordenada**, ¿haría falta mirarlas todas? Piensa en cómo buscas una palabra en el diccionario. Esa pregunta abre la búsqueda binaria.
 
+## Preguntas tipo examen
+
+Preguntas como las del examen PCEP sobre lo que has visto en este capítulo. Se corrigen al momento, y las que tienen código se pueden ver ejecutándose paso a paso. Hay un simulacro completo al final del libro.
+
+```{anywidget} ../widgets/traza.mjs
+{"config":{"tipo":"preguntas","banco":"pcep","capitulo":"08","titulo":"Preguntas tipo examen","etiqueta":"PCEP"}}
+```
+
 ## Ejercicios
 
 1. **Traza a mano.** Haz la tabla de traza de este programa con `notas = [7, 4, 9, 6, 3]`. ¿Qué imprime?

@@ -118,6 +118,14 @@ Si habías predicho 7, acertaste: 2⁶ = 64 todavía no pasa de 100, y 2⁷ = 12
 
 Hemos repetido cosas con números que generábamos nosotros. ¿Y si los datos ya existen, como las notas de toda una clase? Para eso Python tiene las listas, y recorrerlas es el tema del capítulo siguiente: [Recorrer listas](08-recorrer-listas.md).
 
+## Preguntas tipo examen
+
+Preguntas como las del examen PCEP sobre lo que has visto en este capítulo. Se corrigen al momento, y las que tienen código se pueden ver ejecutándose paso a paso. Hay un simulacro completo al final del libro.
+
+```{anywidget} ../widgets/traza.mjs
+{"config":{"tipo":"preguntas","banco":"pcep","capitulo":"07","titulo":"Preguntas tipo examen","etiqueta":"PCEP"}}
+```
+
 ## Ejercicios
 
 1. **Traza a mano** este bucle. ¿Qué imprime?

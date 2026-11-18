@@ -148,6 +148,14 @@ print(bisiesto)
 
 ¿Y si hubiera que poner la calificación a los 30 alumnos de la clase? ¿Copiarías el `if` treinta veces? Esa pregunta abre los bucles.
 
+## Preguntas tipo examen
+
+Preguntas como las del examen PCEP sobre lo que has visto en este capítulo. Se corrigen al momento, y las que tienen código se pueden ver ejecutándose paso a paso. Hay un simulacro completo al final del libro.
+
+```{anywidget} ../widgets/traza.mjs
+{"config":{"tipo":"preguntas","banco":"pcep","capitulo":"06","titulo":"Preguntas tipo examen","etiqueta":"PCEP"}}
+```
+
 ## Ejercicios
 
 1. **¿Qué imprime?** con `x = 7`:

@@ -196,6 +196,14 @@ Además de válidos, los nombres deben ser **claros**. La guía de estilo de Pyt
 
 Ya sabemos cómo se escribe cada pieza. Las listas son la estructura que más usaremos: ¿cómo se copian, cómo se insertan y quitan elementos, y cómo se guarda una tabla entera?
 
+## Preguntas tipo examen
+
+Preguntas como las del examen PCEP sobre lo que has visto en este capítulo. Se corrigen al momento, y las que tienen código se pueden ver ejecutándose paso a paso. Hay un simulacro completo al final del libro.
+
+```{anywidget} ../widgets/traza.mjs
+{"config":{"tipo":"preguntas","banco":"pcep","capitulo":"21","titulo":"Preguntas tipo examen","etiqueta":"PCEP"}}
+```
+
 ## Ejercicios
 
 1. **¿Compilado o interpretado?** Explica con tus palabras por qué en Python puedes ejecutar una línea suelta y ver el resultado al momento.

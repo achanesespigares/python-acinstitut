@@ -140,6 +140,54 @@ table.tz-tabla tr.fantasma td{ color:var(--fila); }
 .tz-toggle{ display:flex; gap:7px; align-items:center; font-size:14px; color:var(--sub); cursor:pointer; margin-left:auto; }
 .tz-toggle input{ accent-color:var(--acento); width:17px; height:17px; }
 
+/* preguntas tipo examen */
+.pq{ gap:14px; }
+.pq-card{ border:1.5px solid var(--fila); border-radius:10px; padding:14px 16px; display:flex; flex-direction:column; gap:10px; background:#fff; }
+.pq-card.bien{ border-color:var(--si); }
+.pq-card.mal{ border-color:var(--acento); }
+.pq-num{ font:600 10.5px/1.2 var(--titulo); letter-spacing:.1em; text-transform:uppercase; color:var(--banda); }
+.pq-enun{ font-size:15.5px; }
+.pq-enun code, .pq-exp code{ font:500 13.5px/1 var(--mono); background:var(--fondo); padding:2px 5px; border-radius:4px; }
+pre.pq-code{ margin:0; font:400 14px/1.6 var(--mono); background:var(--fondo); border-left:4px solid var(--tinta); padding:8px 12px; overflow-x:auto; border-radius:0; }
+.pq-ops{ display:flex; flex-direction:column; gap:7px; }
+.pq-op{ display:flex; gap:10px; align-items:flex-start; border:1.5px solid var(--fila); border-radius:8px; padding:8px 11px; cursor:pointer; background:#fff; }
+.pq-op:hover{ border-color:var(--filete); }
+.pq-op input{ margin-top:4px; accent-color:var(--acento); flex:none; }
+.pq-op .letra{ font:700 13px/1.6 var(--titulo); color:var(--acento); flex:none; }
+.pq-op .txt{ white-space:pre-wrap; }
+.pq-op .txt.mono{ font:500 14px/1.5 var(--mono); }
+.pq-op.correcta{ border-color:var(--si); background:#EEF3F0; }
+.pq-op.fallada{ border-color:var(--acento); background:var(--suave); }
+.pq-op.bloq{ cursor:default; }
+.pq-aviso{ font-size:13px; color:var(--acento); min-height:0; }
+.pq-acc{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+.pq-fb{ display:flex; flex-direction:column; gap:6px; }
+.pq-fb .veredicto{ font:700 14px/1.3 var(--titulo); }
+.pq-fb .veredicto.si{ color:var(--si); }
+.pq-fb .veredicto.no{ color:var(--acento); }
+.pq-exp{ color:var(--sub); border-left:4px solid var(--fila); padding-left:10px; }
+.pq-traza .tz{ margin:6px 0 0; }
+.pq-marcador{ font:500 13px/1 var(--mono); color:var(--banda); }
+.pq-cab{ display:flex; justify-content:space-between; gap:10px; align-items:center; flex-wrap:wrap; }
+.pq-reloj{ font:600 18px/1 var(--mono); }
+.pq-reloj.poco{ color:var(--acento); }
+.pq-rejilla{ display:flex; flex-wrap:wrap; gap:5px; }
+.pq-rejilla button{ width:34px; height:30px; font:500 12.5px/1 var(--mono); border:1px solid var(--fila); background:#fff; border-radius:6px; cursor:pointer; color:var(--tinta); }
+.pq-rejilla button.hecha{ background:var(--fondo); border-color:var(--filete); }
+.pq-rejilla button.marcada{ box-shadow:inset 0 -3px 0 var(--acento); }
+.pq-rejilla button.actual{ outline:2px solid var(--acento); outline-offset:1px; }
+.pq-rejilla button.bien{ background:#EEF3F0; border-color:var(--si); }
+.pq-rejilla button.mal{ background:var(--suave); border-color:var(--acento); }
+.pq-tabla{ border-collapse:collapse; width:100%; font-size:14px; margin:0; }
+.pq-tabla th, .pq-tabla td{ text-align:left; padding:7px 10px; border:0; border-bottom:1px solid var(--fila); background:none; }
+.pq-tabla th{ font:600 10.5px/1.2 var(--titulo); letter-spacing:.08em; text-transform:uppercase; color:var(--banda); }
+.pq-barra{ height:8px; background:var(--fondo); border-radius:4px; overflow:hidden; min-width:80px; }
+.pq-barra span{ display:block; height:100%; background:var(--si); }
+.pq-barra span.baja{ background:var(--acento); }
+.pq-nota{ font:700 40px/1 var(--titulo); }
+.pq-nota.si{ color:var(--si); }
+.pq-nota.no{ color:var(--acento); }
+
 @media (max-width:760px){
   .tz{ padding:12px; }
   .tz-escena{ grid-template-columns:1fr; }
@@ -235,7 +283,210 @@ const PLANTILLA = `
   </div>
 </div>`;
 
+// ---------------------------------------------------------------------------
+// Preguntas tipo examen: config.tipo === "preguntas"
+//   modo "capitulo": tarjetas con corrección inmediata, explicación y la ejecución paso a paso
+//   modo "simulacro": n preguntas al azar según el reparto por secciones, con reloj y nota final
+// Cada pregunta: {id, sec, q, code?, ops[], ok (índice o lista), exp, mono?, traza?}
+// ---------------------------------------------------------------------------
+const md = t => esc(t).replace(/`([^`]+)`/g, "<code>$1</code>").replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>");
+const LETRAS = "ABCDEFGH";
+const correctasDe = q => Array.isArray(q.ok) ? q.ok : [q.ok];
+const barajar = a => { const b = a.slice(); for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; };
+
+function tarjetaPregunta(q, num, total, opciones) {
+  // opciones: [{texto, original}] en el orden en que se muestran
+  const multi = correctasDe(q).length > 1;
+  const nombre = "pq-" + q.id + "-" + Math.random().toString(36).slice(2, 7);
+  return '<div class="pq-card" data-id="' + esc(q.id) + '">' +
+    '<p class="pq-num">Pregunta ' + num + (total ? " de " + total : "") + (q.secNombre === "" ? "" : " · " + esc(q.secNombre || ("Sección " + q.sec))) + "</p>" +
+    '<div class="pq-enun">' + md(q.q) + (multi ? " <b>(Elige " + correctasDe(q).length + ".)</b>" : "") + "</div>" +
+    (q.code ? '<pre class="pq-code">' + q.code.split("\n").map(colorea).join("\n") + "</pre>" : "") +
+    '<div class="pq-ops">' + opciones.map((o, i) =>
+      '<label class="pq-op" data-orig="' + o.original + '"><input type="' + (multi ? "checkbox" : "radio") + '" name="' + nombre + '" value="' + o.original + '">' +
+      '<span class="letra">' + LETRAS[i] + '</span><span class="txt' + (q.mono ? " mono" : "") + '">' + (q.mono ? esc(o.texto) : md(o.texto)) + "</span></label>").join("") + "</div>" +
+    '<p class="pq-aviso" role="alert"></p>' +
+    '<div class="pq-acc"></div><div class="pq-fb"></div><div class="pq-traza"></div></div>';
+}
+function elegidas(card) { return [...card.querySelectorAll("input:checked")].map(i => +i.value).sort((a, b) => a - b); }
+function acierta(q, sel) { return igual(sel, correctasDe(q).slice().sort((a, b) => a - b)); }
+function corrige(card, q, sel) {
+  const ok = acierta(q, sel), buenas = correctasDe(q);
+  card.classList.toggle("bien", ok); card.classList.toggle("mal", !ok);
+  card.querySelectorAll(".pq-op").forEach(l => {
+    const o = +l.dataset.orig;
+    l.classList.add("bloq"); l.querySelector("input").disabled = true;
+    if (buenas.includes(o)) l.classList.add("correcta");
+    else if (sel.includes(o)) l.classList.add("fallada");
+  });
+  const letras = [...card.querySelectorAll(".pq-op")].map((l, i) => buenas.includes(+l.dataset.orig) ? LETRAS[i] : null).filter(Boolean);
+  card.querySelector(".pq-fb").innerHTML = '<p class="veredicto ' + (ok ? "si" : "no") + '">' + (ok ? "✓ Correcto." : "✗ No es esa. " + (letras.length > 1 ? "Las correctas son " + letras.join(" y ") : "La correcta es la " + letras[0]) + ".") +
+    '</p><p class="pq-exp">' + md(q.exp) + "</p>";
+  return ok;
+}
+function botonTraza(card, q) {
+  if (!q.traza) return null;
+  const b = document.createElement("button");
+  b.type = "button"; b.className = "tz-b"; b.textContent = "Ver cómo se ejecuta";
+  b.addEventListener("click", () => {
+    const caja = card.querySelector(".pq-traza");
+    if (caja.childElementCount) { caja.innerHTML = ""; b.textContent = "Ver cómo se ejecuta"; return; }
+    const div = document.createElement("div"); caja.appendChild(div);
+    renderTraza({ model: { get: k => k === "config" ? q.traza.config : k === "traza" ? q.traza.traza : undefined }, el: div });
+    b.textContent = "Ocultar la ejecución";
+  });
+  return b;
+}
+
+// El banco vive en datos/<banco>.json (lo escribe herramientas/preguntas.py); se carga una vez por página.
+const BANCOS = {};
+function cargaBanco(C) {
+  // el módulo se sirve desde <web>/_public/: los datos están en <web>/datos/
+  const url = C.datos || new URL("../datos/" + (C.banco || "pcep") + ".json", import.meta.url).href;
+  if (!BANCOS[url]) BANCOS[url] = fetch(url).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); });
+  return BANCOS[url];
+}
+function renderPreguntas({ model, el }) {
+  const C = model.get("config") || {};
+  el.innerHTML = "<style>" + ESTILOS + '</style><div class="tz pq"><p class="tz-vacio">Cargando las preguntas…</p></div>';
+  const raiz = el.querySelector(".pq");
+  let limpia = null, vivo = true;
+  cargaBanco(C).then(datos => {
+    if (!vivo) return;
+    const nombres = datos.secciones || {};
+    const todas = (datos.preguntas || []).map(q => ({ ...q, secNombre: nombres[q.sec] ? "Sección " + q.sec + " · " + nombres[q.sec] : "Sección " + q.sec }));
+    const banco = C.modo === "simulacro" ? todas : todas.filter(q => q.cap === C.capitulo);
+    if (!banco.length) { raiz.innerHTML = '<p class="tz-vacio">Este capítulo todavía no tiene preguntas.</p>'; return; }
+    limpia = C.modo === "simulacro" ? simulacro(raiz, { reparto: datos.reparto, ...C }, banco, nombres) : porCapitulo(raiz, C, banco);
+  }).catch(() => { raiz.innerHTML = '<p class="tz-vacio">No se han podido cargar las preguntas. Comprueba la conexión y recarga la página.</p>'; });
+  return () => { vivo = false; if (typeof limpia === "function") limpia(); };
+}
+
+function porCapitulo(raiz, C, banco) {
+  let hechas = 0, bien = 0;
+  raiz.innerHTML = '<div class="pq-cab"><span class="tz-tit">' + esc(C.titulo || "Preguntas tipo examen") + '</span><span class="tz-etq">' + esc(C.etiqueta || "PCEP") + "</span></div>" +
+    '<p class="tz-idea">' + md(C.idea || "Elige una respuesta y pulsa «Comprobar». Si fallas, mira la explicación y, en las de código, cómo se ejecuta paso a paso.") + "</p>" +
+    banco.map((q, i) => tarjetaPregunta(q, i + 1, banco.length, q.ops.map((t, j) => ({ texto: t, original: j })))).join("") +
+    '<p class="pq-marcador" aria-live="polite"></p>';
+  const marcador = raiz.querySelector(".pq-marcador");
+  const pinta = () => { marcador.textContent = hechas ? "Llevas " + bien + " de " + hechas + " bien" + (hechas === banco.length ? " · " + Math.round(100 * bien / banco.length) + " %" : "") : ""; };
+  raiz.querySelectorAll(".pq-card").forEach((card, i) => {
+    const q = banco[i], acc = card.querySelector(".pq-acc"), aviso = card.querySelector(".pq-aviso");
+    const comprobar = document.createElement("button");
+    comprobar.type = "button"; comprobar.className = "tz-b prim"; comprobar.textContent = "Comprobar";
+    acc.appendChild(comprobar);
+    card.querySelectorAll("input").forEach(inp => inp.addEventListener("change", () => { aviso.textContent = ""; }));
+    comprobar.addEventListener("click", () => {
+      const sel = elegidas(card);
+      if (!sel.length) { aviso.textContent = "Elige una respuesta primero."; return; }
+      const n = correctasDe(q).length;
+      if (n > 1 && sel.length !== n) { aviso.textContent = "Esta pregunta pide " + n + " respuestas."; return; }
+      hechas++; if (corrige(card, q, sel)) bien++;
+      comprobar.remove();
+      const t = botonTraza(card, q); if (t) acc.appendChild(t);
+      pinta();
+    });
+  });
+}
+
+function simulacro(raiz, C, banco, nombres) {
+  const reparto = C.reparto || {}, n = C.n || 35, minutos = C.minutos || 50, aprobado = C.aprobado || 70;
+  let ronda = null, actual = 0, timer = null, fin = 0, avisoEntrega = false;
+
+  function portada() {
+    para();
+    raiz.innerHTML = '<div class="pq-cab"><span class="tz-tit">' + esc(C.titulo || "Simulacro") + '</span><span class="tz-etq">' + esc(C.etiqueta || "") + "</span></div>" +
+      '<p class="tz-idea">' + md(C.idea || "") + "</p>" +
+      '<table class="pq-tabla"><tr><th>Sección</th><th>Preguntas</th></tr>' + Object.keys(reparto).map(s => "<tr><td>" + s + " · " + esc(nombres[s] || "") + "</td><td>" + reparto[s] + "</td></tr>").join("") +
+      "<tr><td><b>Total</b></td><td><b>" + n + "</b></td></tr></table>" +
+      '<p>' + n + " preguntas · " + minutos + " minutos · para aprobar, " + aprobado + " %. Cada simulacro saca preguntas distintas del banco, que tiene " + banco.length + ".</p>" +
+      '<div class="pq-acc"><button type="button" class="tz-b prim pq-empezar">Empezar el simulacro</button></div>';
+    raiz.querySelector(".pq-empezar").addEventListener("click", empezar);
+  }
+  function empezar() {
+    const elegidasR = [];
+    for (const s of Object.keys(reparto)) elegidasR.push(...barajar(banco.filter(q => String(q.sec) === String(s))).slice(0, reparto[s]));
+    ronda = barajar(elegidasR).map(q => ({ q, orden: barajar(q.ops.map((t, j) => ({ texto: t, original: j }))), sel: [], marcada: false }));
+    actual = 0; avisoEntrega = false;
+    fin = Date.now() + minutos * 60000;
+    timer = setInterval(reloj, 1000);
+    pintaPregunta();
+  }
+  function para() { if (timer) { clearInterval(timer); timer = null; } }
+  function reloj() {
+    const r = raiz.querySelector(".pq-reloj"), quedan = Math.max(0, fin - Date.now());
+    if (r) { const m = Math.floor(quedan / 60000), sg = Math.floor(quedan / 1000) % 60; r.textContent = String(m).padStart(2, "0") + ":" + String(sg).padStart(2, "0"); r.classList.toggle("poco", quedan < 5 * 60000); }
+    if (quedan <= 0) entregar(true);
+  }
+  function guarda() {
+    const card = raiz.querySelector(".pq-card");
+    if (card && ronda) ronda[actual].sel = elegidas(card);
+  }
+  function pintaPregunta() {
+    const R = ronda[actual];
+    raiz.innerHTML = '<div class="pq-cab"><span class="pq-marcador">' + esc(C.titulo || "Simulacro") + '</span><span class="pq-reloj" aria-live="off">--:--</span></div>' +
+      '<div class="pq-rejilla">' + ronda.map((x, i) => '<button type="button" data-i="' + i + '" class="' + (x.sel.length ? "hecha " : "") + (x.marcada ? "marcada " : "") + (i === actual ? "actual" : "") + '" aria-label="Ir a la pregunta ' + (i + 1) + '">' + (i + 1) + "</button>").join("") + "</div>" +
+      tarjetaPregunta({ ...R.q, secNombre: "" }, actual + 1, ronda.length, R.orden) +
+      '<div class="pq-acc"><button type="button" class="tz-b pq-ant">◀ Anterior</button><button type="button" class="tz-b prim pq-sig">Siguiente ▶</button>' +
+      '<button type="button" class="tz-b pq-marca">' + (R.marcada ? "Quitar la marca" : "Marcar para revisar") + '</button><button type="button" class="tz-b pq-entregar">Entregar</button></div>' +
+      '<p class="pq-aviso pq-aviso-entrega" role="alert"></p>';
+    const card = raiz.querySelector(".pq-card");
+    card.querySelectorAll("input").forEach(inp => { if (R.sel.includes(+inp.value)) inp.checked = true; inp.addEventListener("change", () => { guarda(); refrescaRejilla(); }); });
+    raiz.querySelector(".pq-ant").disabled = actual === 0;
+    raiz.querySelector(".pq-sig").disabled = actual === ronda.length - 1;
+    raiz.querySelector(".pq-ant").addEventListener("click", () => { guarda(); actual--; pintaPregunta(); });
+    raiz.querySelector(".pq-sig").addEventListener("click", () => { guarda(); actual++; pintaPregunta(); });
+    raiz.querySelector(".pq-marca").addEventListener("click", () => { guarda(); R.marcada = !R.marcada; pintaPregunta(); });
+    raiz.querySelector(".pq-entregar").addEventListener("click", () => { guarda(); entregar(false); });
+    raiz.querySelectorAll(".pq-rejilla button").forEach(b => b.addEventListener("click", () => { guarda(); actual = +b.dataset.i; pintaPregunta(); }));
+    reloj();
+  }
+  function refrescaRejilla() {
+    raiz.querySelectorAll(".pq-rejilla button").forEach((b, i) => b.classList.toggle("hecha", ronda[i].sel.length > 0));
+  }
+  function entregar(porTiempo) {
+    const sin = ronda.filter(x => !x.sel.length).length;
+    if (!porTiempo && sin && !avisoEntrega) {
+      avisoEntrega = true;
+      raiz.querySelector(".pq-aviso-entrega").textContent = "Te quedan " + sin + (sin === 1 ? " pregunta" : " preguntas") + " sin responder. Si quieres terminar igualmente, pulsa otra vez «Entregar».";
+      return;
+    }
+    para();
+    const res = ronda.map(x => acierta(x.q, x.sel));
+    const bien = res.filter(Boolean).length, pct = Math.round(100 * bien / ronda.length), apto = pct >= aprobado;
+    const porSec = {};
+    ronda.forEach((x, i) => { const s = x.q.sec; porSec[s] = porSec[s] || [0, 0]; porSec[s][1]++; if (res[i]) porSec[s][0]++; });
+    const flojas = Object.keys(porSec).filter(s => porSec[s][0] / porSec[s][1] < aprobado / 100);
+    raiz.innerHTML = '<div class="pq-cab"><span class="tz-tit">Resultado</span><span class="tz-etq">' + (porTiempo ? "se acabó el tiempo" : "entregado") + "</span></div>" +
+      '<p><span class="pq-nota ' + (apto ? "si" : "no") + '">' + pct + " %</span>  " + bien + " de " + ronda.length + " · " + (apto ? "<b>Aprobado</b>" : "<b>Todavía no</b>: hace falta un " + aprobado + " %") + "</p>" +
+      '<table class="pq-tabla"><tr><th>Sección</th><th>Aciertos</th><th></th></tr>' + Object.keys(porSec).sort().map(s => {
+        const [a, t] = porSec[s], f = a / t;
+        return "<tr><td>" + s + " · " + esc(nombres[s] || "") + "</td><td>" + a + " / " + t + '</td><td><div class="pq-barra"><span class="' + (f < aprobado / 100 ? "baja" : "") + '" style="width:' + Math.round(100 * f) + '%"></span></div></td></tr>';
+      }).join("") + "</table>" +
+      (flojas.length ? '<p class="tz-idea">Repasa ' + (flojas.length === 1 ? "la sección " : "las secciones ") + flojas.map(s => s + " (" + esc(nombres[s] || "") + ")").join(", ") + ".</p>" : '<p class="tz-idea">Todas las secciones por encima del ' + aprobado + " %.</p>") +
+      '<div class="pq-acc"><button type="button" class="tz-b prim pq-otra">Hacer otro simulacro</button></div>' +
+      '<p class="tz-micro">Revisión · ' + (ronda.length - bien) + " fallos</p>" +
+      ronda.map((x, i) => res[i] ? "" : tarjetaPregunta(x.q, i + 1, ronda.length, x.orden)).join("");
+    raiz.querySelector(".pq-otra").addEventListener("click", portada);
+    raiz.querySelectorAll(".pq-card").forEach(card => {
+      const x = ronda.find(r => r.q.id === card.dataset.id);
+      card.querySelectorAll("input").forEach(inp => { if (x.sel.includes(+inp.value)) inp.checked = true; });
+      corrige(card, x.q, x.sel);
+      if (!x.sel.length) card.querySelector(".pq-fb .veredicto").textContent = "Sin responder. " + card.querySelector(".pq-fb .veredicto").textContent.replace("✗ No es esa. ", "");
+      const t = botonTraza(card, x.q); if (t) card.querySelector(".pq-acc").appendChild(t);
+    });
+  }
+  portada();
+  return () => para();
+}
+
 function render({ model, el }) {
+  const C0 = model.get("config") || {};
+  if (C0.tipo === "preguntas") return renderPreguntas({ model, el });
+  return renderTraza({ model, el });
+}
+
+function renderTraza({ model, el }) {
   const C = model.get("config") || {};
   const D = model.get("traza");
   if (!D || !D.pasos) { el.textContent = "Falta la traza: ejecuta herramientas/trazar.py sobre este capítulo."; return; }

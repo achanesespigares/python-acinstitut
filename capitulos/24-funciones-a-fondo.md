@@ -180,6 +180,14 @@ Que una función cambie variables globales hace el programa difícil de seguir: 
 
 En la `media` recorríamos `notas` con un `for`. Los bucles tienen más herramientas de las que hemos usado: saltarse una vuelta, anidarlos, parar con un valor centinela…
 
+## Preguntas tipo examen
+
+Preguntas como las del examen PCEP sobre lo que has visto en este capítulo. Se corrigen al momento, y las que tienen código se pueden ver ejecutándose paso a paso. Hay un simulacro completo al final del libro.
+
+```{anywidget} ../widgets/traza.mjs
+{"config":{"tipo":"preguntas","banco":"pcep","capitulo":"24","titulo":"Preguntas tipo examen","etiqueta":"PCEP"}}
+```
+
 ## Ejercicios
 
 1. **¿Válido o no?** a) `def f(a, b=1, c):`; b) `f(1, c=3)` para `def f(a, b=1, c=2)`; c) `f(a=1, 2)`.

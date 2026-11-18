@@ -60,6 +60,9 @@ project:
         - file: capitulos/18-clases-a-fondo.md
         - file: capitulos/19-cadenas-a-fondo.md
         - file: capitulos/20-probar-y-depurar.md
+    - title: Practicar para el examen
+      children:
+        - file: capitulos/simulacro-pcep.md
 site:
   template: book-theme
   options:

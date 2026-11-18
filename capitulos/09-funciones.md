@@ -115,6 +115,14 @@ Hay momentos con **dos marcos a la vez**: el de `hipotenusa`, que espera, y el d
 
 ¿Y si una función se llamara a sí misma? Parece un círculo vicioso, pero si cada llamada trabaja con un caso más pequeño, la pila de marcos crece y luego se deshace sola. Es la **recursión**, y con ella se calcula, por ejemplo, el factorial.
 
+## Preguntas tipo examen
+
+Preguntas como las del examen PCEP sobre lo que has visto en este capítulo. Se corrigen al momento, y las que tienen código se pueden ver ejecutándose paso a paso. Hay un simulacro completo al final del libro.
+
+```{anywidget} ../widgets/traza.mjs
+{"config":{"tipo":"preguntas","banco":"pcep","capitulo":"09","titulo":"Preguntas tipo examen","etiqueta":"PCEP"}}
+```
+
 ## Ejercicios
 
 1. **Escribe** una función `celsius_a_fahrenheit(c)` que devuelva `c * 9 / 5 + 32`. Úsala para convertir 100 °C.

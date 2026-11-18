@@ -139,6 +139,14 @@ Los módulos que no vienen con Python, como `numpy` o `matplotlib`, se instalan 
 
 Hasta ahora, si algo salía mal (un `int("hola")`, una división entre 0), el programa se paraba de golpe con un mensaje en rojo. ¿Podemos prever esos fallos y decirle al programa qué hacer cuando ocurran? Eso son las excepciones.
 
+## Preguntas tipo examen
+
+Preguntas como las del examen PCEP sobre lo que has visto en este capítulo. Se corrigen al momento, y las que tienen código se pueden ver ejecutándose paso a paso. Hay un simulacro completo al final del libro.
+
+```{anywidget} ../widgets/traza.mjs
+{"config":{"tipo":"preguntas","banco":"pcep","capitulo":"12","titulo":"Preguntas tipo examen","etiqueta":"PCEP"}}
+```
+
 ## Ejercicios
 
 1. **Tres formas.** Escribe de tres maneras distintas un programa que imprima la raíz cuadrada de 2 usando `math`.

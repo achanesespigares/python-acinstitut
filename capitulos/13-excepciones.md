@@ -175,6 +175,14 @@ except NotaInvalida as e:
 
 `NotaInvalida` hereda de `Exception`. ¿Qué es exactamente una clase, y qué significa heredar? Es la puerta de la programación orientada a objetos, el bloque con más peso del PCAP.
 
+## Preguntas tipo examen
+
+Preguntas como las del examen PCEP sobre lo que has visto en este capítulo. Se corrigen al momento, y las que tienen código se pueden ver ejecutándose paso a paso. Hay un simulacro completo al final del libro.
+
+```{anywidget} ../widgets/traza.mjs
+{"config":{"tipo":"preguntas","banco":"pcep","capitulo":"13","titulo":"Preguntas tipo examen","etiqueta":"PCEP"}}
+```
+
 ## Ejercicios
 
 1. **¿Qué imprime?**

@@ -491,12 +491,14 @@ def procesa(ruta):
     texto = Path(ruta).read_text(encoding="utf-8")
     trozos, pos, hechos = [], 0, 0
     for w in WIDGET.finditer(texto):
+        cuerpo = json.loads(w.group(2))
+        cfg = cuerpo["config"]
+        if cfg.get("tipo") == "preguntas":          # bancos de preguntas: los rellena preguntas.py
+            continue
         celdas = list(CELDA.finditer(texto, 0, w.start()))
         if not celdas:
             raise SystemExit(f"{ruta}: hay un visualizador sin celda de código antes.")
         codigo = "\n".join(l for l in celdas[-1].group(1).rstrip("\n").split("\n") if not l.startswith(":"))
-        cuerpo = json.loads(w.group(2))
-        cfg = cuerpo["config"]
         nuevo = json.dumps({"config": cfg, "traza": traza(codigo, cfg)}, ensure_ascii=False, separators=(",", ":"), default=repr)
         trozos += [texto[pos:w.start()], w.group(1), nuevo, "\n"]
         pos = w.end() - 3

@@ -105,6 +105,14 @@ print(horas, "h", resto, "min")
 
 `0.1 + 0.2` no da exactamente `0.3` en Python: da `0.30000000000000004`. Pruébalo en una celda. ¿Por qué un ordenador se equivoca sumando decimales tan sencillos? La respuesta está en cómo guarda los `float` en binario.
 
+## Preguntas tipo examen
+
+Preguntas como las del examen PCEP sobre lo que has visto en este capítulo. Se corrigen al momento, y las que tienen código se pueden ver ejecutándose paso a paso. Hay un simulacro completo al final del libro.
+
+```{anywidget} ../widgets/traza.mjs
+{"config":{"tipo":"preguntas","banco":"pcep","capitulo":"05","titulo":"Preguntas tipo examen","etiqueta":"PCEP"}}
+```
+
 ## Ejercicios
 
 1. **Predice el tipo y el valor** de cada expresión: `7 / 7`, `7 // 2`, `"7" * 3`, `3 > 2`.

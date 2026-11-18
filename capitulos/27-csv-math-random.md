@@ -146,6 +146,14 @@ La semilla hace el azar **reproducible** (en [Módulos](12-modulos.md) verás po
 
 Hasta aquí llega todo el temario del PCEP. Lo que viene es el PCAP, y empieza por una pregunta de organización: cuando un programa crece, ¿cómo se reparte en varios ficheros y se reutiliza lo que ya está hecho? Son los módulos y los paquetes.
 
+## Preguntas tipo examen
+
+Preguntas como las del examen PCEP sobre lo que has visto en este capítulo. Se corrigen al momento, y las que tienen código se pueden ver ejecutándose paso a paso. Hay un simulacro completo al final del libro.
+
+```{anywidget} ../widgets/traza.mjs
+{"config":{"tipo":"preguntas","banco":"pcep","capitulo":"27","titulo":"Preguntas tipo examen","etiqueta":"PCEP"}}
+```
+
 ## Ejercicios
 
 1. **Nota media.** Escribe un programa que lea `notas.csv` (el del apartado 1) y calcule la media de la columna `nota`.

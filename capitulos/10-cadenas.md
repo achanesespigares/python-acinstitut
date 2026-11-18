@@ -111,6 +111,14 @@ print(frase)                     # la original no ha cambiado
 
 Hemos contado vocales. ¿Y si quisiéramos saber cuántas veces aparece **cada** letra? Necesitaríamos un contador por letra, y no sabemos de antemano cuáles van a salir. Hace falta una estructura que asocie cada letra con su cuenta: un **diccionario**.
 
+## Preguntas tipo examen
+
+Preguntas como las del examen PCEP sobre lo que has visto en este capítulo. Se corrigen al momento, y las que tienen código se pueden ver ejecutándose paso a paso. Hay un simulacro completo al final del libro.
+
+```{anywidget} ../widgets/traza.mjs
+{"config":{"tipo":"preguntas","banco":"pcep","capitulo":"10","titulo":"Preguntas tipo examen","etiqueta":"PCEP"}}
+```
+
 ## Ejercicios
 
 1. **Predice** el resultado: `"python"[1:4]`, `"python"[-2]` y `len("hola mundo")`.
