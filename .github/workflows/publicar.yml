@@ -42,6 +42,12 @@ jobs:
         run: |
           cp -r datos _build/html/datos
           cp herramientas/trazar.py herramientas/laboratorio.py _build/html/datos/
+      - name: Copiar Python (Pyodide) para el laboratorio
+        run: |
+          mkdir -p _build/html/pyodide
+          for f in pyodide.js pyodide.asm.js pyodide.asm.wasm python_stdlib.zip pyodide-lock.json; do
+            curl -sSfL -o _build/html/pyodide/$f https://cdn.jsdelivr.net/pyodide/v0.29.5/full/$f
+          done
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

@@ -484,7 +484,12 @@ function simulacro(raiz, C, banco, nombres) {
 // Python corre en el navegador (Pyodide, en un Web Worker para que un bucle sin fin no
 // congele la página). El worker carga herramientas/trazar.py y herramientas/laboratorio.py,
 // que la publicación copia en <web>/datos/, y devuelve la misma traza que pinta renderTraza.
-const PYODIDE = "https://cdn.jsdelivr.net/pyodide/v0.29.5/full/";
+// Python se sirve junto al libro (la publicación copia Pyodide en <web>/pyodide/); si no está, de la CDN.
+const PYODIDE_CDN = "https://cdn.jsdelivr.net/pyodide/v0.29.5/full/";
+function basePyodide() {
+  const local = new URL("../pyodide/", import.meta.url).href;
+  return fetch(local + "pyodide.js", { method: "HEAD" }).then(r => r.ok ? local : PYODIDE_CDN).catch(() => PYODIDE_CDN);
+}
 const LAB_EJEMPLOS = [
   { nombre: "La media de una lista", codigo: "notas = [7, 5, 9, 6]\ntotal = 0\nfor n in notas:\n    total = total + n\nmedia = total / len(notas)\nprint(\"Media:\", media)" },
   { nombre: "Duplicar con índices", codigo: "precios = [3, 8, 2]\nfor i in range(len(precios)):\n    precios[i] = precios[i] * 2\nprint(precios)" },
@@ -508,9 +513,18 @@ const LAB_ESTILOS = `
 .lab .lab-error{ border-left:4px solid var(--acento); background:var(--suave); padding:10px 12px; font-size:15px; }
 .lab .lab-res:empty{ display:none; }
 .lab .lab-res > .tz{ margin:0; }
+.lab .lab-pista{ border:2px solid var(--tinta); background:#fff; }
+.lab .lab-pista p{ padding:10px 12px; }
+.lab .lab-tec{ margin-top:8px; font-size:12.5px; color:var(--banda); }
+.lab .lab-tec code{ font:400 12px/1.4 var(--mono); }
+.lab .tz-b[aria-pressed="true"]{ background:var(--tinta); color:#fff; }
+.lab:fullscreen{ overflow:auto; padding:28px 4vw; border:0; border-radius:0; margin:0; }
+.lab:fullscreen .lab-ed, .lab:fullscreen .lab-res{ zoom:1.3; }
+.lab:fullscreen .tz-idea{ display:none; }
+@media (max-width: 700px){ .lab{ padding:12px; } .lab .lab-acc .lab-estado{ flex-basis:100%; } }
 `;
 let LAB = null;   // { worker, listo }: un solo Python por página, cargado la primera vez
-function trabajadorLab() {
+function trabajadorLab(PYODIDE) {
   const fuente = `importScripts("${PYODIDE}pyodide.js");
 let py = null;
 self.onmessage = async (e) => {
@@ -534,14 +548,15 @@ self.onmessage = async (e) => {
 function preparaLab() {
   if (LAB) return LAB.listo;
   const leer = n => fetch(new URL("../datos/" + n, import.meta.url)).then(r => { if (!r.ok) throw new Error("No encuentro " + n); return r.text(); });
-  const w = trabajadorLab();
-  const listo = Promise.all([leer("trazar.py"), leer("laboratorio.py")]).then(([t, l]) => new Promise((res, rej) => {
+  let w = null;
+  const listo = Promise.all([leer("trazar.py"), leer("laboratorio.py"), basePyodide()]).then(([t, l, base]) => new Promise((res, rej) => {
+    w = trabajadorLab(base); LAB.worker = w;
     w.onmessage = e => e.data.tipo === "listo" ? res() : rej(new Error(e.data.error));
     w.onerror = ev => rej(new Error(ev.message || "No se ha podido cargar Python"));
     w.postMessage({ tipo: "cargar", fuentes: { "trazar.py": t, "laboratorio.py": l } });
   }));
-  LAB = { worker: w, listo };
-  listo.catch(() => { w.terminate(); LAB = null; });
+  LAB = { worker: null, listo };
+  listo.catch(() => { if (w) w.terminate(); LAB = null; });
   return listo;
 }
 function ejecutaLab(codigo, entradas, ms = 12000) {
@@ -571,7 +586,7 @@ function renderLaboratorio({ model, el }) {
     '<div class="lab-ed"><pre class="lab-num" aria-hidden="true"></pre><textarea class="lab-cod" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="Tu programa en Python"></textarea></div></div>' +
     '<details class="lab-ent"><summary>Si tu programa usa input()</summary><p>Escribe lo que se teclearía en cada <code>input()</code>, una respuesta por línea.</p>' +
     '<textarea class="lab-in" spellcheck="false" aria-label="Respuestas para input()"></textarea></details>' +
-    '<div class="lab-acc"><button type="button" class="tz-b prim lab-run">Ejecutar y ver</button><span class="lab-estado" aria-live="polite"></span></div>' +
+    '<div class="lab-acc"><button type="button" class="tz-b prim lab-run">Ejecutar y ver</button><button type="button" class="tz-b lab-proy" aria-pressed="false">Proyectar</button><span class="lab-estado" aria-live="polite"></span></div>' +
     '<div class="lab-res"></div></div>';
   const q = s => el.querySelector(s);
   const cod = q(".lab-cod"), num = q(".lab-num"), ent = q(".lab-in"), res = q(".lab-res"), estado = q(".lab-estado"), boton = q(".lab-run");
@@ -590,6 +605,19 @@ function renderLaboratorio({ model, el }) {
   ent.value = lee("entradas") || "";
   if (ent.value) q(".lab-ent").open = true;
   ajusta();
+  // Proyectar: el laboratorio a pantalla completa y con letra grande (Esc para salir)
+  const proy = q(".lab-proy"), caja = q(".lab");
+  if (!document.fullscreenEnabled || !caja.requestFullscreen) proy.remove();
+  else {
+    proy.addEventListener("click", () => {
+      if (document.fullscreenElement) document.exitFullscreen(); else caja.requestFullscreen().catch(() => {});
+    });
+    document.addEventListener("fullscreenchange", () => {
+      const on = !!document.fullscreenElement;
+      proy.setAttribute("aria-pressed", on ? "true" : "false");
+      proy.textContent = on ? "Salir de la proyección" : "Proyectar";
+    });
+  }
   q(".lab-ej").addEventListener("change", e => { if (e.target.value !== "") pon(LAB_EJEMPLOS[+e.target.value]); });
   cod.addEventListener("input", () => { ajusta(); escribe("codigo", cod.value); });
   ent.addEventListener("input", () => escribe("entradas", ent.value));
@@ -610,14 +638,30 @@ function renderLaboratorio({ model, el }) {
   });
   boton.addEventListener("click", () => {
     const entradas = ent.value === "" ? [] : ent.value.replace(/\n$/, "").split("\n");
+    const sinComentarios = cod.value.split("\n").map(l => l.replace(/#.*$/, "")).join("\n");
+    if (/\binput\s*\(/.test(sinComentarios) && !entradas.length) {
+      q(".lab-ent").open = true;
+      res.innerHTML = '<p class="lab-error">Tu programa usa <code>input()</code>. Escribe en el recuadro de arriba lo que se teclearía, una respuesta por línea, y vuelve a pulsar «Ejecutar y ver».</p>';
+      ent.focus();
+      return;
+    }
     boton.disabled = true; res.innerHTML = "";
     estado.textContent = LAB ? "Ejecutando…" : "Preparando Python en tu navegador. La primera vez tarda unos segundos…";
     const listo = LAB ? Promise.resolve() : preparaLab().then(() => { estado.textContent = "Ejecutando…"; });
     listo.then(() => ejecutaLab(cod.value, entradas)).then(r => {
       estado.textContent = "";
-      if (r.error) { res.innerHTML = '<p class="lab-error">' + esc(r.error) + "</p>"; return; }
+      if (r.error) {
+        res.innerHTML = '<p class="lab-error">' + esc(r.error) + "</p>" +
+          (r.interno ? '<p class="lab-tec">Detalle técnico: <code>' + esc(r.interno) + "</code></p>" : "");
+        return;
+      }
       const div = document.createElement("div"); res.appendChild(div);
       renderTraza({ model: { get: k => k === "config" ? r.config : k === "traza" ? r.traza : undefined }, el: div });
+      if (r.pista) {
+        const caja = document.createElement("div"); caja.className = "tz-caja lab-pista";
+        caja.innerHTML = '<div class="tz-barra negro"><span>Pista</span><span>para el error del final</span></div><p>' + esc(r.pista) + "</p>";
+        res.appendChild(caja);
+      }
       const pasos = r.traza.pasos.length - 1;
       const cortado = /se ha detenido al llegar a \d+ pasos/.test(r.traza.pasos[pasos].salida || "");
       estado.textContent = cortado
@@ -628,7 +672,9 @@ function renderLaboratorio({ model, el }) {
       estado.textContent = "";
       const msg = err.message === "tiempo"
         ? "Tu programa ha tardado demasiado y lo he detenido. ¿Hay un bucle que no termina nunca?"
-        : "No se ha podido ejecutar: " + err.message + ". Comprueba tu conexión (la primera vez hay que descargar Python) y vuelve a intentarlo.";
+        : /Python|Error|error/.test(err.message) && LAB
+          ? "Este programa todavía no se puede visualizar en el laboratorio. Pruébalo en Colab y, si puedes, pásaselo a tu profesor."
+          : "No se ha podido cargar Python en este navegador. Comprueba la conexión (la primera vez hay que descargarlo) y vuelve a intentarlo.";
       res.innerHTML = '<p class="lab-error">' + esc(msg) + "</p>";
     }).finally(() => { boton.disabled = false; });
   });

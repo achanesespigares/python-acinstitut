@@ -74,6 +74,7 @@ def sustituye(expr, estado):
 ARCHIVO = "programa.py"          # nombre con el que el código del alumno sale en los tracebacks
 CODIGO = {"texto": ""}          # el programa que se está trazando (para escribir las lambdas)
 LIMITE = None                   # máximo de pasos; el laboratorio del navegador lo fija para cortar bucles sin fin
+AVISA_SIN_RESPUESTA = False     # el laboratorio: si input() se queda sin respuestas, avisa en vez de devolver ""
 
 
 class DemasiadosPasos(Exception):
@@ -256,6 +257,10 @@ def ejecuta(codigo, entradas=()):
 
     def entrada_simulada(mensaje=""):
         """input() de mentira: escribe el mensaje y «teclea» la siguiente entrada de la lista."""
+        if not pendientes and AVISA_SIN_RESPUESTA:
+            salida.write(f"{mensaje}\n")
+            raise EOFError("input() no tiene más respuestas. Escríbelas en el recuadro "
+                           "«Si tu programa usa input()», una por línea.")
         valor = pendientes.pop(0) if pendientes else ""
         salida.write(f"{mensaje}{valor}\n")
         return valor
@@ -322,6 +327,9 @@ def ejecuta(codigo, entradas=()):
                 tb = e.__traceback__.tb_next     # sin el marco de este script
                 if isinstance(e, DemasiadosPasos):
                     salida.write(str(e) + "\n")
+                elif isinstance(e, SystemExit):     # sys.exit(): el programa termina, sin traceback
+                    if e.code not in (None, 0):
+                        salida.write(f"{e.code}\n")
                 else:
                     salida.write("".join(traceback.format_exception(type(e), e, tb)))
                 while eventos and eventos[-1]["ev"] == "return" and not eventos[-1]["funcion"]:
@@ -465,7 +473,7 @@ def traza(codigo, cfg):
             for c in cfg["columnas"]:
                 try:
                     v = eval(c, dict(ENTORNO), dict(contexto(ejec)))
-                    valores.append(repr(v) if isinstance(v, str) else str(v))
+                    valores.append(muestra(marca(v, {})))   # conjuntos ordenados: traza estable
                 except Exception:
                     valores.append("—")
             if cfg["fila_en"] == "comprobacion" and cond:

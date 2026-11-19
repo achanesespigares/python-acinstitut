@@ -24,6 +24,8 @@ En el resto del libro los visualizadores enseñan programas que ya están escrit
 - **La primera vez tarda unos segundos**: el navegador descarga Python. Después, cada ejecución es casi instantánea.
 - **Tu código no sale de tu ordenador.** Python se ejecuta dentro del navegador, y el programa se guarda en él para la próxima visita.
 - **Si usas `input()`**, escribe las respuestas en el recuadro *Si tu programa usa input()*, una por línea.
+- **En clase, «Proyectar»** pone el laboratorio a pantalla completa y con letra grande. Para salir, el mismo botón o la tecla Esc.
+- **Si algo falla**, el laboratorio explica en castellano qué le pasa a la línea, y al final de la ejecución da una pista para el error.
 - **Programas cortos**: el laboratorio se detiene a los 1000 pasos, para que un bucle que no termina no bloquee la página. Para programas largos, mejor Colab.
 - Solo la biblioteca estándar de Python: `math`, `random`, `csv`… sí; paquetes externos, no.
 :::
