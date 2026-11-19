@@ -39,7 +39,9 @@ jobs:
       - name: Construir el libro
         run: npx myst build --html
       - name: Copiar los bancos de preguntas a la web
-        run: cp -r datos _build/html/datos
+        run: |
+          cp -r datos _build/html/datos
+          cp herramientas/trazar.py herramientas/laboratorio.py _build/html/datos/
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

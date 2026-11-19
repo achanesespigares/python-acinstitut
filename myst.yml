@@ -19,6 +19,7 @@ project:
   toc:
     - file: index.md
     - file: capitulos/00-como-leer.md
+    - file: capitulos/laboratorio.md
     - title: Bloque 0 · Pensar antes de programar
       children:
         - file: capitulos/01-especificacion.md

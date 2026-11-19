@@ -19,11 +19,13 @@ capitulos/
   12-modulos.md · 13-excepciones.md · 14-clases.md                         bloque 4
   15-comprensiones.md · 16-funciones-valores.md · 17-ficheros.md
   18-clases-a-fondo.md · 19-cadenas-a-fondo.md · 20-probar-y-depurar.md    bloque 5
+  laboratorio.md                                                           el laboratorio: tu código, paso a paso
   simulacro-pcep.md · simulacro-pcap.md                                    simulacros de examen
   curso-mapa.md · curso-modulo-1.md · curso-modulo-2.md
   curso-proyecto-1.md · curso-proyecto-2.md                                el curso en 30 sesiones
 widgets/traza.mjs           el visualizador (anywidget), con sus estilos dentro
 herramientas/trazar.py      genera las trazas ejecutando el código con sys.settrace
+herramientas/laboratorio.py  el puente del laboratorio: el navegador (Pyodide) lo ejecuta junto a trazar.py
 herramientas/preguntas.py   comprueba el banco de preguntas ejecutándolo y lo coloca en el libro
 preguntas/pcep.py           banco de preguntas tipo examen PCEP (original), con su sección y su capítulo
 preguntas/pcap.py           banco de preguntas tipo examen PCAP (original)

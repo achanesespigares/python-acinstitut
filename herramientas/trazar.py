@@ -73,6 +73,11 @@ def sustituye(expr, estado):
 
 ARCHIVO = "programa.py"          # nombre con el que el código del alumno sale en los tracebacks
 CODIGO = {"texto": ""}          # el programa que se está trazando (para escribir las lambdas)
+LIMITE = None                   # máximo de pasos; el laboratorio del navegador lo fija para cortar bucles sin fin
+
+
+class DemasiadosPasos(Exception):
+    """El programa ha dado más pasos que LIMITE (casi siempre, un bucle que no termina)."""
 
 
 def funcion_como_valor(k, v):
@@ -266,6 +271,9 @@ def ejecuta(codigo, entradas=()):
                 estado_error["propagando"] = True
             return tracer
         if evento in ("line", "return"):
+            if LIMITE and len(eventos) >= LIMITE:
+                raise DemasiadosPasos(f"El programa se ha detenido al llegar a {LIMITE} pasos. "
+                                      "¿Hay un bucle que no termina nunca?")
             por_error = evento == "return" and estado_error["propagando"]
             if evento == "line":
                 estado_error["propagando"] = False
@@ -312,7 +320,10 @@ def ejecuta(codigo, entradas=()):
             except BaseException as e:          # error que nadie atiende: el programa se detiene
                 sys.settrace(None)
                 tb = e.__traceback__.tb_next     # sin el marco de este script
-                salida.write("".join(traceback.format_exception(type(e), e, tb)))
+                if isinstance(e, DemasiadosPasos):
+                    salida.write(str(e) + "\n")
+                else:
+                    salida.write("".join(traceback.format_exception(type(e), e, tb)))
                 while eventos and eventos[-1]["ev"] == "return" and not eventos[-1]["funcion"]:
                     eventos.pop()                # el «return» del módulo que se interrumpe
                 ultimo = eventos[-1]
@@ -495,7 +506,7 @@ def procesa(ruta):
     for w in WIDGET.finditer(texto):
         cuerpo = json.loads(w.group(2))
         cfg = cuerpo["config"]
-        if cfg.get("tipo") == "preguntas":          # bancos de preguntas: los rellena preguntas.py
+        if cfg.get("tipo") in ("preguntas", "laboratorio"):   # sin traza fija: preguntas.py o el navegador
             continue
         celdas = list(CELDA.finditer(texto, 0, w.start()))
         if not celdas:

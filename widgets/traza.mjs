@@ -480,9 +480,164 @@ function simulacro(raiz, C, banco, nombres) {
   return () => para();
 }
 
+// ── Laboratorio: el alumno escribe su programa y lo ve ejecutarse ─────────────────────────
+// Python corre en el navegador (Pyodide, en un Web Worker para que un bucle sin fin no
+// congele la página). El worker carga herramientas/trazar.py y herramientas/laboratorio.py,
+// que la publicación copia en <web>/datos/, y devuelve la misma traza que pinta renderTraza.
+const PYODIDE = "https://cdn.jsdelivr.net/pyodide/v0.29.5/full/";
+const LAB_EJEMPLOS = [
+  { nombre: "La media de una lista", codigo: "notas = [7, 5, 9, 6]\ntotal = 0\nfor n in notas:\n    total = total + n\nmedia = total / len(notas)\nprint(\"Media:\", media)" },
+  { nombre: "Duplicar con índices", codigo: "precios = [3, 8, 2]\nfor i in range(len(precios)):\n    precios[i] = precios[i] * 2\nprint(precios)" },
+  { nombre: "Una función con return", codigo: "def area(base, altura):\n    return base * altura / 2\n\na = area(6, 4)\nprint(\"Área:\", a)" },
+  { nombre: "Adivina el número (input)", codigo: "secreto = 7\nintento = int(input(\"Número: \"))\nwhile intento != secreto:\n    print(\"No es ese\")\n    intento = int(input(\"Otro: \"))\nprint(\"¡Acertaste!\")", entradas: "3\n9\n7" },
+  { nombre: "Una clase", codigo: "class Cuenta:\n    def __init__(self, saldo):\n        self.saldo = saldo\n\n    def ingresa(self, cantidad):\n        self.saldo = self.saldo + cantidad\n\nc = Cuenta(100)\nc.ingresa(50)\nprint(c.saldo)" },
+];
+const LAB_ESTILOS = `
+.lab .lab-fila{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.lab .lab-fila .tz-micro{ margin:0 !important; }
+.lab select{ font:500 14px/1.2 var(--texto); padding:7px 10px; border:1px solid var(--filete); border-radius:6px; background:#fff; color:var(--tinta); max-width:100%; }
+.lab .lab-ed{ display:flex; background:var(--fondo); }
+.lab .lab-num{ margin:0; padding:10px 10px 10px 8px; font:400 14px/1.85 var(--mono); color:var(--filete); text-align:right; user-select:none; background:var(--fondo); border:0; border-radius:0; min-width:3.2ch; }
+.lab textarea{ width:100%; border:0; outline:none; resize:none; background:transparent; color:var(--tinta); font:400 14px/1.85 var(--mono); padding:10px 12px 10px 4px; white-space:pre; overflow-x:auto; overflow-y:hidden; tab-size:4; }
+.lab .lab-ed:focus-within{ box-shadow:inset 0 0 0 2px var(--acento); }
+.lab details{ font-size:14px; }
+.lab summary{ cursor:pointer; color:var(--oscuro); font-weight:600; }
+.lab .lab-in{ margin-top:8px; border:1px solid var(--fila); background:#fff; padding:8px 10px; min-height:4.6em; overflow-y:auto; }
+.lab .lab-acc{ display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
+.lab .lab-estado{ font-size:14px; color:var(--banda); }
+.lab .lab-error{ border-left:4px solid var(--acento); background:var(--suave); padding:10px 12px; font-size:15px; }
+.lab .lab-res:empty{ display:none; }
+.lab .lab-res > .tz{ margin:0; }
+`;
+let LAB = null;   // { worker, listo }: un solo Python por página, cargado la primera vez
+function trabajadorLab() {
+  const fuente = `importScripts("${PYODIDE}pyodide.js");
+let py = null;
+self.onmessage = async (e) => {
+  const m = e.data;
+  try {
+    if (m.tipo === "cargar") {
+      py = await loadPyodide({ indexURL: "${PYODIDE}" });
+      py.FS.mkdirTree("/lab");
+      for (const [n, t] of Object.entries(m.fuentes)) py.FS.writeFile("/lab/" + n, t);
+      py.runPython("import sys; sys.path.insert(0, '/lab'); import laboratorio");
+      self.postMessage({ tipo: "listo" });
+    } else {
+      py.globals.set("codigo_lab", m.codigo);
+      py.globals.set("entradas_lab", py.toPy(m.entradas));
+      self.postMessage({ tipo: "hecho", json: py.runPython("laboratorio.laboratorio(codigo_lab, entradas_lab)") });
+    }
+  } catch (err) { self.postMessage({ tipo: "fallo", error: String(err) }); }
+};`;
+  return new Worker(URL.createObjectURL(new Blob([fuente], { type: "text/javascript" })));
+}
+function preparaLab() {
+  if (LAB) return LAB.listo;
+  const leer = n => fetch(new URL("../datos/" + n, import.meta.url)).then(r => { if (!r.ok) throw new Error("No encuentro " + n); return r.text(); });
+  const w = trabajadorLab();
+  const listo = Promise.all([leer("trazar.py"), leer("laboratorio.py")]).then(([t, l]) => new Promise((res, rej) => {
+    w.onmessage = e => e.data.tipo === "listo" ? res() : rej(new Error(e.data.error));
+    w.onerror = ev => rej(new Error(ev.message || "No se ha podido cargar Python"));
+    w.postMessage({ tipo: "cargar", fuentes: { "trazar.py": t, "laboratorio.py": l } });
+  }));
+  LAB = { worker: w, listo };
+  listo.catch(() => { w.terminate(); LAB = null; });
+  return listo;
+}
+function ejecutaLab(codigo, entradas, ms = 12000) {
+  return preparaLab().then(() => new Promise((res, rej) => {
+    const w = LAB.worker;
+    const reloj = setTimeout(() => { w.terminate(); LAB = null; rej(new Error("tiempo")); }, ms);
+    w.onmessage = e => {
+      clearTimeout(reloj);
+      if (e.data.tipo === "hecho") res(JSON.parse(e.data.json)); else rej(new Error(e.data.error));
+    };
+    w.postMessage({ tipo: "ejecutar", codigo, entradas });
+  }));
+}
+
+function renderLaboratorio({ model, el }) {
+  const C = model.get("config") || {};
+  const GUARDA = "acinstitut-laboratorio";
+  const lee = k => { try { return localStorage.getItem(GUARDA + k); } catch (e) { return null; } };
+  const escribe = (k, v) => { try { localStorage.setItem(GUARDA + k, v); } catch (e) { /* sin almacenamiento */ } };
+  el.innerHTML = "<style>" + ESTILOS + LAB_ESTILOS + "</style>" +
+    '<div class="tz lab">' +
+    '<div class="tz-cab"><span class="tz-tit">' + esc(C.titulo || "Laboratorio") + '</span><span class="tz-etq">' + esc(C.etiqueta || "tu código, paso a paso") + "</span></div>" +
+    '<p class="tz-idea">Escribe un programa o elige un ejemplo, pulsa «Ejecutar y ver» y recórrelo paso a paso. Python se ejecuta aquí mismo, en tu navegador: tu código no sale de tu ordenador.</p>' +
+    '<div class="lab-fila"><label class="tz-micro" for="lab-ej">Ejemplos</label><select class="lab-ej" id="lab-ej"><option value="">Elige un ejemplo…</option>' +
+    LAB_EJEMPLOS.map((x, i) => '<option value="' + i + '">' + esc(x.nombre) + "</option>").join("") + "</select></div>" +
+    '<div class="tz-caja"><div class="tz-barra"><span>Tu programa</span><span class="lab-lineas"></span></div>' +
+    '<div class="lab-ed"><pre class="lab-num" aria-hidden="true"></pre><textarea class="lab-cod" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="Tu programa en Python"></textarea></div></div>' +
+    '<details class="lab-ent"><summary>Si tu programa usa input()</summary><p>Escribe lo que se teclearía en cada <code>input()</code>, una respuesta por línea.</p>' +
+    '<textarea class="lab-in" spellcheck="false" aria-label="Respuestas para input()"></textarea></details>' +
+    '<div class="lab-acc"><button type="button" class="tz-b prim lab-run">Ejecutar y ver</button><span class="lab-estado" aria-live="polite"></span></div>' +
+    '<div class="lab-res"></div></div>';
+  const q = s => el.querySelector(s);
+  const cod = q(".lab-cod"), num = q(".lab-num"), ent = q(".lab-in"), res = q(".lab-res"), estado = q(".lab-estado"), boton = q(".lab-run");
+  function ajusta() {
+    const n = cod.value.split("\n").length;
+    num.textContent = Array.from({ length: n }, (_, i) => i + 1).join("\n");
+    cod.rows = Math.max(8, n + 1);
+    q(".lab-lineas").textContent = n === 1 ? "1 línea" : n + " líneas";
+  }
+  function pon(ejemplo) {
+    cod.value = ejemplo.codigo; ent.value = ejemplo.entradas || "";
+    q(".lab-ent").open = !!ejemplo.entradas;
+    ajusta(); escribe("codigo", cod.value); escribe("entradas", ent.value); res.innerHTML = "";
+  }
+  cod.value = lee("codigo") || LAB_EJEMPLOS[0].codigo;
+  ent.value = lee("entradas") || "";
+  if (ent.value) q(".lab-ent").open = true;
+  ajusta();
+  q(".lab-ej").addEventListener("change", e => { if (e.target.value !== "") pon(LAB_EJEMPLOS[+e.target.value]); });
+  cod.addEventListener("input", () => { ajusta(); escribe("codigo", cod.value); });
+  ent.addEventListener("input", () => escribe("entradas", ent.value));
+  // Tab sangra cuatro espacios; Intro conserva la sangría (y la aumenta tras «:»)
+  cod.addEventListener("keydown", e => {
+    const ini = cod.selectionStart, fin = cod.selectionEnd, v = cod.value;
+    if (e.key === "Tab" && !e.shiftKey) {
+      e.preventDefault();
+      cod.setRangeText("    ", ini, fin, "end");
+    } else if (e.key === "Enter" && !e.isComposing) {
+      const linea = v.slice(v.lastIndexOf("\n", ini - 1) + 1, ini);
+      let sangria = linea.match(/^ */)[0];
+      if (/:\s*$/.test(linea)) sangria += "    ";
+      e.preventDefault();
+      cod.setRangeText("\n" + sangria, ini, fin, "end");
+    } else return;
+    ajusta(); escribe("codigo", cod.value);
+  });
+  boton.addEventListener("click", () => {
+    const entradas = ent.value === "" ? [] : ent.value.replace(/\n$/, "").split("\n");
+    boton.disabled = true; res.innerHTML = "";
+    estado.textContent = LAB ? "Ejecutando…" : "Preparando Python en tu navegador. La primera vez tarda unos segundos…";
+    const listo = LAB ? Promise.resolve() : preparaLab().then(() => { estado.textContent = "Ejecutando…"; });
+    listo.then(() => ejecutaLab(cod.value, entradas)).then(r => {
+      estado.textContent = "";
+      if (r.error) { res.innerHTML = '<p class="lab-error">' + esc(r.error) + "</p>"; return; }
+      const div = document.createElement("div"); res.appendChild(div);
+      renderTraza({ model: { get: k => k === "config" ? r.config : k === "traza" ? r.traza : undefined }, el: div });
+      const pasos = r.traza.pasos.length - 1;
+      const cortado = /se ha detenido al llegar a \d+ pasos/.test(r.traza.pasos[pasos].salida || "");
+      estado.textContent = cortado
+        ? "Detenido a los " + pasos + " pasos: parece un bucle que no termina. Recórrelo para ver por qué."
+        : pasos + (pasos === 1 ? " paso" : " pasos") + ". Pulsa «Paso ▶» para empezar.";
+      res.scrollIntoView({ behavior: "smooth", block: "start" });
+    }).catch(err => {
+      estado.textContent = "";
+      const msg = err.message === "tiempo"
+        ? "Tu programa ha tardado demasiado y lo he detenido. ¿Hay un bucle que no termina nunca?"
+        : "No se ha podido ejecutar: " + err.message + ". Comprueba tu conexión (la primera vez hay que descargar Python) y vuelve a intentarlo.";
+      res.innerHTML = '<p class="lab-error">' + esc(msg) + "</p>";
+    }).finally(() => { boton.disabled = false; });
+  });
+}
+
 function render({ model, el }) {
   const C0 = model.get("config") || {};
   if (C0.tipo === "preguntas") return renderPreguntas({ model, el });
+  if (C0.tipo === "laboratorio") return renderLaboratorio({ model, el });
   return renderTraza({ model, el });
 }
 
