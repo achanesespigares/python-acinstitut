@@ -18,7 +18,8 @@ AQUI = Path(__file__).parent
 LEX = {
     "es": dict(objetivo="Objetivo.", libro="En el libro.", comprobacion="Comprobación.",
                predice="Predice", en_clase="En clase", tarea="Tarea", sesion="Sesión",
-               r_objetivo="Objetivo", r_libro="En el libro", consejo="Consejo"),
+               r_objetivo="Objetivo", r_libro="En el libro", consejo="Consejo",
+               material="Material.", r_material="Material"),
 }
 
 
@@ -221,7 +222,7 @@ def sesion(titulo, cuerpo, lex, modulo):
     filas, resto = [], []
     for parr in re.split(r"\n\s*\n", cuerpo.strip()):
         p = parr.strip().replace("\n", " ")
-        for clave, rot in (("objetivo", "r_objetivo"), ("libro", "r_libro")):
+        for clave, rot in (("objetivo", "r_objetivo"), ("libro", "r_libro"), ("material", "r_material")):
             pref = "**" + lex[clave] + "**"
             if p.startswith(pref):
                 filas.append(f"({cadena(lex[rot])}, [{inline(p[len(pref):].strip())}])")

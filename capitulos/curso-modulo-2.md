@@ -17,6 +17,8 @@ En este módulo el código crece. Desde la sesión 16, cada alumno guarda sus pr
 
 **En el libro.** [Módulos](12-modulos.md).
 
+**Material.** [Cuaderno en Colab](https://colab.research.google.com/github/achanesespigares/python-acinstitut/blob/main/cuadernos/sesion-16.ipynb) · [Diapositivas en PDF](https://achanesespigares.github.io/python-acinstitut/diapositivas/sesion-16.pdf)
+
 ### Predice
 
 ```python
@@ -54,6 +56,8 @@ print(type(r(1, 6)))
 **Objetivo.** Lanzar excepciones, crear las propias y controlar exactamente qué parte de un `try` se ejecuta.
 
 **En el libro.** [Excepciones](13-excepciones.md) § 3–6.
+
+**Material.** [Cuaderno en Colab](https://colab.research.google.com/github/achanesespigares/python-acinstitut/blob/main/cuadernos/sesion-17.ipynb) · [Diapositivas en PDF](https://achanesespigares.github.io/python-acinstitut/diapositivas/sesion-17.pdf)
 
 ### Predice
 
@@ -98,6 +102,8 @@ print(f(0))
 **Objetivo.** Definir una clase con su constructor y sus métodos, crear objetos y distinguir dos objetos iguales de dos nombres para el mismo objeto.
 
 **En el libro.** [Clases y objetos](14-clases.md) § 1–2.
+
+**Material.** [Cuaderno en Colab](https://colab.research.google.com/github/achanesespigares/python-acinstitut/blob/main/cuadernos/sesion-18.ipynb) · [Diapositivas en PDF](https://achanesespigares.github.io/python-acinstitut/diapositivas/sesion-18.pdf)
 
 ### Predice
 
@@ -145,6 +151,8 @@ print(a.n, b.n, a is b)
 **Objetivo.** Compartir datos entre todos los objetos de una clase, darles una representación legible y reutilizar una clase con la herencia.
 
 **En el libro.** [Clases y objetos](14-clases.md) § 3–4.
+
+**Material.** [Cuaderno en Colab](https://colab.research.google.com/github/achanesespigares/python-acinstitut/blob/main/cuadernos/sesion-19.ipynb) · [Diapositivas en PDF](https://achanesespigares.github.io/python-acinstitut/diapositivas/sesion-19.pdf)
 
 ### Predice
 
@@ -197,6 +205,8 @@ for a in [Perro(), Gallina()]:
 
 **En el libro.** [Clases a fondo](18-clases-a-fondo.md) § 1–3.
 
+**Material.** [Cuaderno en Colab](https://colab.research.google.com/github/achanesespigares/python-acinstitut/blob/main/cuadernos/sesion-20.ipynb) · [Diapositivas en PDF](https://achanesespigares.github.io/python-acinstitut/diapositivas/sesion-20.pdf)
+
 ### Predice
 
 ```python
@@ -238,6 +248,8 @@ print(hasattr(c, "__secreto"), hasattr(c, "_Caja__secreto"))
 **Objetivo.** Saber qué método se ejecuta cuando hay varias clases madre, y preguntar a un objeto por sus atributos y su clase.
 
 **En el libro.** [Clases a fondo](18-clases-a-fondo.md) § 4–8.
+
+**Material.** [Cuaderno en Colab](https://colab.research.google.com/github/achanesespigares/python-acinstitut/blob/main/cuadernos/sesion-21.ipynb) · [Diapositivas en PDF](https://achanesespigares.github.io/python-acinstitut/diapositivas/sesion-21.pdf)
 
 ### Predice
 
@@ -290,6 +302,8 @@ print(isinstance(D(), C), issubclass(C, B))
 
 **En el libro.** [Comprensiones](15-comprensiones.md) § 1–5.
 
+**Material.** [Cuaderno en Colab](https://colab.research.google.com/github/achanesespigares/python-acinstitut/blob/main/cuadernos/sesion-22.ipynb) · [Diapositivas en PDF](https://achanesespigares.github.io/python-acinstitut/diapositivas/sesion-22.pdf)
+
 ### Predice
 
 ```python
@@ -334,6 +348,8 @@ Con `numeros = [3, -1, 4, -1, 5, 9, -2, 6]` y `palabras = ["sol", "mar", "sol", 
 
 **En el libro.** [Comprensiones](15-comprensiones.md) § 6 y [Funciones como valores](16-funciones-valores.md) § 1–2.
 
+**Material.** [Cuaderno en Colab](https://colab.research.google.com/github/achanesespigares/python-acinstitut/blob/main/cuadernos/sesion-23.ipynb) · [Diapositivas en PDF](https://achanesespigares.github.io/python-acinstitut/diapositivas/sesion-23.pdf)
+
 ### Predice
 
 ```python
@@ -370,6 +386,8 @@ print(list(map(lambda a: a[0][0], alumnos)))
 **Objetivo.** Fabricar funciones que recuerdan un dato, y producir valores uno a uno sin guardarlos todos.
 
 **En el libro.** [Funciones como valores](16-funciones-valores.md) § 3–4. Los generadores son ampliación en el PCAP: se ven si el grupo va a buen ritmo.
+
+**Material.** [Cuaderno en Colab](https://colab.research.google.com/github/achanesespigares/python-acinstitut/blob/main/cuadernos/sesion-24.ipynb) · [Diapositivas en PDF](https://achanesespigares.github.io/python-acinstitut/diapositivas/sesion-24.pdf)
 
 ### Predice
 
@@ -419,6 +437,8 @@ print(list(cuenta(3)), sum(cuenta(4)))
 
 **En el libro.** [Ficheros y flujos](17-ficheros.md).
 
+**Material.** [Cuaderno en Colab](https://colab.research.google.com/github/achanesespigares/python-acinstitut/blob/main/cuadernos/sesion-25.ipynb) · [Diapositivas en PDF](https://achanesespigares.github.io/python-acinstitut/diapositivas/sesion-25.pdf)
+
 ### Predice
 
 ```python
@@ -463,6 +483,8 @@ print(b)
 
 **En el libro.** [Cadenas a fondo](19-cadenas-a-fondo.md). Al final de la sesión se presenta el [Proyecto 2](curso-proyecto-2.md).
 
+**Material.** [Cuaderno en Colab](https://colab.research.google.com/github/achanesespigares/python-acinstitut/blob/main/cuadernos/sesion-26.ipynb) · [Diapositivas en PDF](https://achanesespigares.github.io/python-acinstitut/diapositivas/sesion-26.pdf) · [Cuaderno del proyecto](https://colab.research.google.com/github/achanesespigares/python-acinstitut/blob/main/cuadernos/proyecto-2.ipynb)
+
 ### Predice
 
 ```python
@@ -501,6 +523,8 @@ print("3".isdigit(), "3.5".isdigit(), " hola ".strip().title())
 **Objetivo.** Leer un traceback de abajo arriba, escribir pruebas unitarias y buscar el porqué de un error con método.
 
 **En el libro.** [Probar y depurar](20-probar-y-depurar.md) § 1–4.
+
+**Material.** [Cuaderno en Colab](https://colab.research.google.com/github/achanesespigares/python-acinstitut/blob/main/cuadernos/sesion-27.ipynb) · [Diapositivas en PDF](https://achanesespigares.github.io/python-acinstitut/diapositivas/sesion-27.pdf) · [Cuaderno del proyecto](https://colab.research.google.com/github/achanesespigares/python-acinstitut/blob/main/cuadernos/proyecto-2.ipynb)
 
 ### Predice
 
@@ -547,6 +571,8 @@ print(informe([]))
 
 **En el libro.** [Probar y depurar](20-probar-y-depurar.md) § 5–6.
 
+**Material.** [Cuaderno en Colab](https://colab.research.google.com/github/achanesespigares/python-acinstitut/blob/main/cuadernos/sesion-28.ipynb) · [Diapositivas en PDF](https://achanesespigares.github.io/python-acinstitut/diapositivas/sesion-28.pdf) · [Cuaderno del proyecto](https://colab.research.google.com/github/achanesespigares/python-acinstitut/blob/main/cuadernos/proyecto-2.ipynb)
+
 ### Predice
 
 Una IA ha propuesto esta función. ¿Qué devuelven las tres llamadas?
@@ -591,6 +617,8 @@ print(es_primo(9), es_primo(7), es_primo(2))
 
 **En el libro.** [Proyecto 2](curso-proyecto-2.md) y [Simulacro PCAP](simulacro-pcap.md).
 
+**Material.** [Cuaderno en Colab](https://colab.research.google.com/github/achanesespigares/python-acinstitut/blob/main/cuadernos/sesion-29.ipynb) · [Diapositivas en PDF](https://achanesespigares.github.io/python-acinstitut/diapositivas/sesion-29.pdf) · [Cuaderno del proyecto](https://colab.research.google.com/github/achanesespigares/python-acinstitut/blob/main/cuadernos/proyecto-2.ipynb)
+
 | Tiempo | Qué se hace |
 |---|---|
 | 0:00 | **Simulacro PCAP**: 42 preguntas en 65 minutos, con el temporizador del libro. |
@@ -603,6 +631,8 @@ print(es_primo(9), es_primo(7), es_primo(2))
 ## Sesión 30 · Proyecto 2: exposiciones
 
 **Objetivo.** Explicar a otros un programa propio, su diseño y sus decisiones.
+
+**Material.** [Cuaderno en Colab](https://colab.research.google.com/github/achanesespigares/python-acinstitut/blob/main/cuadernos/sesion-30.ipynb) · [Diapositivas en PDF](https://achanesespigares.github.io/python-acinstitut/diapositivas/sesion-30.pdf) · [Cuaderno del proyecto](https://colab.research.google.com/github/achanesespigares/python-acinstitut/blob/main/cuadernos/proyecto-2.ipynb)
 
 | Tiempo | Qué se hace |
 |---|---|

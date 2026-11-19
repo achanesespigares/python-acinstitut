@@ -29,6 +29,9 @@ herramientas/trazar.py      genera las trazas ejecutando el código con sys.sett
 herramientas/laboratorio.py  el puente del laboratorio: el navegador (Pyodide) lo ejecuta junto a trazar.py
 herramientas/cobertura.py    escribe capitulos/cobertura.md y avisa si algún objetivo del temario queda sin cubrir
 herramientas/preguntas.py   comprueba el banco de preguntas ejecutándolo y lo coloca en el libro
+herramientas/sesiones.py    los cuadernos de Colab y las diapositivas de las 30 sesiones, a partir de la guía y los capítulos
+cuadernos/                  sesion-NN.ipynb (uno por sesión) y proyecto-1/2.ipynb, que se abren en Colab desde GitHub
+diapositivas/               fuentes/sesion-NN.typ y comun-diapos.typ; pdf/ac-institut/ se publica en la web
 preguntas/pcep.py           banco de preguntas tipo examen PCEP (original), con su sección y su capítulo
 preguntas/pcap.py           banco de preguntas tipo examen PCAP (original)
 pdf/                        la guía del curso en PDF: md2typ.py convierte las páginas curso-*.md a Typst (paquete ac-institut)
@@ -47,6 +50,15 @@ npm run trazas         # regenera las trazas de todos los capítulos
 npm start              # vista previa en http://localhost:3000
 npm run build          # versión estática en _build/html
 ```
+
+## Cuadernos y diapositivas de las sesiones
+
+```bash
+python3 herramientas/sesiones.py         # cuadernos/ y diapositivas/fuentes/, y la línea «Material.» de la guía
+python3 herramientas/sesiones.py --pdf   # además, los PDF con las dos pieles (ac-institut y rocafort)
+```
+
+Todo sale de `capitulos/curso-modulo-*.md`, `curso-proyecto-*.md` y de los capítulos: si cambian, se vuelve a ejecutar. El script ejecuta cada cuaderno para comprobarlo y marca las celdas que acaban en error a propósito. Los PDF necesitan `pdf/paquetes` y `pdf/fuentes` (el paquete ac-institut, desde Dropbox). Las diapositivas con la piel de Rocafort no se suben al repositorio. Los cuadernos se abren en Colab con `https://colab.research.google.com/github/achanesespigares/python-acinstitut/blob/main/cuadernos/sesion-NN.ipynb`.
 
 Con la distribución oficial de Jupyter Book 2 funciona igual: `jupyter book start` y `jupyter book build --html`.
 
