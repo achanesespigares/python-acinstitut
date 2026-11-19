@@ -135,6 +135,12 @@ table.tz-tabla tr.fantasma td{ color:var(--fila); }
 .tz-b.prim{ background:var(--acento); border-color:var(--acento); color:#fff; }
 .tz-b.prim:hover{ background:var(--oscuro); }
 .tz-b:disabled{ opacity:.35; cursor:default; }
+.tz-teclas{ display:none; font:500 12.5px/1.3 var(--mono); color:var(--banda); }
+.tz:fullscreen{ overflow:auto; padding:24px 4vw 0; border:0; border-radius:0; margin:0; }
+.tz:fullscreen > :not(.tz-mandos){ zoom:1.3; }
+.tz:fullscreen .tz-mandos{ position:sticky; bottom:0; background:#fff; padding:12px 0 16px; z-index:5; }
+.tz:fullscreen .tz-teclas{ display:inline; }
+.tz:focus{ outline:none; }
 .tz-b:focus-visible,.tz-pred:focus-visible{ outline:2px solid var(--acento); outline-offset:2px; }
 .tz-cuenta{ font:500 13px/1 var(--mono); color:var(--banda); }
 .tz-toggle{ display:flex; gap:7px; align-items:center; font-size:14px; color:var(--sub); cursor:pointer; margin-left:auto; }
@@ -278,7 +284,9 @@ const PLANTILLA = `
     <button type="button" class="tz-b prim tz-sigue">Paso ▶</button>
     <button type="button" class="tz-b tz-play">Reproducir</button>
     <button type="button" class="tz-b tz-reinicia">Reiniciar</button>
+    <button type="button" class="tz-b tz-proy" aria-pressed="false" title="Pantalla completa para proyectar en clase (tecla F)">Proyectar</button>
     <span class="tz-cuenta"></span>
+    <span class="tz-teclas">→ paso · ← atrás · P reproducir · Inicio reiniciar · Esc salir</span>
     <label class="tz-toggle"><input type="checkbox" class="tz-pred"> Modo predicción</label>
   </div>
 </div>`;
@@ -1261,10 +1269,32 @@ function renderTraza({ model, el }) {
     q(".tz-play").textContent = "Pausa";
     timer = setInterval(() => { avanza(); if (oculto) para(); }, 1100);
   });
+  // Proyectar: el visualizador a pantalla completa con letra grande; se maneja con el teclado
+  // o con un mando de presentaciones (envían Avance Pág / Retroceso Pág).
+  const raiz = q(".tz"), proy = q(".tz-proy");
+  raiz.tabIndex = -1;
+  const proyectando = () => ((raiz.getRootNode().fullscreenElement || document.fullscreenElement) === raiz);
+  if (!document.fullscreenEnabled || !raiz.requestFullscreen) proy.remove();
+  else proy.addEventListener("click", () => { if (proyectando()) document.exitFullscreen(); else raiz.requestFullscreen().then(() => raiz.focus()).catch(() => {}); });
+  const alCambiarPantalla = () => {
+    const on = proyectando();
+    proy.setAttribute("aria-pressed", on ? "true" : "false");
+    proy.textContent = on ? "Salir de la proyección" : "Proyectar";
+    pinta();
+  };
+  document.addEventListener("fullscreenchange", alCambiarPantalla);
+  raiz.addEventListener("keydown", e => {
+    if (e.target.matches && e.target.matches("input, textarea, select")) return;
+    const acciones = { ArrowRight: () => q(".tz-sigue").click(), PageDown: () => q(".tz-sigue").click(),
+      ArrowLeft: () => q(".tz-atras").click(), PageUp: () => q(".tz-atras").click(),
+      Home: () => q(".tz-reinicia").click(), p: () => q(".tz-play").click(), P: () => q(".tz-play").click(),
+      f: () => proy.isConnected && proy.click(), F: () => proy.isConnected && proy.click() };
+    if (acciones[e.key] && !e.ctrlKey && !e.metaKey && !e.altKey) { e.preventDefault(); acciones[e.key](); }
+  });
   const alRedimensionar = () => pinta();
   window.addEventListener("resize", alRedimensionar);
   pinta();
-  return () => { para(); window.removeEventListener("resize", alRedimensionar); };
+  return () => { para(); window.removeEventListener("resize", alRedimensionar); document.removeEventListener("fullscreenchange", alCambiarPantalla); };
 }
 
 export default { render };
