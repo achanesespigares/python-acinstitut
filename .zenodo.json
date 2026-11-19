@@ -1,0 +1,10 @@
+{
+  "title": "Programación en Python · Ver el código pensar",
+  "upload_type": "lesson",
+  "description": "Libro interactivo para aprender Python viendo cómo se ejecuta cada programa, línea a línea y con la memoria a la vista. Cubre el temario oficial de las certificaciones PCEP y PCAP, con laboratorio en el navegador, simulacros y un curso de 30 sesiones. AC Institut.",
+  "creators": [{ "name": "Chanes Espigares, Antonio" }],
+  "license": "cc-by-nc-sa-4.0",
+  "language": "spa",
+  "keywords": ["Python", "programación", "educación", "PCEP", "PCAP", "visualización de código", "Jupyter Book"],
+  "related_identifiers": [{ "identifier": "https://achanesespigares.github.io/python-acinstitut/", "relation": "isDocumentedBy", "resource_type": "publication-book" }]
+}
