@@ -1,6 +1,6 @@
 ---
-title: Programación en Python
-subtitle: Ver el código pensar
+title: Mirar y ver tu código pensar
+subtitle: Python, desde dentro
 ---
 
 **AC Institut · Programación · De cero a PCEP y PCAP**
