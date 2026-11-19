@@ -33,7 +33,7 @@ print(type(r(1, 6)))
 | 0:00 | Comentario del simulacro PCEP de la sesión 15: qué secciones fallaron más. Si quedan exposiciones del proyecto 1, se hacen ahora. |
 | 0:20 | **Situación**: una caja de herramientas; no se saca todo para apretar un tornillo. |
 | 0:30 | **Predice**. `round(2.5)` da 2: redondeo al par, una pregunta clásica de examen. |
-| 0:45 | Construcción: formas de `import`, `dir`, `__name__`, `sys.path`, paquetes, `pip`. |
+| 0:45 | Construcción: formas de `import`, `dir`, `__name__`, `sys.path`, paquetes y subpaquetes, `pip` y PyPI, y qué pasa cuando importar falla. |
 | 1:20 | Ejercicios del capítulo. |
 | 1:45 | Preguntas tipo examen PCAP y tarea 16. |
 
@@ -53,7 +53,7 @@ print(type(r(1, 6)))
 
 **Objetivo.** Lanzar excepciones, crear las propias y controlar exactamente qué parte de un `try` se ejecuta.
 
-**En el libro.** [Excepciones](13-excepciones.md) § 3–5.
+**En el libro.** [Excepciones](13-excepciones.md) § 3–6.
 
 ### Predice
 
@@ -77,7 +77,7 @@ print(f(0))
 | 0:00 | Corrección de la tarea 16. |
 | 0:15 | **Situación**: un parte de incidencias; cada tipo de avería va a un técnico distinto. |
 | 0:25 | **Predice**. El `finally` imprime antes que el `print` de fuera, aunque haya un `return`. |
-| 0:45 | Construcción: `raise`, `else`, `finally`, orden de los `except`, jerarquía de excepciones, clases propias. |
+| 0:45 | Construcción: `raise`, `else`, `finally`, orden de los `except`, varios tipos en un `except`, jerarquía hasta `BaseException`, relanzar con `raise`, clases propias. |
 | 1:20 | Ejercicios del capítulo. |
 | 1:45 | Preguntas tipo examen y tarea 17. |
 

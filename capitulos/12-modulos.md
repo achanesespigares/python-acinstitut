@@ -139,6 +139,63 @@ matplotlib>=3.9
 
 `pip freeze > requirements.txt` lo genera con lo que tienes instalado, y `pip install -r requirements.txt` instala todo lo que lista. `pip list` enseña lo instalado y `pip show numpy`, los datos de un paquete.
 
+### 5 · Cuando importar sale mal
+
+**Si el módulo no existe**, o no está en ninguna carpeta de `sys.path`, Python lanza `ModuleNotFoundError`, que es un tipo de `ImportError`:
+
+```{code-cell} python
+try:
+    import numpi
+except ModuleNotFoundError as e:
+    print(type(e).__name__, "·", e)
+print(issubclass(ModuleNotFoundError, ImportError))
+```
+
+Imprime `ModuleNotFoundError · No module named 'numpi'` y `True`. Si el módulo existe pero no contiene el nombre que pides, como en `from math import raiz`, el error es un `ImportError` a secas.
+
+**Si dos módulos tienen nombres iguales dentro**, el último `from … import` gana y **tapa** al anterior:
+
+```python
+from math import sqrt
+from cmath import sqrt      # el sqrt de los números complejos
+print(sqrt(-4))             # 2j: ya no es el de math
+```
+
+Con `import math` e `import cmath`, cada nombre va con su módulo delante (`math.sqrt`, `cmath.sqrt`) y no chocan. Para eso sirven también los alias: `from cmath import sqrt as sqrt_complejo`.
+
+**Los paquetes pueden anidarse**: un paquete dentro de otro es un **subpaquete**, y cada carpeta lleva su propio `__init__.py`. Se importa encadenando nombres con puntos:
+
+```text
+tienda/
+├── __init__.py
+└── pagos/
+    ├── __init__.py
+    └── caja.py          ← define total(precios)
+```
+
+```python
+import tienda.pagos.caja
+from tienda.pagos.caja import total
+from tienda.pagos import caja as c
+print(tienda.pagos.caja.total([2, 3]), total([1]), c.total([4, 4]))    # 5 1 8
+```
+
+Con `import tienda.pagos.caja` hay que escribir el camino entero cada vez; con `from … import` basta el último nombre. Si una parte del camino no existe, como `import tienda.cobros`, el error es el mismo `ModuleNotFoundError`.
+
+**Una importación circular** se da cuando dos módulos se importan entre sí:
+
+```python
+# nombres.py                         # saludos.py
+from saludos import saluda           from nombres import nombre
+
+def nombre():                        def saluda():
+    return "Ana"                         return "Hola, " + nombre()
+```
+
+Al ejecutar `nombres.py`, su primera línea pide `saluda` a `saludos`, así que Python empieza a cargar `saludos.py`. Pero la primera línea de `saludos.py` pide `nombre` a `nombres`, y cargar `nombres` vuelve a pedir `saluda` a `saludos`… que está a medio cargar y todavía no ha llegado a definir `saluda`. El resultado es un `ImportError` del tipo `cannot import name 'saluda'`. La solución habitual es sacar lo que comparten a un tercer módulo del que dependan los dos.
+
+Por último, los paquetes externos que instala `pip` vienen de **PyPI** (*Python Package Index*, pypi.org), el repositorio público de paquetes de Python.
+
 ## Conexiones
 
 - Un módulo es la versión grande de una función: una caja con nombre, que se usa sin mirar dentro.

@@ -166,6 +166,59 @@ except NotaInvalida as e:
     print("Error:", e)
 ```
 
+### 6 · Varios tipos a la vez, la jerarquía entera y volver a lanzar
+
+Un mismo `except` puede atender **varios tipos** a la vez: se escriben en una tupla.
+
+```{code-cell} python
+def convierte(texto, divisor):
+    try:
+        return int(texto) / divisor
+    except (ValueError, ZeroDivisionError) as e:
+        print("No se puede:", type(e).__name__)
+        return None
+
+print(convierte("8", 2))
+print(convierte("ocho", 2))
+print(convierte("8", 0))
+```
+
+Imprime `4.0`, después `No se puede: ValueError` y `None`, y por último `No se puede: ZeroDivisionError` y `None`. La variable `e` guarda la excepción que haya saltado, sea cual sea de las dos.
+
+En lo más alto de la jerarquía no está `Exception` sino **`BaseException`**. De ella cuelga `Exception`, madre de casi todos los errores de un programa, y también unas pocas excepciones que no son errores del programa: `SystemExit` (la lanza `sys.exit()`), `KeyboardInterrupt` (al pulsar Ctrl+C para detener un programa) y `GeneratorExit`.
+
+```text
+BaseException
+├── SystemExit
+├── KeyboardInterrupt
+├── GeneratorExit
+└── Exception
+    ├── ArithmeticError ── ZeroDivisionError
+    ├── LookupError ────── IndexError, KeyError
+    ├── ValueError, TypeError, NameError…
+    └── ImportError ────── ModuleNotFoundError
+```
+
+Por eso `except Exception:` atrapa los errores del programa pero deja que Ctrl+C lo detenga, mientras que un `except:` sin tipo, o `except BaseException:`, lo atrapa todo, incluso eso. Lo recomendable es atrapar siempre lo más concreto posible.
+
+A veces se quiere **anotar** un error y dejar que siga subiendo para que lo atienda quien llamó. Un `raise` solo, sin nada detrás y dentro de un `except`, **vuelve a lanzar** la misma excepción:
+
+```{code-cell} python
+def lee_nota(texto):
+    try:
+        return float(texto)
+    except ValueError:
+        print("Aviso: dato raro ->", texto)
+        raise
+
+try:
+    lee_nota("siete")
+except ValueError as e:
+    print("Lo atiende quien llamó:", e)
+```
+
+La función avisa, `raise` relanza el mismo `ValueError`, la función se interrumpe y el error sube hasta el `try` de fuera, que imprime `Lo atiende quien llamó: could not convert string to float: 'siete'`.
+
 ## Conexiones
 
 - `try`/`except` es un condicional especial: en lugar de preguntar antes, se intenta y se reacciona si falla. En Python se dice que es mejor pedir perdón que pedir permiso.

@@ -70,6 +70,8 @@ print(junto, suma, media)
 
 :::{warning} Trampa · `input()` siempre devuelve texto
 Lo que el usuario escribe con `input()` llega como `str`, aunque sea un número. Si vas a hacer cuentas con ello, conviértelo primero: `edad = int(input("¿Cuántos años tienes? "))`.
+
+Las cuatro conversiones básicas llevan el nombre del tipo al que convierten: `int("42")` da `42`, `float("3.5")` da `3.5`, `str(7)` da `"7"` y `bool(0)` da `False`. Con `bool()`, el cero y el texto vacío `""` son `False`, y casi todo lo demás, como `bool("hola")`, es `True`. Si el texto no tiene forma de número, `int("hola")` lanza un `ValueError`.
 :::
 
 ### 3 · Horas y minutos: división entera y resto

@@ -63,6 +63,7 @@ project:
         - file: capitulos/20-probar-y-depurar.md
     - title: Practicar para el examen
       children:
+        - file: capitulos/cobertura.md
         - file: capitulos/simulacro-pcep.md
         - file: capitulos/simulacro-pcap.md
     - title: El curso en 30 sesiones

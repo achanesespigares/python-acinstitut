@@ -32,7 +32,7 @@ Cada módulo termina con un **proyecto práctico** que el alumnado construye en 
 | **14** | Errores, ficheros, CSV y módulos | [Excepciones](13-excepciones.md) §1–2 · [CSV, math y random](27-csv-math-random.md) | hito 3 |
 | **15** | **Proyecto 1** y simulacro PCEP | [Proyecto 1](curso-proyecto-1.md) · [Simulacro PCEP](simulacro-pcep.md) | exposición |
 | **16** | Módulos y paquetes | [Módulos](12-modulos.md) | tarea 16 |
-| **17** | Excepciones a fondo | [Excepciones](13-excepciones.md) §3–5 | tarea 17 |
+| **17** | Excepciones a fondo | [Excepciones](13-excepciones.md) §3–6 | tarea 17 |
 | **18** | Clases y objetos | [Clases y objetos](14-clases.md) §1–2 | tarea 18 |
 | **19** | Atributos de clase, `__str__` y herencia | [Clases y objetos](14-clases.md) §3–4 | tarea 19 |
 | **20** | Nombres ocultos y polimorfismo | [Clases a fondo](18-clases-a-fondo.md) §1–3 | tarea 20 |

@@ -61,6 +61,19 @@ P("P12-10", "12", 1, "¿Qué guarda Python en la carpeta `__pycache__`?",
    "Los datos que el programa guarda entre ejecuciones", "Los paquetes instalados con pip"], 0,
   "La primera vez que importa un módulo, Python lo compila a bytecode y lo guarda allí para cargarlo más rápido la siguiente vez.")
 
+P("P12-11", "12", 1, "¿Qué imprime este programa?", ["ModuleNotFoundError", "ImportError", "NameError", "No imprime nada"], 0,
+  "`except ImportError` también atiende a sus subclases, y `ModuleNotFoundError` es una de ellas. `type(e)` dice el tipo real del objeto: `ModuleNotFoundError`.",
+  code='try:\n    import numpi\nexcept ImportError as e:\n    print(type(e).__name__)', v="salida", mono=True)
+P("P12-12", "12", 1, "¿Qué imprime este programa?", ["2j", "2.0", "Lanza ValueError", "-2"], 0,
+  "El segundo `from … import sqrt` tapa al primero: `sqrt` es ya el de `cmath`, que trabaja con números complejos y devuelve `2j`. Con `import math` e `import cmath` no habría choque.",
+  code='from math import sqrt\nfrom cmath import sqrt\nprint(sqrt(-4))', v="salida", mono=True)
+P("P12-13", "12", 1, "El fichero `tienda/pagos/caja.py` define `total()`, y las carpetas `tienda` y `pagos` tienen su `__init__.py`. ¿Qué instrucción permite llamar a la función escribiendo solo `total([2, 3])`?",
+  ["from tienda.pagos.caja import total", "import tienda.pagos.caja", "import total from tienda.pagos.caja", "from tienda.pagos import total"], 0,
+  "`from paquete.subpaquete.modulo import nombre` trae el nombre al programa. Con `import tienda.pagos.caja` habría que escribir el camino entero; la tercera no es Python y la cuarta busca `total` en `pagos/__init__.py`, donde no está.", mono=True)
+P("P12-14", "12", 1, "`a.py` empieza con `from b import f` y `b.py` empieza con `from a import g`. ¿Qué pasa al ejecutar `a.py`?",
+  ["Python lanza un ImportError por la importación circular", "Funciona: Python resuelve solo el orden", "Se queda colgado para siempre", "Lanza SyntaxError"], 0,
+  "Es una importación circular: cada módulo necesita al otro antes de terminar de cargarse, y uno de los dos está a medio cargar cuando se le pide un nombre. El remedio es llevar lo compartido a un tercer módulo.")
+
 # ---------------------------------------------------------------- 2 · excepciones
 P("P13-1", "13", 2, "¿Qué imprime este programa?", ["A\nC", "A\nB\nC", "A", "B\nC"], 0,
   "Hay error: se ejecuta el `except` (A), no el `else`, que solo corre si no hubo error. El `finally` se ejecuta siempre (C).",
@@ -92,6 +105,16 @@ P("P13-9", "13", 2, "¿De qué clase conviene heredar al crear tus propias excep
 P("P13-10", "13", 2, "¿Qué imprime este programa?", ["V 12", "Lanza NotaInvalida", "12", "V NotaInvalida"], 0,
   "`NotaInvalida` hereda de `ValueError`, así que `except ValueError` también la atrapa. Imprimir `e` muestra su mensaje.",
   code='class NotaInvalida(ValueError):\n    pass\n\ntry:\n    raise NotaInvalida("12")\nexcept ValueError as e:\n    print("V", e)', v="salida")
+
+P("P13-11", "13", 2, "¿Qué imprime este programa?", ["Z", "V", "Z\nV", "Lanza ZeroDivisionError"], 0,
+  "Un `except` con una tupla atiende cualquiera de sus tipos. `1 / 0` lanza `ZeroDivisionError`, que está en la tupla del primero: imprime Z y el segundo ya no se mira.",
+  code='try:\n    1 / 0\nexcept (ValueError, ZeroDivisionError):\n    print("Z")\nexcept Exception:\n    print("V")', v="salida", mono=True)
+P("P13-12", "13", 2, "¿Qué imprime este programa?", ["False True", "True True", "True False", "False False"], 0,
+  "`KeyboardInterrupt` (Ctrl+C) no es un error del programa: cuelga directamente de `BaseException`, no de `Exception`. Por eso `except Exception` no impide detener el programa con Ctrl+C.",
+  code='print(issubclass(KeyboardInterrupt, Exception), issubclass(KeyboardInterrupt, BaseException))', v="salida", mono=True)
+P("P13-13", "13", 2, "¿Qué imprime este programa?", ["A\nB", "A", "B", "A\nLanza ValueError"], 0,
+  "Dentro de `f`, el `except` imprime A y el `raise` solo vuelve a lanzar el mismo `ValueError`. Sale de `f` y lo atiende el `except` de fuera, que imprime B.",
+  code='def f():\n    try:\n        int("x")\n    except ValueError:\n        print("A")\n        raise\n\ntry:\n    f()\nexcept ValueError:\n    print("B")', v="salida", mono=True)
 
 # ---------------------------------------------------------------- 3 · cadenas
 P("P19-1", "19", 3, "¿Qué imprime este programa?", ["32 d", "-32 d", "32 c", "1 d"], 0,

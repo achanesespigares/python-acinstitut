@@ -139,6 +139,35 @@ bisiesto = (año % 4 == 0 and año % 100 != 0) or año % 400 == 0
 print(bisiesto)
 ```
 
+### Condiciones anidadas
+
+Un `if` puede ir **dentro** de otro: la pregunta de dentro solo se hace si la de fuera ha tomado ese camino.
+
+```{code-cell} python
+edad = 16
+con_permiso = True
+if edad >= 18:
+    print("Puede entrar")
+else:
+    if con_permiso:
+        print("Puede entrar con permiso")
+    else:
+        print("No puede entrar")
+```
+
+Imprime `Puede entrar con permiso`. Un `if` dentro de un `else` es un `elif` disfrazado: se podría escribir `elif con_permiso:` con una sangría menos. Pero a veces la pregunta de dentro es una **segunda** pregunta, no otra rama:
+
+```{code-cell} python
+nota = 9.5
+if nota >= 5:
+    print("Aprobado")
+    if nota >= 9:
+        print("Y con matrícula")
+print("Fin")
+```
+
+Con 9,5 imprime las tres líneas; con un 7, solo `Aprobado` y `Fin`; con un 3, solo `Fin`. Lo que decide qué pregunta está dentro de cuál es la **sangría**.
+
 ## Conexiones
 
 - El `if` es la segunda pieza de todo algoritmo. Con la asignación y la iteración ya tienes las tres.
