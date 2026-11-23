@@ -30,6 +30,10 @@ En el resto del libro los visualizadores enseñan programas que ya están escrit
 - Solo la biblioteca estándar de Python: `math`, `random`, `csv`… sí; paquetes externos, no.
 :::
 
+## El laboratorio completo
+
+Este capítulo tiene un laboratorio hermano, fuera del libro: [«Mirar y ver · cómo piensa tu código»](https://achanesespigares.github.io/python-acinstitut/mirar-y-ver/). Está organizado en ocho áreas (Variables, Decisiones, Patrones, Funciones, Colecciones, Algoritmos, Física y código, y Tu código) y 22 puestos. Cada puesto trae varias versiones del mismo programa, una con una trampa típica, y un chequeo automático al final.
+
 ## Ideas para practicar
 
 - Copia un ejercicio de cualquier capítulo, **predice** qué hará y compruébalo aquí.

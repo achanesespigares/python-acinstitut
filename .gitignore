@@ -3,5 +3,7 @@ _build/
 _templates/
 .DS_Store
 __pycache__/
+# El laboratorio Mirar y ver se construye en la publicación (mirar-y-ver/fuente/construir.py)
+mirar-y-ver/index.html
 # Las diapositivas con la piel de Rocafort se entregan aparte, no se publican
 diapositivas/pdf/rocafort/

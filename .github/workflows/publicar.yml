@@ -52,6 +52,13 @@ jobs:
           for f in pyodide.js pyodide.asm.js pyodide.asm.wasm python_stdlib.zip pyodide-lock.json; do
             curl -sSfL -o _build/html/pyodide/$f https://cdn.jsdelivr.net/pyodide/v0.29.5/full/$f
           done
+      - name: Laboratorio «Mirar y ver · cómo piensa tu código»
+        run: |
+          mkdir -p _build/html/mirar-y-ver/py
+          python3 mirar-y-ver/fuente/construir.py _build/html/mirar-y-ver/index.html
+          for f in pyodide.js pyodide.asm.mjs pyodide.asm.wasm python_stdlib.zip pyodide-lock.json; do
+            curl -sSfL -o _build/html/mirar-y-ver/py/$f https://cdn.jsdelivr.net/npm/pyodide@314.0.7/$f
+          done
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
