@@ -37,6 +37,7 @@ preguntas/pcap.py           banco de preguntas tipo examen PCAP (original)
 pdf/                        la guía del curso en PDF: md2typ.py convierte las páginas curso-*.md a Typst (paquete ac-institut)
 descargas/                  los PDF ya generados, enlazados desde la portada
 estilo/ac-institut.css      piel AC Institut (vino, Montserrat, Arimo, IBM Plex Mono)
+mirar-y-ver/                el laboratorio «Mirar y ver · cómo piensa tu código»: 8 áreas y 22 puestos, en /mirar-y-ver/
 .github/workflows/          publicación automática en GitHub Pages
 ```
 

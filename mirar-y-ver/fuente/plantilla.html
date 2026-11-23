@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mirar y ver · cómo piensa tu código</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;600;700&family=Arimo:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* VOICE everyday learning: a programming lab, calm and exact, AC Institut house style (same family as the science lab)
+   IDEA the computer's memory laid on the bench: code with its execution arrow, the list as a row of cells, variables as boxes
+   PICTURE code left, memory right, a cursor that walks the cells while the trace table grows row by row
+   COLOUR white ground, ink, berenjena #5A3466 (the AC technology palette) as accent, grey side band
+   TYPE Montserrat titles and labels, Arimo text, IBM Plex Mono for code
+   LAYOUT laptop: bench left, controls right, trace table full width, two reading boxes, map of the eight areas; phone: stacked */
+:root{color-scheme:light dark;--bg:light-dark(#ffffff,#141017);--ink:light-dark(#111111,#ece6ef);--sub:light-dark(#333333,#c4bac9);--mut:light-dark(#6B6B6B,#978d9c);--acc:light-dark(#5A3466,#CBA8D8);--accf:light-dark(#5A3466,#6f4582);--soft:light-dark(#F4F2F5,#1f1824);--dk:light-dark(#412549,#dcc6e5);--rule:light-dark(#9A9A9A,#463b4c);--row:light-dark(#D4D4D4,#31283a);--surf:light-dark(#F4F4F4,#1a151e);--ok:light-dark(#2D6A3E,#7fd19a);--ko:light-dark(#A32D2D,#ff9090);--band:light-dark(#6B6B6B,#2f2834);--mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+html,body{margin:0}html{scroll-padding-top:20px}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 Arimo,"Liberation Sans",Arial,sans-serif;overflow-x:clip;border-left:10px solid var(--band)}
+h1,h2,h3{font-family:Montserrat,Arial,sans-serif}
+.band{padding:clamp(22px,3.4vw,48px) max(4vw,16px)}
+.wrap{max-width:1240px;margin:0 auto}
+header.top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
+.kick{font:600 12px/1.3 Montserrat,Arial,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);margin:0 0 10px}
+h1{font-weight:700;font-size:clamp(32px,5vw,46px);line-height:1.05;letter-spacing:-.02em;margin:0}
+.sub1{font:500 clamp(18px,2.4vw,22px)/1.25 Montserrat,Arial,sans-serif;color:var(--acc);margin:8px 0 0}
+.logo{display:flex;align-items:center;gap:8px;font-family:Montserrat,Arial,sans-serif;white-space:nowrap}
+.logo b{font-weight:700;font-size:24px;letter-spacing:-.02em}.logo i{width:1px;height:22px;background:var(--rule)}.logo span{font-weight:300;font-size:18px;color:var(--mut)}
+hr.r{border:0;border-top:1.5px solid var(--rule);margin:18px 0 0}
+.areas{display:flex;gap:20px;overflow-x:auto;padding-top:14px}
+.areas a{flex:none;font:600 15px Montserrat,Arial,sans-serif;color:var(--mut);text-decoration:none;padding:6px 0;border-bottom:3px solid transparent;min-height:36px;display:flex;align-items:center}
+.areas a.on{color:var(--ink);border-color:var(--accf)}
+.puestos{display:flex;gap:8px;overflow-x:auto;padding:14px 0 2px}
+.puestos span{flex:none;font:500 14px/1 Montserrat,Arial,sans-serif;padding:10px 14px;border:1px dashed var(--row);border-radius:22px;min-height:40px;display:flex;align-items:center;gap:6px;color:var(--mut)}
+.puestos a{flex:none;font:500 14px/1 Montserrat,Arial,sans-serif;padding:10px 14px;border:1px solid var(--row);border-radius:22px;min-height:40px;display:flex;align-items:center;gap:6px;color:var(--sub);text-decoration:none}
+.puestos a.on{background:var(--accf);color:#fff;border-color:var(--accf)}
+.cell .i b{color:var(--acc)}
+.mleg{font-size:12px;color:var(--mut);margin:-6px 0 0}.mleg b{color:var(--acc)}
+.lab{display:grid;grid-template-columns:minmax(0,1.8fr) minmax(0,1fr);gap:24px;align-items:start}
+.box{border:1.5px solid var(--ink)}
+.bh{background:var(--accf);color:#fff;font:600 12px/1 Montserrat,Arial,sans-serif;letter-spacing:.08em;text-transform:uppercase;padding:9px 12px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.bh.g{background:var(--band)}.bh.k{background:var(--ink);color:var(--bg)}.bh .t{text-transform:none;letter-spacing:.02em}
+.bench{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr)}
+.code{border-right:1px solid var(--row);padding:10px 0;font:14px/1.75 var(--mono);overflow-x:auto}
+.ln{display:grid;grid-template-columns:22px 26px minmax(0,1fr);white-space:pre;padding-right:10px}
+.ln .a{color:var(--acc);font-weight:600;text-align:center}.ln .n{color:var(--mut);text-align:right;padding-right:8px}
+.ln.next{background:var(--soft)}.ln.next .c{font-weight:600}
+.ln.prev .a{color:var(--mut)}
+.ln{grid-template-columns:22px 26px minmax(0,1fr) auto}.ln .ct{font:600 12px Montserrat,Arial,sans-serif;color:var(--mut);padding-left:8px;align-self:center}
+.ln .ct b{color:var(--ok)}.ln .ct i{font-style:normal;color:var(--ko)}.ln.never .c{color:var(--mut)}
+.path{padding:10px 12px 0;display:flex;flex-wrap:wrap;gap:4px;align-items:center;font:12px Montserrat,Arial,sans-serif;color:var(--mut)}
+.path span{font:600 12px var(--mono);min-width:22px;height:22px;display:grid;place-items:center;border:1px solid var(--row);color:var(--sub)}
+.path span.on{background:var(--accf);color:#fff;border-color:var(--accf)}
+.leg{font:12px/1.4 Arimo,Arial,sans-serif;color:var(--mut);padding:8px 12px 0;display:flex;gap:14px;flex-wrap:wrap}
+.leg b{color:var(--acc)}
+.mem{padding:12px 14px;display:grid;gap:14px;align-content:start;min-height:260px}
+.mh{font:600 12px Montserrat,Arial,sans-serif;color:var(--mut);letter-spacing:.06em;text-transform:uppercase;margin:0}
+.lrow{display:grid;gap:6px}
+.lname{font:600 14px var(--mono);display:flex;align-items:center;gap:6px}
+.lname em{font-style:normal;color:var(--acc)}
+.track{position:relative;padding-top:26px;overflow-x:auto}
+.cells{display:flex;gap:6px}
+.cell{flex:none;width:52px;text-align:center}
+.cell .v{height:44px;display:grid;place-items:center;border:1.5px solid var(--ink);font:600 16px var(--mono);background:var(--bg);transition:background .25s}
+.cell .i{font:12px var(--mono);color:var(--mut);margin-top:3px}
+.cell.seen .v{background:var(--surf);color:var(--mut)}
+.cell.cur .v{background:var(--soft);border-color:var(--accf);border-width:3px;color:var(--ink)}
+.cell.ghost .v{border-style:dashed;border-color:var(--accf)}
+.cell.end .v{border:1.5px dashed var(--row);color:var(--mut);font:500 12px Montserrat,Arial,sans-serif}
+.cur-mark{position:absolute;top:0;left:0;width:52px;text-align:center;font:600 12px Montserrat,Arial,sans-serif;color:var(--acc);transition:transform .35s ease}
+.vars{display:flex;flex-wrap:wrap;gap:10px}
+.var{display:grid;gap:3px}
+.var .k{font:600 13px var(--mono);color:var(--sub)}
+.var .v{min-width:56px;height:44px;padding:0 10px;display:grid;place-items:center;border:1.5px solid var(--ink);font:600 16px var(--mono);transition:background .25s}
+.var.nu .v{background:var(--soft);border-color:var(--accf);border-width:3px}
+.var.lp .k{color:var(--acc)}
+.empty{color:var(--mut);font-size:14px;margin:0}
+.out{border-top:1px solid var(--row);padding:8px 12px;font:14px/1.5 var(--mono);display:flex;gap:10px;min-height:40px;align-items:baseline}
+.out span{font:600 12px Montserrat,Arial,sans-serif;color:var(--mut);letter-spacing:.06em;text-transform:uppercase;flex:none}
+.out pre{margin:0;white-space:pre-wrap}
+.res{padding:12px 14px;border-top:1px solid var(--row);font-size:15px;background:var(--soft);min-height:50px}
+.res code{font:600 14px var(--mono)}
+.res.e{color:var(--ko)}
+.panel{display:grid;gap:18px}
+.seg{display:grid;grid-template-columns:1fr 1fr;border:1.5px solid var(--ink)}
+.seg button{font:600 15px Montserrat,Arial,sans-serif;min-height:44px;border:0;background:var(--bg);color:var(--ink);cursor:pointer}
+.seg button+button{border-left:1.5px solid var(--ink)}
+.seg button[aria-pressed=true]{background:var(--ink);color:var(--bg)}
+.lbl{font-size:13px;color:var(--mut);margin:0 0 6px}
+.opt{display:flex;flex-wrap:wrap;gap:6px}
+.opt button{flex:1 1 auto;font:600 13px Montserrat,Arial,sans-serif;min-height:42px;padding:0 12px;border:1px solid var(--rule);border-radius:22px;background:var(--bg);color:var(--ink);cursor:pointer}
+.opt button[aria-pressed=true]{background:var(--accf);color:#fff;border-color:var(--accf)}
+.opt button.tr[aria-pressed=false]{border-style:dashed;color:var(--ko)}
+.steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.steps button,.act button{font:600 14px Montserrat,Arial,sans-serif;min-height:44px;border:1px solid var(--rule);background:var(--bg);color:var(--ink);border-radius:6px;cursor:pointer;padding:0 10px}
+.steps button:disabled{opacity:.4;cursor:default}
+.pri{background:var(--accf)!important;color:#fff!important;border-color:var(--accf)!important}
+.pos{display:flex;justify-content:space-between;font-size:14px;color:var(--sub);margin-top:8px}
+.pos output{font:600 14px Montserrat,Arial,sans-serif;color:var(--ink)}
+input[type=range]{width:100%;height:36px;accent-color:var(--accf);margin:0}
+button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.pred{border:1px solid var(--row);border-left:6px solid var(--accf);padding:12px 14px;background:var(--soft)}
+.pred h3{margin:0 0 4px;font-size:16px}
+.pred p{margin:0 0 10px;font-size:14px;color:var(--sub)}
+.pred .q{font-size:15px;color:var(--ink)}
+.pred .q code{font:600 14px var(--mono);background:var(--bg);padding:1px 5px}
+.pin{display:flex;gap:8px}
+.pin input{flex:1;font:16px var(--mono);min-height:44px;padding:0 10px;border:1.5px solid var(--ink);background:var(--bg);color:var(--ink)}
+.act{display:flex;gap:8px;margin-top:8px}.act button{flex:1}
+.fb{font-size:14px;margin:8px 0 0;min-height:20px}.fb .y{color:var(--ok)}.fb .x{color:var(--ko)}
+.score{font:600 13px Montserrat,Arial,sans-serif;color:var(--acc)}
+.ed textarea{width:100%;min-height:190px;font:14px/1.6 var(--mono);padding:10px;border:1.5px solid var(--ink);background:var(--bg);color:var(--ink);resize:vertical;tab-size:4}
+.stat{font-size:13px;color:var(--mut);margin:6px 0 0}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th{font:600 12px Montserrat,Arial,sans-serif;color:var(--mut);text-align:right;padding:6px 10px;border-bottom:1px solid var(--row);white-space:nowrap}
+th:nth-child(-n+2){text-align:left}
+td{padding:7px 10px;border-bottom:1px dashed var(--row);font:14px var(--mono);text-align:right;white-space:nowrap}
+td:nth-child(-n+2){text-align:left}
+td.ch{font-weight:600;color:var(--acc)}
+tr.hl td{background:var(--soft)}tr.hl td:first-child{box-shadow:inset 4px 0 0 var(--accf)}
+td.src{font-size:13px;color:var(--sub);white-space:pre}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;margin-top:28px}
+.bb{padding:14px 16px}
+.say{font-size:17px;line-height:1.5;font-style:italic;color:var(--dk);margin:0 0 12px;border-left:4px solid var(--accf);padding-left:12px}
+.anat{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 12px}
+.anat div{background:var(--soft);padding:10px;font-size:14px}
+.anat b{display:block;font:600 12px Montserrat,Arial,sans-serif;color:var(--acc);letter-spacing:.04em;text-transform:uppercase;margin-bottom:2px}
+.anat code,.bb p code{font:600 13px var(--mono)}
+.bb p{margin:0 0 10px;font-size:15px}
+.chk{display:flex;gap:10px;align-items:baseline;border:1px solid var(--row);padding:10px 12px;font-size:15px}
+.chk b{font:600 12px Montserrat,Arial,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);flex:none}
+.chk .y{color:var(--ok)}.chk .x{color:var(--ko)}
+.lk{font:600 14px Montserrat,Arial,sans-serif;color:var(--acc);background:none;border:0;padding:8px 0;cursor:pointer;text-decoration:underline;min-height:40px}
+h2{font-size:clamp(22px,3vw,28px);font-weight:700;letter-spacing:-.01em;margin:0}
+.lead{color:var(--sub);margin:6px 0 16px;max-width:72ch}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:14px}
+.st{border:1px solid var(--row);padding:14px 16px;display:grid;gap:6px;align-content:start}
+.st.on{border:2px solid var(--accf)}
+.st .h{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.st .num{font:700 22px Montserrat,Arial,sans-serif;color:var(--acc)}
+.st h3{margin:0;font-size:16px;font-weight:600}
+.st p{margin:0;font-size:14px;color:var(--sub)}
+.st ul{margin:2px 0 0;padding-left:18px;font-size:14px;color:var(--sub)}
+.st a{color:var(--acc);font-weight:700}
+.chip{font:600 12px Montserrat,Arial,sans-serif;padding:4px 10px;border-radius:12px;white-space:nowrap;background:var(--surf);color:var(--mut)}
+.chip.on{background:var(--accf);color:#fff}
+footer{color:var(--mut);font:500 13px Montserrat,Arial,sans-serif;border-top:1px solid var(--row)}
+footer p{margin:0 0 4px}
+[hidden]{display:none!important}
+#tu{display:grid;gap:6px;margin-bottom:12px}#tu[hidden]{display:none!important}#tu .lbl{margin:0}
+#ent{min-height:0;height:auto;width:100%;font:15px/1.5 var(--mono);padding:8px 10px;border:1.5px solid var(--ink);background:var(--bg);color:var(--ink);resize:vertical}
+.ejes{display:flex;gap:12px}.ejes label{flex:1;display:flex;align-items:center;gap:8px;font-size:14px;color:var(--sub)}.ejes input{flex:1;width:0;font:16px var(--mono);min-height:40px;padding:0 8px;border:1.5px solid var(--ink);background:var(--bg);color:var(--ink)}
+.chk a{color:var(--acc);font-weight:700}
+.plot svg{width:100%;height:auto;display:block}.plot text{font:500 12px Montserrat,Arial,sans-serif;fill:var(--mut)}
+.plot .lg{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--sub);margin:4px 0 0}.plot .lg b{color:var(--acc)}
+.plot .rd{font:14px var(--mono);margin:6px 0 0;color:var(--ink)}.plot .rd span{color:var(--mut);font-family:Arimo,Arial,sans-serif}
+.cell.dim .v{opacity:.3}.cell.ord .v{background:var(--surf)}.cell.fin .v{background:var(--surf);color:var(--mut);border-color:var(--rule)}
+.cell.chg .v{background:var(--soft);border-color:var(--accf);border-width:3px}
+.cell .mk{display:flex;flex-direction:column;gap:2px;margin-top:3px;align-items:center}.cell .mk span{font:600 12px var(--mono);color:#fff;background:var(--accf);padding:1px 5px;border-radius:3px;white-space:nowrap}
+.mets{display:flex;gap:10px;flex-wrap:wrap}.mets div{border:1px solid var(--row);padding:6px 10px;font-size:13px;color:var(--sub)}.mets b{font:700 18px Montserrat,Arial,sans-serif;color:var(--acc);margin-right:6px}
+.cell.champ .v,.cell.champ.cur .v,.cell.champ.seen .v{background:var(--accf);color:#fff;border-color:var(--accf)}
+.cell.champ.cur .v{box-shadow:0 0 0 3px var(--bg),0 0 0 5px var(--accf)}
+.cur-mark{display:flex;justify-content:center;white-space:nowrap}
+.bench.stk{grid-template-columns:minmax(0,1fr)}.bench.stk .code{border-right:0;border-bottom:1px solid var(--row)}.bench.stk .mem{overflow-x:auto}
+.hp{position:relative;display:grid;grid-template-columns:minmax(120px,max-content) minmax(0,1fr);column-gap:clamp(40px,7vw,72px);align-items:start}
+.hp>svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+.frm{border:1.5px solid var(--ink);margin-bottom:10px;background:var(--bg)}
+.frm h4{margin:0;font:600 12px Montserrat,Arial,sans-serif;padding:6px 8px;background:var(--surf);border-bottom:1px solid var(--row)}
+.frm.top h4{background:var(--accf);color:#fff}
+.fv{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:7px 8px;font:600 14px var(--mono);border-bottom:1px dashed var(--row)}
+.fv:last-child{border-bottom:0}.fv.nu{background:var(--soft)}
+.dot{width:12px;height:12px;border-radius:50%;background:var(--ink);flex:none;display:inline-block}
+.fv.nu .dot{background:var(--acc)}
+.objs{display:flex;gap:40px;align-items:flex-start;width:max-content}.objs .col{display:grid;gap:14px;justify-items:start}
+.ob .cl.cur{background:var(--soft);box-shadow:inset 0 -4px 0 var(--accf)}
+.ob .rws{display:grid;grid-template-columns:auto auto}.ob .rws span{padding:5px 8px;border-top:1px solid var(--row);font:600 14px var(--mono);white-space:nowrap}
+.ob .rws span:nth-child(odd){color:var(--mut);border-right:1px solid var(--row)}.ob .rws span:nth-child(-n+2){border-top:0}.ob .rws span.ch{background:var(--soft)}
+.ob{border:1.5px solid var(--ink);display:inline-grid;min-width:64px;background:var(--bg)}
+.ob .ty{font:500 11px Montserrat,Arial,sans-serif;color:var(--mut);padding:2px 6px;border-bottom:1px solid var(--row)}
+.ob .pv{font:600 16px var(--mono);padding:8px 12px;text-align:center;white-space:nowrap}
+.ob.nu{border-color:var(--accf);border-width:3px}.ob.mu{background:var(--soft);border-color:var(--accf);border-width:3px}
+.ob .cls{display:flex}.ob .cl{border-right:1px solid var(--row);min-width:40px;text-align:center;padding:5px 6px 2px;font:600 15px var(--mono)}
+.ob .cl:last-child{border-right:0}.ob .cl small{display:block;font:11px var(--mono);color:var(--mut)}
+@media (prefers-reduced-motion:reduce){.cur-mark,.cell .v,.var .v{transition:none}}
+@media(max-width:980px){.lab,.two{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:640px){body{border-left-width:6px}.bench{grid-template-columns:minmax(0,1fr)}.code{border-right:0;border-bottom:1px solid var(--row)}.anat{grid-template-columns:minmax(0,1fr)}table{font-size:13px}}
+</style>
+</head>
+<body>
+<section class="band">
+<div class="wrap">
+<header class="top">
+<div>
+<p class="kick">AC Institut · Laboratorio de programación · Python</p>
+<h1>Mirar y ver</h1>
+<p class="sub1" id="sub1"></p>
+</div>
+<div class="logo" aria-label="AC Institut"><b>ac</b><i></i><span>institut</span></div>
+</header>
+<hr class="r">
+<nav class="areas" id="areas" aria-label="Áreas del laboratorio"></nav>
+<nav class="puestos" id="puestos" aria-label="Puestos del área Patrones"></nav>
+</div>
+</section>
+
+<section class="band" style="padding-top:0">
+<div class="wrap">
+<div class="lab">
+<div class="box">
+<div class="bh"><span>Código y memoria</span><span class="t" id="vname"></span></div>
+<div class="bench">
+<div>
+<div class="code" id="code" aria-label="Código con la flecha de ejecución"></div>
+<div class="leg"><span><b>➜</b> va a ejecutarse</span><span><b style="color:var(--mut)">➜</b> acaba de ejecutarse</span><span id="leg-ct">×n veces ejecutada</span></div>
+<div class="path" id="path" hidden></div>
+</div>
+<div class="mem" id="mem" aria-live="polite"></div>
+</div>
+<div class="out"><span>Salida</span><pre id="out"></pre></div>
+<div class="res" id="res" aria-live="polite"></div>
+</div>
+
+<div class="panel">
+<div class="seg" role="group" aria-label="Modo">
+<button id="m-exp" aria-pressed="true">Explorar</button>
+<button id="m-pre" aria-pressed="false">Predecir</button>
+</div>
+<div>
+<p class="lbl" id="var-lbl">Variante</p>
+<div class="opt" id="vars"></div>
+</div>
+<div id="nav">
+<div class="steps">
+<button id="b-ini" aria-label="Al principio">⏮</button>
+<button id="b-ant" aria-label="Paso anterior">◀</button>
+<button id="b-sig" aria-label="Paso siguiente" class="pri">▶</button>
+<button id="b-play" aria-label="Reproducir">▷ Play</button>
+</div>
+<div class="pos"><span>Paso</span><output id="o-k"></output></div>
+<input type="range" id="k" min="0" value="0" aria-label="Paso de la ejecución">
+</div>
+<div class="pred" id="pred" hidden>
+<h3>Predice antes de avanzar</h3>
+<p>Escribe lo que crees que pasará en la próxima línea; al comprobar, la flecha avanza y te dice si acertaste. <span class="score" id="score"></span></p>
+<div class="q" id="pq"></div>
+<div class="pin" style="margin-top:10px"><input id="pa" autocomplete="off" spellcheck="false" aria-label="Tu predicción"></div>
+<div class="act"><button class="pri" id="p-ok">Comprobar</button><button id="p-skip">Ver sin predecir</button><button id="p-back" aria-label="Retroceder un paso">◀</button></div>
+<p class="fb" id="pfb" role="status"></p>
+</div>
+<div class="ed">
+<div id="tu" hidden>
+<p class="lbl">Vista</p>
+<div class="opt" id="vista"><button data-w="auto" aria-pressed="true">Automática</button><button data-w="cas" aria-pressed="false">Casillas</button><button data-w="heap" aria-pressed="false">Cajas y flechas</button><button data-w="flow" aria-pressed="false">Recorrido</button><button data-w="plot" aria-pressed="false">Gráfica</button></div>
+<div class="ejes" id="ejes" hidden><label>Eje x <input id="ex" value="i" spellcheck="false" autocomplete="off"></label><label>Eje y <input id="ey" value="a" spellcheck="false" autocomplete="off"></label></div>
+<p class="lbl" style="margin-top:12px">Entradas para <code>input()</code>, una por línea</p>
+<textarea id="ent" rows="2" spellcheck="false" aria-label="Entradas para input"></textarea>
+</div>
+<p class="lbl" id="ed-lbl">Cambia el código y míralo pensar</p>
+<textarea id="ta" spellcheck="false" aria-label="Código Python"></textarea>
+<div class="act"><button class="pri" id="run">Ejecutar y trazar</button><button id="rst">Restaurar variante</button></div>
+<p class="stat" id="stat">Las variantes se ven al instante. Tu código se ejecuta con Python de verdad en el navegador: la primera vez hay que descargar el intérprete.</p>
+</div>
+</div>
+</div>
+
+<div class="box" style="margin-top:24px">
+<div class="bh g"><span>Tabla de traza</span><span class="t">una fila por línea ejecutada</span></div>
+<div class="scroll"><table id="tt"></table></div>
+</div>
+
+<div class="two">
+<div class="box">
+<div class="bh k"><span>Lectura operativa</span><span class="t" id="lec-t"></span></div>
+<div class="bb" id="lec"></div>
+</div>
+<div class="box">
+<div class="bh"><span>La trampa y su chequeo</span><span class="t">antes de fiarte del resultado</span></div>
+<div class="bb">
+<div id="trp"></div>
+<div class="chk" id="chk"><b>Chequeo</b><span></span></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<section class="band" id="mapa" style="background:var(--surf)">
+<div class="wrap">
+<h2>Mapa del laboratorio</h2>
+<p class="lead">Ocho áreas, un puesto por construcción de Python. Cada puesto tiene cuatro lecturas: la memoria paso a paso, la predicción antes de ejecutar, la lectura operativa («si ves… haz…») y la trampa con su chequeo.</p>
+<div class="grid" id="grid"></div>
+</div>
+</section>
+
+<footer class="band">
+<div class="wrap">
+<p>AC Institut · Antonio Chanes Espigares · CC BY-NC-ND 4.0 · Acompaña al libro <a href="https://achanesespigares.github.io/python-acinstitut/">Mirar y ver tu código pensar</a></p>
+<p>Motor: Pyodide 314.0.7 (Python 3.14) con <code>sys.settrace</code>. Las variantes llevan su traza ya calculada con este mismo trazador.</p>
+</div>
+</footer>
+
+<script>
+{
+const PRE = __PRE__;
+for (const k in PRE.trace){ let v = {}, o = ''; PRE.trace[k] = PRE.trace[k].map(e => { v = Object.assign({}, v, e.d || {}); (e.x || []).forEach(n => delete v[n]); if ('o' in e) o = e.o; const r = {l:e.l, v, o}; for (const q of ['f','h','r','e']) if (q in e) r[q] = e[q]; return r; }); }
+const TRZ = __TRZ__;
+const URLS = [new URL('py/', location.href).href, 'https://cdn.jsdelivr.net/pyodide/v314.0.7/full/','https://cdn.jsdelivr.net/npm/pyodide@314.0.7/'];
+const PUESTOS = [
+ {id:'recorrer', ar:2, n:'Recorrer y acumular', sub:'Puesto 1: recorrer una lista y acumular', lt:'el patrón acumulador', trap:'trampa',
+  vars:[{id:'for',n:'for x in lista'},{id:'indice',n:'Por índice'},{id:'while',n:'Con while'},{id:'contar',n:'Contar pares'},{id:'trampa',n:'Trampa',tr:1}],
+  lec:`<p class="say">Si tienes que reducir toda una lista a un solo valor (una suma, una cuenta, un producto), prepara el acumulador fuera del bucle con su valor neutro, actualízalo dentro con cada elemento y léelo cuando el bucle haya terminado.</p>
+<div class="anat"><div><b>Antes</b>El valor neutro: <code>0</code> para sumar y contar, <code>1</code> para multiplicar.</div><div><b>Dentro</b><code>total = total + x</code>: lo viejo más la casilla del cursor.</div><div><b>Después</b>Fuera del bucle, el acumulador ya es la respuesta.</div></div>
+<p><b>Qué revela la memoria.</b> <code>total</code> no conoce la suma de antemano: la construye casilla a casilla, y cada salto en la tabla mide justo lo que vale la casilla del cursor. Y <code>x</code> no es una caja fija: en cada vuelta es el nombre del elemento siguiente.</p>`,
+  trp:`<p><b>La trampa.</b> Si el acumulador se inicializa <em>dentro</em> del bucle, vuelve a cero en cada vuelta y al final solo queda el último elemento. El programa no da error: da un número equivocado. Su primo: empezar un producto en <code>0</code>.</p>
+<button class="lk" data-trap>Ver la trampa en marcha</button>
+<p><b>Chequeo de bolsillo.</b> Al terminar, <code>total</code> tiene que valer <code>sum(lista)</code>, y el bucle tiene que haber dado <code>len(lista)</code> vueltas: tantas filas con la casilla nueva como casillas tiene la lista.</p>`},
+ {id:'maximo', ar:2, n:'Buscar el máximo', sub:'Puesto 2: buscar el máximo', lt:'el campeón y el retador', trap:'trampa0', cl:{cur:'retador', ch:'campeón', out:1},
+  champ:{posicion:{k:'idx',v:'pos'}, empates:{k:'idx',v:'pos'}, maximo:{k:'val',v:'mayor'}, trampa0:{k:'val',v:'mayor'}},
+  vars:[{id:'maximo',n:'El mayor'},{id:'posicion',n:'Dónde está'},{id:'empates',n:'Empates: >='},{id:'trampa0',n:'Trampa',tr:1}],
+  lec:`<p class="say">Si buscas el mayor de una lista, nombra campeón al primer elemento, enfréntalo con cada casilla y, cuando gane el retador, el retador pasa a ser el campeón; al acabar el recorrido, el campeón es el máximo.</p>
+<div class="anat"><div><b>Antes</b>Campeón = <code>lista[0]</code>: un candidato de verdad, nunca un número inventado.</div><div><b>Dentro</b><code>if x &gt; mayor: mayor = x</code>. Solo cambia si gana el retador.</div><div><b>Después</b>El campeón ya se ha enfrentado a todas las casillas.</div></div>
+<p><b>Qué revela la memoria.</b> Después de cada vuelta, <code>mayor</code> es el máximo de las casillas ya visitadas: por eso en la tabla su columna sube a escalones y nunca baja. El <code>if</code> no cambia ninguna variable; solo decide si la flecha entra en la línea 5 o vuelve al <code>for</code>. Para el mínimo, cambia <code>&gt;</code> por <code>&lt;</code>.</p>`,
+  trp:`<p><b>La trampa.</b> Empezar con <code>mayor = 0</code>. Con números positivos funciona, y por eso engaña; si todos son negativos, el 0 no pierde nunca y el programa devuelve un número que ni siquiera está en la lista. Una decisión fina, sin ser error: con <code>&gt;</code> el empate lo gana el primero, con <code>&gt;=</code> el último.</p>
+<button class="lk" data-trap>Ver la trampa en marcha</button>
+<p><b>Chequeo de bolsillo.</b> Al terminar, el campeón tiene que estar en la lista y no puede perder contra ninguna casilla. Durante el recorrido, su columna en la tabla solo sube o se queda.</p>`},
+ {id:'primero', ar:2, n:'El primero que cumple', sub:'Puesto 3: el primero que cumple', lt:'buscar y salir', trap:'sinbreak', cl:{cur:'cursor', ch:'el primero que cumple'},
+  champ:{break:{k:'val',v:'encontrado'}, ninguno:{k:'val',v:'encontrado'}, sinbreak:{k:'val',v:'encontrado'}},
+  vars:[{id:'break',n:'Con break'},{id:'mientras',n:'Con while'},{id:'ninguno',n:'No hay ninguno'},{id:'sinbreak',n:'Trampa: sin break',tr:1},{id:'ordenand',n:'Trampa: orden del and',tr:1}],
+  lec:`<p class="say">Si buscas el primero que cumple una condición, pregunta a cada casilla por orden y, en cuanto una cumpla, guárdala y sal del bucle; si el recorrido acaba sin salir, es que no había ninguna.</p>
+<div class="anat"><div><b>Antes</b>Un valor que signifique «nada todavía»: <code>None</code>, o la posición <code>len(lista)</code>.</div><div><b>Dentro</b><code>if cumple:</code> guarda y <code>break</code>. La salida es parte de la búsqueda.</div><div><b>Después</b>Si sigue valiendo <code>None</code>, ninguna casilla cumplía.</div></div>
+<p><b>Qué revela la memoria.</b> Con <code>break</code> la flecha abandona el bucle a mitad de lista y el cursor deja casillas sin mirar: por eso la búsqueda es rápida cuando el buscado aparece pronto. En el <code>while</code>, la condición hace dos preguntas y el orden importa: <code>i &lt; len(lista)</code> va primero porque protege a <code>lista[i]</code>. Si la primera da <code>False</code>, Python ya no evalúa la segunda.</p>`,
+  trp:`<p><b>La trampa del break.</b> Sin <code>break</code> el bucle sigue, cada casilla que cumple sobrescribe a la anterior y el resultado es el <em>último</em> que cumple, no el primero. No hay error: hay una respuesta distinta.</p>
+<button class="lk" data-trap="sinbreak">Ver la trampa del break</button>
+<p><b>La trampa del and.</b> Escribir <code>lista[i] % 2 != 0 and i &lt; len(lista)</code>. Si ninguna casilla cumple, <code>i</code> llega a <code>len(lista)</code> y <code>lista[i]</code> se evalúa antes que la protección: <code>IndexError</code>.</p>
+<button class="lk" data-trap="ordenand">Ver la trampa del and</button>
+<p><b>Chequeo de bolsillo.</b> El elegido tiene que cumplir la condición y ninguna casilla anterior puede cumplirla. Si sale <code>None</code>, el bucle tiene que haber mirado todas las casillas.</p>`}
+,
+ {id:'asignar', ar:0, mem:'heap', n:'Asignar y reasignar', sub:'Puesto 1: asignar y reasignar', lt:'cajas y flechas', trap:'ecuacion',
+  vars:[{id:'asignar',n:'b = a'},{id:'texto',n:'Con texto'},{id:'doblar',n:'n = n * 2'},{id:'ecuacion',n:'Trampa: ¿ecuación?',tr:1}],
+  chk:f => {
+    const val = n => f.v[n] ? f.v[n][1] : '?';
+    if (st.v==='ecuacion') return ['x', `✗ Si esperabas 11: y = ${val('y')}, porque se calculó con el x que había entonces (3). Cambiar x después no recalcula y.`];
+    let multi = 0;
+    for (let j=1;j<st.tr.length;j++){ const A = refs(st.tr[j-1]), B = refs(st.tr[j]); if (Object.keys(B).filter(n => A[n]!==B[n]).length>1) multi++; }
+    return [multi?'x':'y', multi ? `✗ Hay ${multi} línea(s) que han movido más de una flecha.` : `✓ Cada línea ha movido una sola flecha. Al final: ${Object.keys(f.v).map(n => n+' = '+val(n)).join(', ')}.`];
+  },
+  lec:`<p class="say">Si ves <code>nombre = expresión</code>, calcula primero la derecha con los valores que hay ahora en memoria y después apunta el nombre de la izquierda al resultado; las demás flechas no se mueven.</p>
+<div class="anat"><div><b>Primero</b>La derecha, con lo que hay en memoria en este instante.</div><div><b>Después</b>La flecha: el nombre de la izquierda pasa a apuntar al resultado.</div><div><b>Nada más</b>Ninguna otra flecha se toca.</div></div>
+<p><b>Qué revela la memoria.</b> Una variable no es una caja que guarda un número para siempre: es una flecha hacia un valor. Tras <code>b = a</code> hay dos flechas al mismo 5; <code>a = a + 1</code> crea un 6 y mueve solo la flecha de <code>a</code>. Un valor del que no sale ninguna flecha desaparece de la memoria.</p>`,
+  trp:`<p><b>La trampa.</b> Leer <code>=</code> como una ecuación. Tras <code>y = x + 1</code>, <code>y</code> no queda atada a <code>x</code>: si después cambias <code>x</code>, <code>y</code> no se recalcula.</p>
+<button class="lk" data-trap>Ver la trampa en marcha</button>
+<p><b>Chequeo de bolsillo.</b> Cada asignación mueve una sola flecha, la del nombre que está a su izquierda. Si una variable cambia sin aparecer a la izquierda de ningún <code>=</code>, es que su objeto se ha modificado por otro camino (puesto 3).</p>`},
+ {id:'intercambiar', ar:0, mem:'heap', n:'Intercambiar dos variables', sub:'Puesto 2: intercambiar dos variables', lt:'la tercera mano', trap:'pisar',
+  vars:[{id:'aux',n:'Con aux'},{id:'tupla',n:'a, b = b, a'},{id:'pisar',n:'Trampa: sin aux',tr:1}],
+  chk:f => {
+    const s0 = st.tr.find(s => s.v.a && s.v.b), a0 = +s0.v.a[1], b0 = +s0.v.b[1], a = +f.v.a[1], b = +f.v.b[1];
+    return a===b0 && b===a0 ? ['y', `✓ a = ${a} y b = ${b}: intercambiados. La suma a + b sigue valiendo ${a+b}.`] : ['x', `✗ a = ${a} y b = ${b}: el ${a0} se ha perdido (la suma pasó de ${a0+b0} a ${a+b}). Tras a = b, ningún nombre apuntaba ya al ${a0}.`];
+  },
+  lec:`<p class="say">Si tienes que intercambiar dos valores, no los pises con dos asignaciones seguidas: sujeta uno con una variable auxiliar antes de mover su flecha, o usa <code>a, b = b, a</code>, que calcula toda la derecha antes de mover ninguna flecha.</p>
+<div class="anat"><div><b>Sujeta</b><code>aux = a</code>: el 3 ya tiene una segunda flecha.</div><div><b>Pisa</b><code>a = b</code>: ahora puedes mover la flecha de <code>a</code>.</div><div><b>Recupera</b><code>b = aux</code>: el 3 vuelve a su nuevo dueño.</div></div>
+<p><b>Qué revela la memoria.</b> Tras <code>a = b</code>, solo <code>aux</code> sujeta el 3: es la tercera mano. En la versión con tupla, Python construye primero la pareja <code>(8, 3)</code> con los valores de ahora y luego reparte las flechas, así que no se pierde nada.</p>`,
+  trp:`<p><b>La trampa.</b> Escribir <code>a = b</code> y luego <code>b = a</code>. Tras la primera línea el 3 se queda sin flechas y desaparece; la segunda ya no tiene de dónde sacarlo, y las dos variables acaban valiendo 8.</p>
+<button class="lk" data-trap>Ver la trampa en marcha</button>
+<p><b>Chequeo de bolsillo.</b> Al final, <code>a</code> tiene que valer lo que valía <code>b</code> al principio, y al revés; y la suma <code>a + b</code> no puede cambiar.</p>`},
+ {id:'mutar', ar:0, mem:'heap', n:'Mutar o reasignar', sub:'Puesto 3: mutar o reasignar', lt:'dos nombres, una lista', trap:'masigual',
+  vars:[{id:'alias',n:'b = a y append'},{id:'nueva',n:'b = b + [4]'},{id:'copia',n:'a.copy()'},{id:'masigual',n:'Trampa: b += [4]',tr:1}],
+  chk:f => {
+    const R = refs(f), same = R.a===R.b, a = '['+f.v.a[1].join(', ')+']', a0 = '['+st.tr.find(s => s.v.a).v.a[1].join(', ')+']';
+    return a!==a0 ? ['x', `✗ a vale ${a} y nunca aparece a la izquierda de un =: a is b → ${same?'True':'False'}. Dos nombres, una sola lista: lo que se le hace a través de b, lo ve a.`] : ['y', `✓ a sigue valiendo ${a}: a is b → ${same?'True':'False'}. b es otra lista, así que a no se entera.`];
+  },
+  lec:`<p class="say">Si ves <code>b = a</code> con una lista, no tienes dos listas sino dos nombres para la misma; antes de modificar <code>b</code>, decide: si <code>a</code> no debe cambiar, haz una copia con <code>b = a.copy()</code>.</p>
+<div class="anat"><div><b>Mutar</b><code>append</code>, <code>+=</code> o <code>b[0] = …</code> cambian el objeto: lo ven todas sus flechas.</div><div><b>Reasignar</b><code>b = b + [4]</code> crea otra lista y mueve solo la flecha de <code>b</code>.</div><div><b>Copiar</b><code>a.copy()</code> o <code>list(a)</code> crean otro objeto desde el principio.</div></div>
+<p><b>Qué revela la memoria.</b> Tras <code>b = a</code> hay dos flechas que llegan a la misma caja de lista. Si la modificas a través de <code>b</code>, la caja cambia y <code>a</code> «cambia» sin que nadie la toque. <code>a is b</code> pregunta si las dos flechas llegan a la misma caja; <code>a == b</code>, si las cajas tienen el mismo contenido.</p>`,
+  trp:`<p><b>La trampa.</b> <code>b += [4]</code> parece lo mismo que <code>b = b + [4]</code>, pero con listas no lo es: <code>+=</code> modifica la lista en su sitio, como <code>append</code>, y <code>a</code> también cambia.</p>
+<button class="lk" data-trap>Ver la trampa en marcha</button>
+<p><b>Chequeo de bolsillo.</b> Al final, <code>a is b</code> dice si comparten caja. Si es <code>True</code>, cualquier modificación de una se ve en la otra.</p>`}
+,
+ {id:'llamar', ar:3, mem:'heap', n:'Llamar y devolver', sub:'Puesto 1: llamar y devolver', lt:'el marco que nace y muere', trap:'sinreturn',
+  vars:[{id:'doble',n:'doble(4)'},{id:'area',n:'Dos llamadas'},{id:'componer',n:'Una dentro de otra'},{id:'sinreturn',n:'Trampa: print sin return',tr:1}],
+  chk:f => {
+    if (f.e) return ['x', `✗ ${f.e}. doble no tiene return, así que devuelve None: el print enseña el 8 en la pantalla, pero no se lo entrega a quien llamó, y None + 1 no se puede calcular.`];
+    const rets = st.tr.filter(s => s.r).map(s => `${s.f[s.f.length-1][0]} → ${s.h[s.r][0]==='p' ? s.h[s.r][2] : '…'}`);
+    return ['y', `✓ Valores devueltos, en orden: ${rets.join(' · ')}. Cada uno se puede comprobar de cabeza.`];
+  },
+  lec:`<p class="say">Si ves una llamada <code>f(…)</code>, imagina que se abre un marco nuevo: los parámetros apuntan a los valores que le pasas, el cuerpo trabaja allí dentro y, al llegar a <code>return</code>, el marco desaparece y en su lugar queda el valor devuelto.</p>
+<div class="anat"><div><b>Llamar</b>Se abre un marco; cada parámetro apunta a su argumento.</div><div><b>Trabajar</b>El cuerpo crea y mueve flechas solo en su marco.</div><div><b>Devolver</b><code>return</code> entrega un valor y el marco se borra.</div></div>
+<p><b>Qué revela la memoria.</b> Mientras <code>doble</code> trabaja, <code>n</code> todavía no existe: la línea <code>n = doble(4)</code> está a medias, esperando el valor. Y las funciones también son objetos: <code>doble</code> es un nombre del marco Global que apunta a una función.</p>`,
+  trp:`<p><b>La trampa.</b> Usar <code>print</code> en lugar de <code>return</code>. El número aparece en la pantalla y parece que todo va bien, pero la función devuelve <code>None</code>: quien la llamó no recibe nada con lo que seguir calculando.</p>
+<button class="lk" data-trap>Ver la trampa en marcha</button>
+<p><b>Chequeo de bolsillo.</b> Prueba la función con un caso que sepas de cabeza (<code>doble(4)</code> tiene que dar 8). Si una llamada que usas en una cuenta devuelve <code>None</code>, le falta un <code>return</code>.</p>`},
+ {id:'locales', ar:3, mem:'heap', n:'Variables locales', sub:'Puesto 2: variables locales', lt:'cada llamada, su cuarto', trap:'unbound',
+  vars:[{id:'sombra',n:'Dos x'},{id:'mutparam',n:'Lista que se modifica'},{id:'reasparam',n:'Lista que se reasigna'},{id:'unbound',n:'Trampa: contador',tr:1}],
+  chk:f => {
+    const v = n => f.v[n] ? (f.v[n][0]==='l' ? '['+f.v[n][1].join(', ')+']' : f.v[n][1]) : '?';
+    if (st.v==='unbound') return ['x', '✗ UnboundLocalError: como sumar asigna contador, Python lo trata como local en toda la función, y en la derecha de contador = contador + 1 todavía no vale nada. Pásalo como parámetro y devuélvelo.'];
+    if (st.v==='sombra') return ['y', `✓ x (Global) sigue valiendo ${v('x')} e y = ${v('y')}: la x de f era otra flecha, en otro marco.`];
+    if (st.v==='mutparam') return ['x', `✗ datos vale ${v('datos')} sin aparecer a la izquierda de ningún =: el parámetro l apuntaba a la misma lista, y append la modificó.`];
+    if (st.v==='reasparam') return ['y', `✓ datos sigue valiendo ${v('datos')}: l = [] movió solo la flecha local de l.`];
+    return null;
+  },
+  lec:`<p class="say">Si ves un nombre dentro de una función, pregúntate en qué marco vive: los parámetros y todo lo que se asigna dentro son del marco de la función y mueren con él; para que un resultado salga, devuélvelo con <code>return</code>.</p>
+<div class="anat"><div><b>Parámetros</b>Flechas nuevas en el marco nuevo, hacia los objetos que se pasan.</div><div><b>Asignar dentro</b>Crea o mueve flechas del marco local, nunca las de fuera.</div><div><b>Mutar dentro</b>Si el parámetro apunta a una lista de fuera, esa lista sí cambia.</div></div>
+<p><b>Qué revela la memoria.</b> Dos <code>x</code> en dos marcos son dos flechas distintas, aunque se llamen igual. Pasar una lista no la copia: el parámetro es otra flecha al mismo objeto, como <code>b = a</code> en el área Variables.</p>`,
+  trp:`<p><b>La trampa.</b> Querer cambiar una variable global desde dentro con <code>contador = contador + 1</code>. Como la función asigna <code>contador</code>, Python decide que es local, y al leerla en la derecha todavía no tiene valor: <code>UnboundLocalError</code>.</p>
+<button class="lk" data-trap>Ver la trampa en marcha</button>
+<p><b>Chequeo de bolsillo.</b> Al volver de la llamada, las variables globales que no se han pasado a la función tienen que estar igual. Si una lista de fuera ha cambiado, mira si la función la modificó a través de un parámetro.</p>`},
+ {id:'recursion', ar:3, mem:'heap', n:'Recursión', sub:'Puesto 3: recursión', lt:'la pila que crece y se vacía', trap:'sinbase',
+  vars:[{id:'factorial',n:'factorial(4)'},{id:'cuenta',n:'Cuenta atrás'},{id:'sumarec',n:'Suma de una lista'},{id:'sinbase',n:'Trampa: sin caso base',tr:1}],
+  chk:f => {
+    const md = Math.max(...st.tr.filter(s => s.f).map(s => s.f.length)) - 1, out = f.o.trim();
+    if (st.v==='sinbase') return ['x', '✗ Sin caso base, cada llamada pide otra y la pila no deja de crecer. El laboratorio corta a las 50 llamadas; Python acabaría lanzando RecursionError.'];
+    if (f.e) return null;
+    if (st.v==='factorial') return ['y', `✓ factorial(4) = ${out} = 4 · 3 · 2 · 1. La pila llegó a ${md} marcos de factorial y se vació en orden inverso.`];
+    if (st.v==='cuenta') return ['y', `✓ La pila llegó a ${md} marcos. Lo que va después de la llamada (las líneas «vuelta») sale en orden inverso, porque se ejecuta al deshacer la pila.`];
+    if (st.v==='sumarec') return ['y', `✓ suma = ${out} = 3 + 8 + 2, con ${md} marcos: uno por casilla y otro para la lista vacía.`];
+    return null;
+  },
+  lec:`<p class="say">Si ves una función que se llama a sí misma, busca primero el caso base, que responde sin llamar a nadie, y comprueba que cada llamada se acerca a él; la respuesta se construye a la vuelta, cuando los marcos se van cerrando.</p>
+<div class="anat"><div><b>Caso base</b>Responde sin llamarse: <code>n == 0</code> devuelve 1.</div><div><b>Paso</b>Se llama con un problema más pequeño: <code>n - 1</code>.</div><div><b>Vuelta</b>Cada marco usa lo que le devuelven y lo pasa hacia arriba.</div></div>
+<p><b>Qué revela la memoria.</b> Hay varios marcos de <code>factorial</code> vivos a la vez, cada uno con su propia <code>n</code>, y ninguno termina hasta que el de abajo le devuelve su valor. La pila crece hasta el caso base y luego se vacía en orden inverso.</p>`,
+  trp:`<p><b>La trampa.</b> Olvidar el caso base. Cada llamada pide otra, ninguna puede terminar y la pila crece sin fin hasta que Python se rinde con <code>RecursionError</code>.</p>
+<button class="lk" data-trap>Ver la trampa en marcha</button>
+<p><b>Chequeo de bolsillo.</b> Comprueba a mano el caso base (<code>factorial(0) = 1</code>) y un caso pequeño (<code>factorial(2) = 2</code>). Si los dos salen y cada llamada se acerca al caso base, la recursión es correcta para todos: es inducción.</p>`}
+,
+ {id:'ramas', ar:1, mem:'flow', n:'if / elif / else', sub:'Puesto 1: if / elif / else', lt:'la bifurcación', trap:'orden',
+  vars:[{id:'nota',n:'Calificación'},{id:'paridad',n:'Par o impar'},{id:'bisiesto',n:'Año bisiesto'},{id:'orden',n:'Trampa: orden',tr:1},{id:'sueltos',n:'Trampa: if sueltos',tr:1}],
+  chk:f => {
+    const val = n => f.v[n] ? f.v[n][1].replace(/^'|'$/g,'') : '?', ramas = st.tr.filter(s => /calificacion =/.test(st.an.L[s.l-1]||'')).length;
+    if (f.v.nota){ const n = +val('nota'), ok = n>=9 ? 'Sobresaliente' : n>=7 ? 'Notable' : n>=5 ? 'Aprobado' : 'Suspenso', c = val('calificacion');
+      if (c===ok && ramas===1) return ['y', `✓ ${n} → ${c}, y ha entrado exactamente una rama. Prueba también las fronteras: 5, 7 y 9.`];
+      return ['x', `✗ ${n} debería ser ${ok}, pero sale ${c}. ${ramas>1 ? `Han entrado ${ramas} ramas: con if sueltos se evalúan todas y la última pisa a las demás.` : 'La primera condición True gana, y nota >= 5 se cumple antes de llegar a las exigentes: ordena los tramos de mayor a menor.'}`]; }
+    if (f.v.n){ const n = +val('n'); return ['y', `✓ ${n} % 2 = ${n%2}: ${n%2 ? 'impar' : 'par'}. Ha entrado una sola rama.`]; }
+    if (f.v['año']){ const a = +val('año'), b = a%4===0 && (a%100!==0 || a%400===0); return ['y', `✓ ${a} ${b?'es':'no es'} bisiesto. Fronteras útiles: 1900 (no), 2000 (sí), 2024 (sí), 2023 (no).`]; }
+    return null;
+  },
+  lec:`<p class="say">Si ves una cadena <code>if</code> / <code>elif</code> / <code>else</code>, recórrela de arriba abajo: la primera condición que dé True decide la rama, se ejecuta solo esa y el resto ni se mira; si ninguna es True, entra el <code>else</code>.</p>
+<div class="anat"><div><b>Pregunta</b>Cada condición se evalúa a True o False.</div><div><b>Elige</b>La primera True gana; las de debajo no se evalúan.</div><div><b>Por defecto</b>El <code>else</code> recoge lo que no ha entrado antes.</div></div>
+<p><b>Qué revela la memoria.</b> Mira los contadores: en una cadena <code>elif</code>, de las ramas solo una tiene ×1, y las condiciones de debajo de la ganadora se quedan en gris, sin evaluar. Por eso el orden importa: con tramos (≥ 9, ≥ 7, ≥ 5) hay que ir del más exigente al menos exigente.</p>`,
+  trp:`<p><b>La trampa del orden.</b> Si <code>nota &gt;= 5</code> va primero, un 9,5 entra ahí y nunca llega a Sobresaliente: ninguna condición es falsa, simplemente gana la primera.</p>
+<button class="lk" data-trap="orden">Ver la trampa del orden</button>
+<p><b>La trampa de los if sueltos.</b> Con tres <code>if</code> independientes se evalúan los tres, y cada asignación pisa a la anterior.</p>
+<button class="lk" data-trap="sueltos">Ver la trampa de los if sueltos</button>
+<p><b>Chequeo de bolsillo.</b> Prueba un valor de cada tramo y los valores frontera (5, 7 y 9): cada uno tiene que caer en su rama, y en cada ejecución tiene que entrar exactamente una.</p>`},
+ {id:'mientras-que', ar:1, mem:'flow', n:'while con condición', sub:'Puesto 2: while con condición', lt:'repetir mientras', trap:'infinito',
+  vars:[{id:'duplicar',n:'Duplicar hasta 100'},{id:'cifras',n:'Contar cifras'},{id:'collatz',n:'Collatz'},{id:'infinito',n:'Trampa: nunca para',tr:1}],
+  chk:f => {
+    const wl = st.an.L.findIndex(s => /^\s*while\b/.test(s)) + 1, preg = st.tr.filter(s => s.l===wl).length;
+    if (f.e) return ['x', `✗ El bucle no termina: el laboratorio lo ha cortado a los 400 pasos. Nada dentro del bucle cambia n, así que n < 100 da True siempre: la pregunta se repite con la misma respuesta.`];
+    const v = n => f.v[n] ? f.v[n][1] : '?';
+    if (st.v==='duplicar') return ['y', `✓ ${v('pasos')} vueltas y ${preg} preguntas (una más, la que da False). Al salir, n = ${v('n')} ≥ 100, y antes de la última vuelta valía ${+v('n')/2} < 100.`];
+    if (st.v==='cifras') return ['y', `✓ cifras = ${v('cifras')} = len("4096"). El while ha preguntado ${preg} veces: ${preg-1} True y una False.`];
+    if (st.v==='collatz') return ['y', `✓ ${v('pasos')} pasos hasta llegar a 1: 6, 3, 10, 5, 16, 8, 4, 2, 1. Que siempre termine para cualquier n es la conjetura de Collatz, aún sin demostrar.`];
+    return null;
+  },
+  lec:`<p class="say">Si ves <code>while</code>, piensa en una pregunta que se repite: mientras la condición sea True, se ejecuta el bloque y se vuelve a preguntar; dentro del bloque tiene que haber algo que acerque la condición a False, o el bucle no terminará.</p>
+<div class="anat"><div><b>Pregunta</b>Antes de cada vuelta se evalúa la condición.</div><div><b>Avanza</b>El cuerpo cambia la variable de la condición.</div><div><b>Para</b>La primera vez que da False, la flecha salta tras el bloque.</div></div>
+<p><b>Qué revela la memoria.</b> La línea del <code>while</code> siempre se ejecuta una vez más que el cuerpo: la última pregunta es la que da False. En el recorrido de la flecha se ve el ritmo 3 → 4 → 5 → 3… y la salida por la línea de después.</p>`,
+  trp:`<p><b>La trampa.</b> Olvidar actualizar la variable de la condición. La pregunta da siempre la misma respuesta y el bucle no termina. El laboratorio corta a los 400 pasos; un programa real se quedaría colgado.</p>
+<button class="lk" data-trap>Ver la trampa en marcha</button>
+<p><b>Chequeo de bolsillo.</b> En los contadores, la línea del <code>while</code> tiene una vez más que cada línea del cuerpo. Al salir, la condición tiene que ser False; en el ejemplo, n ≥ 100.</p>`},
+ {id:'for-range', ar:1, mem:'flow', n:'for y range', sub:'Puesto 3: for y range', lt:'contar vueltas', trap:'hasta10',
+  vars:[{id:'range5',n:'range(5)'},{id:'pares',n:'range(2, 11, 2)'},{id:'tabla',n:'Tabla del 7'},{id:'hasta10',n:'Trampa: range(1, 10)',tr:1},{id:'tocari',n:'Trampa: tocar i',tr:1}],
+  chk:f => {
+    const body = st.an.L.findIndex(s => /^\s*for\b/.test(s)) + 2, vueltas = st.tr.filter(s => s.l===body).length, v = n => f.v[n] ? f.v[n][1] : '?';
+    if (st.v==='hasta10') return ['x', `✗ suma = ${v('suma')}, pero 1 + 2 + … + 10 = 10 · 11 / 2 = 55. range(1, 10) se para en 9: da ${vueltas} vueltas, no 10. Para incluir el 10, range(1, 11).`];
+    if (st.v==='tocari') return ['x', `✗ Se imprime 0, 1, 2, 3, 4: ${vueltas} vueltas igualmente. El for reasigna i al empezar cada vuelta, así que sumarle 10 dentro no salta ninguna.`];
+    if (st.v==='pares') return ['y', `✓ suma = ${v('suma')} = 2 + 4 + 6 + 8 + 10, en ${vueltas} vueltas: len(range(2, 11, 2)) = 5.`];
+    return ['y', `✓ ${vueltas} vueltas, las que manda el range. La línea del for se ha ejecutado una vez más para descubrir que no quedaban números.`];
+  },
+  lec:`<p class="say">Si sabes cuántas vueltas quieres, usa <code>for</code> con <code>range</code>: <code>range(a, b)</code> da los números desde a hasta b − 1, así que da b − a vueltas; el <code>for</code> asigna la variable en cada vuelta y no hace falta actualizarla.</p>
+<div class="anat"><div><b>range(n)</b>0, 1, …, n − 1: n vueltas.</div><div><b>range(a, b)</b>De a hasta b − 1: b − a vueltas.</div><div><b>range(a, b, p)</b>De p en p, sin llegar nunca a b.</div></div>
+<p><b>Qué revela la memoria.</b> La línea del <code>for</code> se ejecuta una vez por vuelta y una más para descubrir que no quedan números. La variable no la avanza el cuerpo, la avanza el <code>for</code>: aunque la cambies dentro, la vuelta siguiente la reasigna.</p>`,
+  trp:`<p><b>La trampa del final.</b> El final de <code>range</code> no se incluye: para sumar de 1 a 10 hace falta <code>range(1, 11)</code>.</p>
+<button class="lk" data-trap="hasta10">Ver la trampa del final</button>
+<p><b>La trampa de tocar i.</b> Cambiar <code>i</code> dentro del <code>for</code> creyendo que así se saltan vueltas: el <code>for</code> la vuelve a asignar.</p>
+<button class="lk" data-trap="tocari">Ver la trampa de tocar i</button>
+<p><b>Chequeo de bolsillo.</b> Número de vueltas = <code>len(range(a, b))</code> = b − a. Y para la suma 1 + … + n, Gauss: n(n + 1) / 2.</p>`}
+,
+ {id:'listas', ar:4, mem:'heap', n:'Modificar una lista', sub:'Puesto 1: modificar una lista', lt:'la caja que cambia por dentro', trap:'sortnone',
+  vars:[{id:'indices',n:'Por índice'},{id:'metodos',n:'append, insert, pop'},{id:'ordenar',n:'sorted o sort'},{id:'sortnone',n:'Trampa: = sort()',tr:1},{id:'borrar',n:'Trampa: borrar al recorrer',tr:1}],
+  chk:f => {
+    const v = n => f.v[n] ? (f.v[n][0]==='l' ? '['+f.v[n][1].join(', ')+']' : f.v[n][1]) : '?', R = refs(f);
+    if (st.v==='sortnone') return ['x', '✗ datos = None: sort() ordena la lista en su sitio y devuelve None. Al asignarlo, la flecha de datos se va al None y la lista ordenada se queda sin flechas.'];
+    if (st.v==='borrar') return ['x', `✗ nums = ${v('nums')}, pero quitando los pares tendría que quedar [5]. Al borrar mientras se recorre, las casillas se corren a la izquierda y el for se salta la siguiente.`];
+    if (st.v==='ordenar') return ['y', `✓ datos = ${v('datos')} y copia = ${v('copia')}: mismo contenido, pero copia is datos → ${R.copia===R.datos?'True':'False'}. sorted crea otra lista; sort reordena la misma.`];
+    if (st.v==='metodos') return ['y', `✓ pila = ${v('pila')} y ultimo = ${v('ultimo')}: append añade al final, insert donde digas, y pop saca el último y lo devuelve.`];
+    return ['y', `✓ notas = ${v('notas')}: cada asignación por índice cambia una casilla de la misma caja. notas[-1] es la última.`];
+  },
+  lec:`<p class="say">Si ves una lista con corchetes o un método detrás de un punto, pregúntate si cambia la caja o crea otra: la asignación por índice y los métodos como <code>append</code>, <code>insert</code>, <code>pop</code>, <code>remove</code> o <code>sort</code> modifican la misma lista; <code>sorted</code>, las porciones y el <code>+</code> crean una nueva.</p>
+<div class="anat"><div><b>Por índice</b><code>l[i] = x</code> cambia una casilla; <code>l[-1]</code> es la última.</div><div><b>Métodos que mutan</b><code>append</code>, <code>insert</code>, <code>remove</code>, <code>sort</code> devuelven <code>None</code>; <code>pop</code> devuelve lo que saca.</div><div><b>Funciones que crean</b><code>sorted(l)</code>, <code>l[1:3]</code>, <code>l + [x]</code> devuelven otra lista.</div></div>
+<p><b>Qué revela la memoria.</b> La caja de la lista no cambia de sitio: cambia por dentro, y todas sus flechas lo ven. <code>sorted(datos)</code> aparece como una caja nueva; <code>datos.sort()</code> reordena la misma. Al recorrer con <code>for</code>, la casilla subrayada es la que toca.</p>`,
+  trp:`<p><b>La trampa de sort.</b> <code>datos = datos.sort()</code>: <code>sort</code> devuelve <code>None</code>, la flecha de <code>datos</code> se va a <code>None</code> y la lista ordenada se queda sin flechas.</p>
+<button class="lk" data-trap="sortnone">Ver la trampa de sort</button>
+<p><b>La trampa de borrar al recorrer.</b> Si quitas elementos de la lista que el <code>for</code> está recorriendo, las casillas se corren y el cursor se salta la siguiente.</p>
+<button class="lk" data-trap="borrar">Ver la trampa de borrar</button>
+<p><b>Chequeo de bolsillo.</b> Después de un método que muta, la flecha del nombre tiene que seguir apuntando a la misma caja: no asignes lo que devuelve. Para filtrar, recorre una copia (<code>for x in nums[:]</code>) o construye una lista nueva.</p>`},
+ {id:'copiar', ar:4, mem:'heap', n:'Copiar de verdad', sub:'Puesto 2: copiar de verdad', lt:'copias superficiales y profundas', trap:'tablero',
+  vars:[{id:'plana',n:'Lista simple'},{id:'anidada',n:'Trampa: copy() de una matriz',tr:1},{id:'profunda',n:'deepcopy'},{id:'tablero',n:'Trampa: [[0] * 3] * 3',tr:1},{id:'filas',n:'Filas nuevas'}],
+  chk:f => {
+    const R = refs(f), v = n => f.v[n] ? '['+f.v[n][1].join(', ')+']' : '?';
+    if (st.v==='plana') return ['y', `✓ a = ${v('a')} no ha cambiado: b es otra caja, y sus casillas son números.`];
+    if (st.v==='anidada') return ['x', `✗ matriz = ${v('matriz')}: también ha cambiado. copy() hace una caja exterior nueva, pero sus casillas siguen apuntando a las mismas filas.`];
+    if (st.v==='profunda') return ['y', `✓ matriz = ${v('matriz')} no ha cambiado: deepcopy copia también las filas.`];
+    const filas = new Set(f.h[R.tablero][1]).size;
+    return filas===1 ? ['x', `✗ El tablero tiene 1 sola fila de verdad: las 3 casillas apuntan a la misma. Por eso al cambiar tablero[0][0] cambian «las tres».`] : ['y', `✓ ${filas} filas distintas: tablero[0] is tablero[1] → False. Solo cambia la primera.`];
+  },
+  lec:`<p class="say">Si copias una lista que contiene otras listas, mira las flechas de sus casillas: <code>copy()</code> y <code>[:]</code> hacen una caja exterior nueva, pero sus casillas siguen apuntando a las mismas filas; para que nada se comparta, usa <code>copy.deepcopy</code> o construye cada fila nueva.</p>
+<div class="anat"><div><b>Superficial</b><code>copy()</code>, <code>list(l)</code>, <code>l[:]</code>: caja nueva, mismas flechas dentro.</div><div><b>Profunda</b><code>copy.deepcopy(l)</code> copia también lo de dentro.</div><div><b>Filas nuevas</b><code>[[0] * 3 for _ in range(3)]</code> crea tres filas distintas.</div></div>
+<p><b>Qué revela la memoria.</b> En una lista de listas, cada casilla es una flecha, y las filas se dibujan a la derecha. Dos casillas con flechas a la misma fila son la misma fila: cambiarla por una de ellas se ve por la otra.</p>`,
+  trp:`<p><b>La trampa de la matriz.</b> Creer que <code>copy()</code> basta con listas anidadas: la copia comparte las filas con el original.</p>
+<button class="lk" data-trap="anidada">Ver la trampa de la matriz</button>
+<p><b>La trampa del tablero.</b> <code>[[0] * 3] * 3</code> multiplica las flechas, no las filas: las tres casillas apuntan a la misma fila.</p>
+<button class="lk" data-trap="tablero">Ver la trampa del tablero</button>
+<p><b>Chequeo de bolsillo.</b> Cuenta las cajas de fila en la memoria: una matriz de 3 filas tiene que tener 3 cajas distintas. En código, <code>tablero[0] is tablero[1]</code> tiene que dar <code>False</code>.</p>`},
+ {id:'diccionarios', ar:4, mem:'heap', n:'Diccionarios', sub:'Puesto 3: diccionarios', lt:'claves que apuntan a valores', trap:'keyerror',
+  vars:[{id:'agenda',n:'Añadir y cambiar'},{id:'contarletras',n:'Contar con get'},{id:'items',n:'Recorrer items()'},{id:'keyerror',n:'Trampa: KeyError',tr:1}],
+  chk:f => {
+    if (st.v==='keyerror') return ['x', "✗ KeyError: la clave 'Marta' no existe. Pregunta antes con 'Marta' in edades, o usa edades.get('Marta', 0), que da 0 si no está."];
+    const R = refs(f);
+    if (st.v==='agenda'){ const d = dk(f, f.h[R.edades]); return ['y', `✓ edades tiene ${Object.keys(d).length} claves y 'Ana' vale ${d["'Ana'"]}: asignar una clave que ya existe sustituye su valor, no la repite.`]; }
+    if (st.v==='contarletras'){ const d = dk(f, f.h[R.cuenta]), s = Object.values(d).reduce((a,b) => a + +b, 0); return ['y', `✓ Las cuentas suman ${s} = len("banana"), y hay ${Object.keys(d).length} claves: una por letra distinta.`]; }
+    if (st.v==='items') return ['y', `✓ total = ${f.o.trim()} = 1.2 + 0.9: items() da cada pareja clave, valor en una vuelta.`];
+    return null;
+  },
+  lec:`<p class="say">Si ves llaves, piensa en una tabla de clave → valor: con <code>d[clave]</code> lees o escribes el valor de esa clave; si la clave ya existe se sustituye su valor, y si no, se añade; para leer una clave que quizá no exista, usa <code>get</code>.</p>
+<div class="anat"><div><b>Leer</b><code>d[k]</code> falla si no existe; <code>d.get(k, x)</code> da x.</div><div><b>Escribir</b><code>d[k] = v</code> añade o sustituye.</div><div><b>Recorrer</b><code>for k, v in d.items()</code>.</div></div>
+<p><b>Qué revela la memoria.</b> Cada fila del diccionario es una clave con su valor, y no hay dos filas con la misma clave: la fila que cambia se resalta. Contar con <code>get</code> es el patrón acumulador del área Patrones, pero con un acumulador por clave.</p>`,
+  trp:`<p><b>La trampa.</b> Leer una clave que no existe con <code>d[clave]</code>: <code>KeyError</code>, y el programa se detiene.</p>
+<button class="lk" data-trap>Ver la trampa en marcha</button>
+<p><b>Chequeo de bolsillo.</b> En un conteo, la suma de todos los valores tiene que ser igual al número de elementos contados, y <code>len(d)</code> al número de claves distintas.</p>`}
+,
+ {id:'buscar', ar:5, n:'Búsqueda lineal y binaria', sub:'Puesto 1: búsqueda lineal y binaria', lt:'partir por la mitad', trap:'desordenada',
+  cnt:[{n:'comparaciones con la lista', re:/^\s*(if|elif)\b.*lista\[/}],
+  algo:(v, n, end) => { const m = [], I = iv(v,'izq'), D = iv(v,'der');
+    for (const [k,l] of [['i','i'],['izq','izq'],['der','der'],['medio','medio']]){ const x = iv(v,k); if (x!==null && x>=0 && x<n) m.push([x,l]); }
+    return {marks:m, dim: I!==null && D!==null ? i => i<I || i>D : null}; },
+  vars:[{id:'lineal',n:'Lineal'},{id:'binaria',n:'Binaria'},{id:'noesta',n:'Binaria: no está'},{id:'desordenada',n:'Trampa: desordenada',tr:1},{id:'sinmasuno',n:'Trampa: izq = medio',tr:1}],
+  chk:f => {
+    const c = cuenta(st.tr.length)[0][1], p = f.v.pos ? +f.v.pos[1] : null, L = f.v.lista[1].map(Number), ob = +f.v.objetivo[1];
+    if (st.v==='sinmasuno') return ['x', '✗ El bucle no termina: con izq = medio, cuando izq y der quedan juntos medio vale izq y el intervalo deja de encoger. Hace falta izq = medio + 1.'];
+    if (st.v==='desordenada') return ['x', `✗ pos = -1, pero ${ob} está en lista[${L.indexOf(ob)}]. La binaria solo funciona con la lista ordenada: aquí ha descartado la mitad equivocada.`];
+    if (p===-1) return ['y', `✓ pos = -1: ${ob} no está. El bucle ha terminado cuando izq pasó a der (izq = ${f.v.izq[1]}, der = ${f.v.der[1]}), tras ${c} comparaciones.`];
+    if (st.v==='lineal') return ['y', `✓ pos = ${p}: lista[${p}] = ${L[p]}. ${c} comparaciones: la lineal mira casilla a casilla, y con ${L.length} casillas puede necesitar hasta ${L.length}.`];
+    return ['y', `✓ pos = ${p}: lista[${p}] = ${L[p]}, con solo ${c} comparaciones. Cada vuelta descarta la mitad: con ${L.length} casillas bastan como mucho ${Math.floor(Math.log2(L.length))+1} vueltas.`];
+  },
+  lec:`<p class="say">Si la lista está ordenada, no la recorras entera: mira la casilla del medio, descarta la mitad donde no puede estar y repite con la que queda, hasta encontrarlo o hasta que <code>izq</code> pase a <code>der</code>.</p>
+<div class="anat"><div><b>Mira el medio</b><code>medio = (izq + der) // 2</code>.</div><div><b>Descarta</b>Si es menor, <code>izq = medio + 1</code>; si es mayor, <code>der = medio - 1</code>.</div><div><b>Para</b>Lo encuentras, o <code>izq &gt; der</code> y no está.</div></div>
+<p><b>Qué revela la memoria.</b> Las casillas descartadas se apagan, y en cada vuelta se apaga la mitad de las que quedaban. La lineal, en cambio, avanza casilla a casilla: compara los contadores.</p>
+<p><b>Lectura dinámica.</b> El coste de la lineal crece como n; el de la binaria, como log₂ n. Duplicar la lista añade una sola pregunta: con un millón de casillas, 20 comparaciones frente a un millón.</p>`,
+  trp:`<p><b>La trampa del desorden.</b> Usar la binaria con una lista sin ordenar: descarta la mitad equivocada y no encuentra algo que sí está.</p>
+<button class="lk" data-trap="desordenada">Ver la trampa del desorden</button>
+<p><b>La trampa del + 1.</b> Escribir <code>izq = medio</code>: cuando izq y der quedan juntos, el intervalo ya no encoge y el bucle no termina.</p>
+<button class="lk" data-trap="sinmasuno">Ver la trampa del + 1</button>
+<p><b>Chequeo de bolsillo.</b> El intervalo [izq, der] tiene que encoger en cada vuelta; si una vuelta no lo cambia, el bucle es infinito. Y antes de buscar, <code>lista == sorted(lista)</code> tiene que dar True.</p>`},
+ {id:'burbuja', ar:5, n:'Burbuja', sub:'Puesto 2: ordenar con la burbuja', lt:'los grandes suben', trap:'pisarb',
+  cnt:[{n:'comparaciones', re:/^\s*if lista\[j\] > lista\[j \+ 1\]/},{n:'intercambios', re:/^\s*lista\[j\](,| =)/}],
+  algo:(v, n, end) => { const m = [], J = iv(v,'j'), I = iv(v,'i'), N = iv(v,'n');
+    if (J!==null && J<n){ m.push([J,'j']); if (J+1<n) m.push([J+1,'j+1']); }
+    return {marks:m, fin: end ? () => true : I!==null && N!==null ? i => i >= N - I : null}; },
+  vars:[{id:'burbuja',n:'Burbuja'},{id:'temprana',n:'Con parada temprana'},{id:'pisarb',n:'Trampa: intercambio a medias',tr:1},{id:'rangob',n:'Trampa: range(n)',tr:1}],
+  chk:f => {
+    if (st.v==='rangob') return ['x', '✗ IndexError: con range(n) el último j es n − 1, y lista[j + 1] se sale de la lista. El bucle interior tiene que ser range(n − 1 − i).'];
+    const [c, x] = cuenta(st.tr.length).map(a => a[1]), L = f.v.lista[1].map(Number), L0 = st.tr[1].v.lista[1].map(Number), ok = JSON.stringify(L)===JSON.stringify([...L0].sort((a,b)=>a-b)), n = L.length;
+    if (!ok) return ['x', `✗ lista = [${L.join(', ')}]: han desaparecido valores y otros se repiten (la suma pasó de ${L0.reduce((a,b)=>a+b)} a ${L.reduce((a,b)=>a+b)}). Tras lista[j] = lista[j + 1], el valor viejo de lista[j] ya no está en ninguna parte: hace falta el intercambio simultáneo.`];
+    if (st.v==='temprana') return ['y', `✓ Ordenada con ${c} comparaciones: la segunda pasada no intercambió nada y el break paró el bucle. Sin la bandera serían ${n*(n-1)/2}.`];
+    return ['y', `✓ Ordenada: ${c} comparaciones = ${n}·${n-1}/2, y ${x} intercambios, justo las ${invs(L0)} parejas desordenadas (inversiones) que tenía la lista original.`];
+  },
+  lec:`<p class="say">Si ves dos vecinos desordenados, intercámbialos; recorre la lista haciendo esto y el mayor sube hasta el final como una burbuja; repite con la parte que queda, una casilla más corta cada vez.</p>
+<div class="anat"><div><b>Compara</b><code>lista[j] &gt; lista[j + 1]</code>.</div><div><b>Intercambia</b>A la vez: <code>a, b = b, a</code>.</div><div><b>Acorta</b>Tras cada pasada, la última casilla de la zona ya está en su sitio.</div></div>
+<p><b>Qué revela la memoria.</b> Las marcas j y j+1 avanzan juntas comparando vecinos; tras cada pasada, la casilla más grande que quedaba se queda fija al final, en gris. Las casillas que acaban de cambiar se resaltan.</p>
+<p><b>Lectura dinámica.</b> Sin parada temprana, n(n − 1)/2 comparaciones: duplicar la lista cuadruplica el trabajo. Con la bandera <code>cambiado</code>, una lista casi ordenada cuesta muy poco.</p>`,
+  trp:`<p><b>La trampa del intercambio a medias.</b> <code>lista[j] = lista[j + 1]</code> y después <code>lista[j + 1] = lista[j]</code>: el primer valor se pierde, como en Variables · Intercambiar.</p>
+<button class="lk" data-trap="pisarb">Ver la trampa del intercambio</button>
+<p><b>La trampa del range.</b> <code>for j in range(n)</code>: en la última vuelta, <code>j + 1</code> se sale de la lista.</p>
+<button class="lk" data-trap="rangob">Ver la trampa del range</button>
+<p><b>Chequeo de bolsillo.</b> Al final, <code>lista == sorted(lista)</code> y con los mismos elementos: misma longitud y misma suma. El número de intercambios es el de parejas desordenadas de la lista original.</p>`},
+ {id:'insercion', ar:5, n:'Inserción', sub:'Puesto 3: ordenar por inserción', lt:'las cartas en la mano', trap:'sinj',
+  cnt:[{n:'comparaciones', re:/^\s*while\b.*lista\[j\] > clave/},{n:'desplazamientos', re:/^\s*lista\[j \+ 1\] = lista\[j\]/}],
+  algo:(v, n, end) => { const m = [], I = iv(v,'i'), J = iv(v,'j');
+    if (I!==null && I<n) m.push([I,'i']); if (J!==null && J>=0 && J<n) m.push([J,'j']);
+    return {marks:m, ord: end ? () => true : I!==null ? i => i < I : null}; },
+  vars:[{id:'insercion',n:'Inserción'},{id:'casi',n:'Casi ordenada'},{id:'alreves',n:'Al revés'},{id:'sinj',n:'Trampa: sin j >= 0',tr:1}],
+  chk:f => {
+    if (st.v==='sinj') return ['x', '✗ IndexError: sin la protección j >= 0, j se vuelve negativo y Python lee lista[-1], la última casilla. El algoritmo se mezcla con el final de la lista hasta salirse.'];
+    const [c, d] = cuenta(st.tr.length).map(a => a[1]), L0 = st.tr[1].v.lista[1].map(Number), n = L0.length;
+    return ['y', `✓ Ordenada con ${c} comparaciones y ${d} desplazamiento${d===1?'':'s'}: ${d===1 ? 'justo la única pareja desordenada' : `justo las ${invs(L0)} parejas desordenadas`} que tenía la lista original.${st.v==='alreves' ? ` Es el peor caso: n(n − 1)/2 = ${n*(n-1)/2}.` : st.v==='casi' ? ' Casi ordenada, casi sin trabajo.' : ''}`];
+  },
+  lec:`<p class="say">Si ordenas como las cartas en la mano, toma la siguiente carta, desplaza a la derecha las de la parte ordenada que sean mayores y déjala en el hueco que queda; la parte ordenada crece una carta en cada vuelta.</p>
+<div class="anat"><div><b>Toma</b><code>clave = lista[i]</code>: la carta queda a salvo en su caja.</div><div><b>Desplaza</b>Mientras <code>lista[j] &gt; clave</code>, <code>lista[j + 1] = lista[j]</code>.</div><div><b>Coloca</b><code>lista[j + 1] = clave</code>, en el hueco.</div></div>
+<p><b>Qué revela la memoria.</b> La parte izquierda, tintada, está siempre ordenada. Durante el desplazamiento una casilla aparece repetida un momento: es el hueco, y la carta que se está colocando espera en <code>clave</code>.</p>
+<p><b>Lectura dinámica.</b> Cada desplazamiento deshace una pareja desordenada. Una lista casi ordenada sale casi gratis; una lista al revés es el peor caso, n(n − 1)/2 desplazamientos.</p>`,
+  trp:`<p><b>La trampa.</b> Olvidar <code>j &gt;= 0</code> en la condición: cuando la clave es la menor, <code>j</code> se vuelve negativo, <code>lista[-1]</code> lee la última casilla y el algoritmo se enreda hasta salirse.</p>
+<button class="lk" data-trap>Ver la trampa en marcha</button>
+<p><b>Chequeo de bolsillo.</b> Misma longitud y misma suma antes y después, y <code>lista == sorted(lista)</code>. El número de desplazamientos tiene que ser el de parejas desordenadas de la lista original.</p>`}
+,
+ {id:'caida', ar:6, n:'Caída libre con Euler', sub:'Puesto 1: caída libre con Euler', lt:'paso a paso hacia el suelo', trap:'signo',
+  plot:{euler:{x:'t', y:'y', f:t => 20 - 4.9*t*t, fl:'exacta: y = 20 − 4,9·t²', yr:[0]}, dtgrande:{x:'t', y:'y', f:t => 20 - 4.9*t*t, fl:'exacta: y = 20 − 4,9·t²', yr:[0]}, cromerc:{x:'t', y:'y', f:t => 20 - 4.9*t*t, fl:'exacta: y = 20 − 4,9·t²', yr:[0]}, signo:{x:'t', y:'y', f:t => 20 - 4.9*t*t, fl:'exacta: y = 20 − 4,9·t²'}},
+  vars:[{id:'euler',n:'Euler, dt = 0.1'},{id:'dtgrande',n:'Euler, dt = 0.4'},{id:'cromerc',n:'Primero v, luego y'},{id:'signo',n:'Trampa: signo de g',tr:1},{id:'tigual',n:'Trampa: t != 1.0',tr:1}],
+  chk:f => {
+    const te = Math.sqrt(40/9.8);
+    if (st.v==='signo') return ['x', '✗ El bucle no termina: con v = v + g * dt la gravedad empuja hacia arriba, y crece sin parar y nunca llega al suelo. Con y hacia arriba, la gravedad resta.'];
+    if (st.v==='tigual'){ const ts = []; st.tr.forEach(s => { const x = s.v.t && s.v.t[1]; if (x && ts[ts.length-1]!==x) ts.push(x); }); return ['x', `✗ t nunca vale exactamente 1.0: tras diez sumas de 0.1 vale ${ts[10]}, porque 0.1 no se puede escribir exacto en binario. Compara floats con < o con una tolerancia: abs(t - 1.0) < 1e-9.`]; }
+    const [tt, yy] = f.o.trim().split(/\s+/).map(Number), dt = num(f.v.dt);
+    return ['y', `✓ Toca el suelo en t ≈ ${tt} s (último punto, y = ${yy}, ya por debajo). La exacta da √(2·20/9,8) = ${te.toFixed(2)} s. Error: ${Math.abs(tt-te).toFixed(2)} s con dt = ${dt}${st.v==='dtgrande' ? ' (con dt = 0.1 eran 0.08 s: el error crece con dt)' : ''}; ${st.v==='cromerc' ? 'actualizando v primero cae algo antes que la exacta' : 'el Euler explícito cae algo más despacio, porque usa la velocidad del principio de cada paso'}.`];
+  },
+  lec:`<p class="say">Si conoces cómo cambia algo (su velocidad) pero no la fórmula de dónde estará, avanza a pasitos: nuevo = viejo + ritmo · dt, y repite; cuanto más pequeño sea dt, más se parecen los puntos a la curva exacta.</p>
+<div class="anat"><div><b>Estado</b><code>t</code>, <code>y</code>, <code>v</code>: la foto del instante.</div><div><b>Paso</b><code>y += v·dt</code>, <code>v −= g·dt</code>, <code>t += dt</code>.</div><div><b>Repite</b>Mientras no llegue al suelo: <code>while y &gt; 0</code>.</div></div>
+<p><b>Qué revela la memoria.</b> Cada punto es el estado al empezar una vuelta. Los puntos de Python se separan poco a poco de la curva discontinua: el error se acumula paso a paso. Con dt = 0.4 los escalones se ven a simple vista.</p>
+<p><b>Lectura dinámica.</b> El error al final es más o menos proporcional a dt (método de primer orden), y el número de pasos a 1/dt: para ganar el doble de precisión hacen falta el doble de vueltas.</p>`,
+  trp:`<p><b>La trampa del signo.</b> <code>v = v + g * dt</code> con el eje y hacia arriba: la gravedad empuja hacia arriba y el objeto no llega nunca al suelo.</p>
+<button class="lk" data-trap="signo">Ver la trampa del signo</button>
+<p><b>La trampa de la igualdad.</b> <code>while t != 1.0</code>: sumando 0.1 diez veces no sale 1.0 exacto, así que el bucle no termina.</p>
+<button class="lk" data-trap="tigual">Ver la trampa de la igualdad</button>
+<p><b>Chequeo de bolsillo.</b> Compara con un caso que sabes resolver: desde 20 m tarda √(2h/g) ≈ 2,02 s. Si el bucle se para en un instante muy distinto, revisa signos y dt. Y compara floats siempre con &lt;, &gt; o una tolerancia.</p>`},
+ {id:'muelle', ar:6, n:'Muelle y oscilador', sub:'Puesto 2: muelle y oscilador', lt:'la energía que se escapa', trap:'explota',
+  plot:{explicito:{x:'t', y:'x', f:t => Math.cos(2*t), fl:'exacta: x = cos 2t'}, cromer:{x:'t', y:'x', f:t => Math.cos(2*t), fl:'exacta: x = cos 2t'}, energia:{x:'t', y:'E', f:t => 2, fl:'exacta: E = 2 J, constante', yr:[0]}, explota:{x:'t', y:'x', f:t => Math.cos(2*t), fl:'exacta: x = cos 2t'}},
+  vars:[{id:'explicito',n:'Euler explícito'},{id:'cromer',n:'Euler-Cromer'},{id:'energia',n:'La energía'},{id:'explota',n:'Trampa: dt = 0.5',tr:1}],
+  chk:f => {
+    const xs = st.tr.map(s => num(s.v.x)).filter(x => x!==null), amp = Math.max(...xs.map(Math.abs));
+    if (st.v==='cromer') return ['y', `✓ La amplitud se mantiene: el máximo de |x| es ${f2(amp)}, como la exacta (1). Euler-Cromer no pierde ni gana energía a la larga.`];
+    if (st.v==='energia') return ['x', `✗ E = ${f.o.trim()} J al final, cuando tendría que seguir valiendo 2 J. Con Euler explícito la energía crece un 4 % en cada paso: (1 + (ω·dt)²) = 1,04.`];
+    if (st.v==='explota') return ['x', `✗ |x| llega a ${f2(amp)}, cuando nunca debería pasar de 1. Con dt = 0.5, cada paso multiplica la amplitud por √(1 + (2·0,5)²) = √2 ≈ 1,41: la simulación explota.`];
+    return ['x', `✗ La amplitud crece hasta ${f2(amp)}, cuando la exacta se queda en 1: el Euler explícito multiplica la amplitud por √(1 + (ω·dt)²) ≈ 1,02 en cada paso. Prueba Euler-Cromer.`];
+  },
+  lec:`<p class="say">Si simulas algo que oscila, vigila la energía: con Euler explícito crece en cada vuelta y la oscilación se abre; si actualizas primero la velocidad y después la posición con la velocidad nueva (Euler-Cromer), se mantiene estable.</p>
+<div class="anat"><div><b>Fuerza</b><code>a = −(k/m)·x</code>, siempre hacia el centro.</div><div><b>Explícito</b>x y v con los valores viejos: la energía crece.</div><div><b>Cromer</b>v primero y x con la v nueva: la energía no se escapa.</div></div>
+<p><b>Qué revela la memoria.</b> Con Euler explícito los puntos se salen de la cosenoide exacta hacia fuera; con Cromer se quedan encima. La energía, que debería ser constante (2 J), sube a escalones.</p>
+<p><b>Lectura dinámica.</b> Cada paso de Euler explícito multiplica la amplitud por √(1 + (ω·dt)²), un número mayor que 1: a la larga, crece sin límite. En Euler-Cromer ese factor vale 1: ni crece ni se apaga.</p>`,
+  trp:`<p><b>La trampa.</b> Un dt grande con Euler explícito: el factor por paso es tan grande que la oscilación explota en pocas vueltas.</p>
+<button class="lk" data-trap>Ver la trampa en marcha</button>
+<p><b>Chequeo de bolsillo.</b> Calcula la energía E = ½mv² + ½kx² en cada paso: tiene que mantenerse casi constante. Si crece sin parar, el método o el dt están mal.</p>`},
+ {id:'tiro', ar:6, n:'Tiro parabólico', sub:'Puesto 3: tiro parabólico', lt:'dos movimientos a la vez', trap:'grados',
+  plot:Object.fromEntries([['tiro45',45],['tiro30',30],['tiro60',60]].map(([id,a]) => { const r = a*Math.PI/180, c = Math.cos(r); return [id, {x:'x', y:'y', f:x => x*Math.tan(r) - 9.8*x*x/(2*225*c*c), fl:'exacta: la parábola', xr:[0, 225*Math.sin(2*r)/9.8], yr:[0]}]; }).concat([['grados', {x:'x', y:'y', yr:[0]}]])),
+  vars:[{id:'tiro45',n:'45°'},{id:'tiro30',n:'30°'},{id:'tiro60',n:'60°'},{id:'grados',n:'Trampa: grados',tr:1}],
+  chk:f => {
+    const a = num(f.v.ang), R = 225*Math.sin(2*a*Math.PI/180)/9.8, x = +f.o.trim();
+    if (st.v==='grados') return ['x', `✗ Alcance ${x} m, pero a 45° tendría que ser ${R.toFixed(2)} m. math.cos(45) usa 45 radianes (unos 2578°), no 45°: el ángulo real del tiro es otro. Pásalo antes con math.radians.`];
+    return ['y', `✓ Alcance ${x} m; el exacto es v0²·sin 2θ / g = ${R.toFixed(2)} m. La diferencia viene de dt y de que el último punto ya está bajo el suelo.${a!==45 ? ` ${a}° y ${90-a}° llegan igual de lejos: sin 2θ es simétrico respecto a 45°.` : ''}`];
+  },
+  lec:`<p class="say">Si un objeto se mueve en dos direcciones a la vez, trata cada una por separado: en x la velocidad no cambia, en y la gravedad la frena; y antes de usar seno y coseno, pasa los grados a radianes.</p>
+<div class="anat"><div><b>Descompón</b><code>vx = v0·cos θ</code>, <code>vy = v0·sin θ</code>.</div><div><b>Separa</b>x avanza con vx constante; vy pierde g·dt en cada paso.</div><div><b>Termina</b>Cuando y vuelve a ser negativa.</div></div>
+<p><b>Qué revela la memoria.</b> Los puntos dibujan la parábola: en horizontal avanzan a pasos iguales, en vertical suben cada vez menos y luego bajan. Prueba 30° y 60°: llegan igual de lejos.</p>`,
+  trp:`<p><b>La trampa.</b> <code>math.cos(45)</code> no es el coseno de 45°: Python trabaja en radianes. El tiro sale con otro ángulo y otro alcance.</p>
+<button class="lk" data-trap>Ver la trampa en marcha</button>
+<p><b>Chequeo de bolsillo.</b> El alcance exacto es v0²·sin 2θ / g, 22,96 m para 15 m/s y 45°. El último punto queda un poco por debajo del suelo: el bucle se para un paso después de cruzarlo.</p>`}
+,
+ {id:'tucodigo', ar:7, tu:1, n:'Pega y mira', sub:'Puesto 1: pega tu programa y míralo pensar', lt:'mirar antes de corregir', trap:'blanco',
+  vars:[{id:'blanco',n:'En blanco'},{id:'fibo',n:'Fibonacci'},{id:'vocales',n:'Contar vocales'},{id:'pareshasta',n:'Una función'},{id:'entrada',n:'Con input()'}],
+  chk:f => {
+    const MAPA = [[/IndexError/, 'primero', 'El primero que cumple (trampa del and)'], [/KeyError/, 'diccionarios', 'Diccionarios'], [/UnboundLocalError/, 'locales', 'Variables locales'], [/llamadas anidadas/, 'recursion', 'Recursión'], [/pasos/, 'mientras-que', 'while con condición'], [/NoneType/, 'llamar', 'Llamar y devolver'], [/NameError/, 'asignar', 'Asignar y reasignar'], [/EOFError/, null, '']];
+    if (st.an.L.every(x => !x.trim() || x.trim().startsWith('#'))) return ['', '', 'Escribe tu programa en el editor y pulsa «Ejecutar y trazar».'];
+    if (f.e){ const m = MAPA.find(x => x[0].test(f.e));
+      return ['x', '', `✗ ${esc(f.e)}.${m && m[1] ? ` Este error tiene su puesto en el laboratorio: <a href="#${m[1]}">${m[2]}</a>.` : ''} Retrocede unos pasos y mira qué valía cada variable justo antes.`]; }
+    const n = st.tr.length - 1, R = f.f ? refs(f) : {}, vs = Object.keys(f.v).slice(0, 6).map(k => `${esc(k)} = ${esc(f.v[k][0]==='s' ? f.v[k][1] : f.v[k][0]==='l' ? '['+f.v[k][1].join(', ')+']' : '{'+f.v[k][1].map(([a,b]) => a+': '+b).join(', ')+'}')}`);
+    const nm = Object.keys(R).filter(k => f.h && f.h[R[k]] && (f.h[R[k]][0]==='l' || f.h[R[k]][0]==='d')), sh = nm.filter((a,i) => nm.some((b,j) => j>i && R[a]===R[b]) );
+    const al = sh.length ? ` Ojo: ${sh.map(a => `<code>${esc(a)}</code> y <code>${esc(nm.find(b => b!==a && R[b]===R[a]))}</code>`).join(', ')} son el mismo objeto (<a href="#mutar">Mutar o reasignar</a>).` : '';
+    return ['y', '', `✓ Terminado en ${n} pasos.${vs.length ? ' Al final: ' + vs.join(', ') + '.' : ''}${al}`];
+  },
+  lec:`<p class="say">Si tu programa no hace lo que esperas, no lo releas: míralo pensar. Predice qué va a pasar en la siguiente línea antes de avanzar y detente en el primer paso en que la memoria te lleve la contraria: ahí está el error.</p>
+<div class="anat"><div><b>Predice</b>Antes de cada paso, di qué valor cambiará. El modo Predecir te lo pregunta.</div><div><b>Avanza</b>Un paso cada vez, mirando la memoria y la tabla de traza.</div><div><b>Para</b>En la primera sorpresa: esa línea, con esos valores, es la pista.</div></div>
+<p><b>Qué vista elegir.</b> «Automática» decide por ti: cajas y flechas si hay funciones, diccionarios o listas compartidas; casillas si hay listas; recorrido en lo demás. La gráfica dibuja un punto por vuelta con las dos variables que elijas.</p>`,
+  trp:`<p><b>Lo que el laboratorio no enseña.</b> Corta a los 400 pasos y a las 50 llamadas anidadas. Solo usa la biblioteca estándar (sin numpy ni otros paquetes). <code>input()</code> no abre ventana: lee de la caja «Entradas». Los objetos de clases propias aparecen como una caja con su tipo.</p>
+<p><b>Chequeo de bolsillo.</b> Si al final una variable vale algo que no esperabas, busca el último paso en que cambió en la tabla de traza. Si una lista cambió sin aparecer a la izquierda de un <code>=</code>, otra variable apunta a la misma.</p>`}
+];
+const AREAS = [
+  {n:'Variables', p:'Cajas y flechas: un nombre apunta a un valor; reasignar mueve la flecha.', u:['Asignar y reasignar','Intercambiar dos variables','Mutar o reasignar'], on:3},
+  {n:'Decisiones', p:'if, while, for: el camino que sigue la flecha de ejecución.', u:['if / elif / else','while con condición','for y range'], on:3},
+  {n:'Patrones', p:'Acumular y buscar: los gestos que se repiten en todo programa.', u:['Recorrer y acumular','Buscar el máximo','El primero que cumple'], on:3},
+  {n:'Funciones', p:'La pila de llamadas: marcos que se apilan y se desapilan con return.', u:['Llamar y devolver','Variables locales','Recursión'], on:3},
+  {n:'Colecciones', p:'Listas y diccionarios: modificar, copiar y buscar por clave.', u:['Modificar una lista','Copiar de verdad','Diccionarios'], on:3},
+  {n:'Algoritmos', p:'Buscar y ordenar, casilla a casilla, contando lo que cuesta.', u:['Búsqueda lineal y binaria','Burbuja','Inserción'], on:3},
+  {n:'Física y código', p:'El alumno programa el método de Euler y compara con el banco del laboratorio de física.', u:['Caída libre con Euler','Muelle y oscilador','Tiro parabólico'], lk:1, on:3},
+  {n:'Tu código', p:'Pega tu programa y mira cómo piensa.', u:['Pega y mira'], on:1}
+];
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const st = {p:PUESTOS[0], v:'for', code:'', tr:[], k:0, mode:'exp', ok:0, tot:0, timer:null, an:null};
+
+const PA = i => PUESTOS.filter(p => p.ar===i);
+$('#grid').innerHTML = AREAS.map((a,i) => `<div class="st${a.on?' on':''}" id="a${i}"><div class="h"><span class="num">${i+1}</span><span class="chip${a.on?' on':''}">${a.on?'Abierto · '+a.on+' puestos':'En diseño'}</span></div><h3>${a.n}</h3><p>${a.p}</p><ul>${a.u.map((u,j)=>`<li>${PA(i)[j]?'<a href="#'+PA(i)[j].id+'">'+u+'</a>':u}</li>`).join('')}</ul>${a.lk?'<p><a href="https://claude.ai/artifact/8oRGZis5FPsswYeJn1h5XE">Abrir el laboratorio de física</a></p>':''}</div>`).join('');
+
+function analyze(code){
+  const L = code.split('\n'), fors = [], idx = [], blk = {};
+  L.forEach((s,i) => { if (/^\s*(if|elif|else|while|for)\b.*:\s*$/.test(s)){ const ind = s.match(/^\s*/)[0].length, b = new Set();
+    for (let j=i+1;j<L.length;j++){ if (!L[j].trim()) continue; if (L[j].match(/^\s*/)[0].length<=ind) break; b.add(j+1); } blk[i+1] = b; } });
+  L.forEach((s,i) => {
+    const m = s.match(/^(\s*)for\s+(\w+)\s+in\s+(.+):\s*$/);
+    if (m){
+      const ind = m[1].length, body = new Set();
+      for (let j=i+1;j<L.length;j++){ if (!L[j].trim()) continue; if (L[j].match(/^\s*/)[0].length<=ind) break; body.add(j+1); }
+      fors.push({ln:i+1, it:m[3], lv:m[2], body});
+    }
+    for (const q of s.matchAll(/(\w+)\[(\w+)\]/g)) idx.push([q[1], q[2]]);
+  });
+  return {L, fors, idx, blk};
+}
+
+function cursor(k, name){
+  const s = st.tr[k], v = s.v, len = v[name][1].length, an = st.an;
+  const cc = st.p.champ && st.p.champ[st.v];
+  for (const [l,i] of an.idx) if (l===name && !(cc && cc.v===i) && v[i] && v[i][0]==='s' && /^-?\d+$/.test(v[i][1])){ const c=+v[i][1]; if (c>=0 && c<=len) return {c, ghost:false}; }
+  const f = an.fors.find(f => new RegExp('\\b'+name+'\\b').test(f.it));
+  if (!f) return null;
+  let cnt = null;
+  for (let j=0;j<=k;j++){
+    const l = st.tr[j].l;
+    if (l===f.ln){ const p = j? st.tr[j-1].l : -1; cnt = (cnt!==null && (p===f.ln || f.body.has(p))) ? cnt+1 : 0; }
+    else if (!f.body.has(l)) cnt = null;
+  }
+  if (cnt===null) return null;
+  if (s.l===f.ln) return {c:cnt-1, ghost:cnt};
+  return {c:cnt, ghost:false, lv:f.lv};
+}
+
+const num = x => x && x[0]==='s' && x[1]!=='' && !isNaN(+x[1]) ? +x[1] : null;
+const f2 = x => Math.abs(x) >= 1000 || (x!==0 && Math.abs(x) < 0.01) ? x.toExponential(2) : (+x.toFixed(3)).toString();
+function plot(k){
+  const P = st.p.plot && st.p.plot[st.v]; if (!P) return '';
+  const loop = st.an.L.findIndex(s => /^\s*(while|for)\b/.test(s)) + 1, pts = [];
+  st.tr.forEach((s,j) => { if (s.l!==loop && j!==st.tr.length-1) return; const X = num(s.v[P.x]), Y = num(s.v[P.y]); if (X===null || Y===null) return; if (pts.length && pts[pts.length-1][0]===X && pts[pts.length-1][1]===Y) return; pts.push([X,Y,j]); });
+  if (!pts.length) return st.p.tu ? `<p class="empty">Para la gráfica, escribe en «Eje x» y «Eje y» dos variables numéricas que cambien en un bucle while o for.</p>` : '';
+  let x0 = Math.min(...pts.map(p => p[0])), x1 = Math.max(...pts.map(p => p[0]));
+  if (P.xr){ x0 = Math.min(x0, P.xr[0]); x1 = Math.max(x1, P.xr[1]); }
+  const ex = P.f ? Array.from({length:121}, (_,i) => { const x = x0 + (x1-x0)*i/120; return [x, P.f(x)]; }).filter(p => isFinite(p[1])) : [];
+  const ys = pts.map(p => p[1]).concat(ex.map(p => p[1])).concat(P.yr || []);
+  let y0 = Math.min(...ys), y1 = Math.max(...ys); if (y1 - y0 < 1e-9){ y0 -= 1; y1 += 1; }
+  const W = 640, H = 250, l = 54, r = 12, tp = 12, bt = 30, sx = x => l + (x-x0)/(x1-x0||1)*(W-l-r), sy = y => tp + (y1-y)/(y1-y0)*(H-tp-bt);
+  const vis = pts.filter(p => p[2] <= k), cur = vis[vis.length-1];
+  let g = '';
+  const tk = (a,b) => { const raw = (b-a)/4, p = Math.pow(10, Math.floor(Math.log10(raw))), st2 = [1,2,2.5,5,10].map(m => m*p).find(s => s >= raw), o = []; for (let v = Math.ceil(a/st2)*st2; v <= b + 1e-9; v += st2) o.push(+v.toFixed(10)); return o; };
+  for (const yv of tk(y0,y1)) g += `<line x1="${l}" x2="${W-r}" y1="${sy(yv)}" y2="${sy(yv)}" style="stroke:var(--row)"/><text x="${l-6}" y="${sy(yv)+4}" text-anchor="end">${f2(yv)}</text>`;
+  for (const xv of tk(x0,x1)) g += `<text x="${sx(xv)}" y="${H-10}" text-anchor="middle">${f2(xv)}</text>`;
+  if (y0 < 0 && y1 > 0) g += `<line x1="${l}" x2="${W-r}" y1="${sy(0)}" y2="${sy(0)}" style="stroke:var(--ink);stroke-width:1.2"/>`;
+  if (ex.length) g += `<path d="${ex.map((p,i) => (i?'L':'M')+sx(p[0]).toFixed(1)+','+sy(p[1]).toFixed(1)).join('')}" style="fill:none;stroke:var(--mut);stroke-width:2;stroke-dasharray:6 5"/>`;
+  if (vis.length>1) g += `<path d="${vis.map((p,i) => (i?'L':'M')+sx(p[0]).toFixed(1)+','+sy(p[1]).toFixed(1)).join('')}" style="fill:none;stroke:var(--acc);stroke-width:1.5;opacity:.6"/>`;
+  g += vis.map(p => `<circle cx="${sx(p[0]).toFixed(1)}" cy="${sy(p[1]).toFixed(1)}" r="3.5" style="fill:var(--acc)"/>`).join('');
+  if (cur) g += `<circle cx="${sx(cur[0])}" cy="${sy(cur[1])}" r="8" style="fill:none;stroke:var(--acc);stroke-width:2.5"/>`;
+  const rd = cur ? `<p class="rd"><span>Punto actual:</span> ${P.x} = ${f2(cur[0])} · ${P.y} = ${f2(cur[1])}${P.f ? ` · <span>exacta:</span> ${f2(P.f(cur[0]))} · <span>error:</span> ${f2(Math.abs(cur[1]-P.f(cur[0])))}` : ''}</p>` : '<p class="rd"><span>Los puntos aparecen al empezar cada vuelta del while.</span></p>';
+  return `<div class="plot"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Gráfica de ${P.y} frente a ${P.x}">${g}</svg><div class="lg"><span><b>●</b> Python, una vuelta por punto</span>${P.f ? `<span>- - - ${esc(P.fl)}</span>` : ''}</div>${rd}</div>`;
+}
+function iv(v, n){ return v[n] && v[n][0]==='s' && /^-?\d+$/.test(v[n][1]) ? +v[n][1] : null; }
+function cuenta(k){ const c = st.p.cnt || [], L = st.an.L; return c.map(x => [x.n, st.tr.slice(0, k).filter(s => s.l && x.re.test(L[s.l-1])).length]); }
+function invs(a){ let c = 0; for (let i=0;i<a.length;i++) for (let j=i+1;j<a.length;j++) if (a[i] > a[j]) c++; return c; }
+function guess(){
+  const tr = st.tr, L = st.an.L.join('\n');
+  if (/^\s*def\b/m.test(L) || tr.some(s => s.f && s.f.length > 1)) return 'heap';
+  if (tr.some(s => Object.values(s.v).some(x => x[0]==='d'))) return 'heap';
+  if (tr.some(s => s.h && Object.values(s.h).some(o => o && o[0]==='l' && o[1].some(e => s.h[e] && s.h[e][0]==='l')))) return 'heap';
+  if (tr.some(s => { if (!s.f) return false; const r = refs(s), v = Object.values(r).filter(x => s.h[x] && s.h[x][0]!=='p'); return new Set(v).size < v.length; })) return 'heap';
+  if (tr.some(s => Object.values(s.v).some(x => x[0]==='l'))) return 'cas';
+  return 'flow';
+}
+function vista(){
+  const P = st.p; if (!P.tu) return;
+  const w = st.vista || 'auto', v = w==='auto' ? guess() : w;
+  P.mem = v==='heap' && st.tr.some(s => s.f) ? 'heap' : v==='flow' ? 'flow' : undefined;
+  P.plot = v==='plot' ? {[st.v]: {x: $('#ex').value.trim(), y: $('#ey').value.trim()}} : undefined;
+  $('#ejes').hidden = w!=='plot';
+  const nom = {heap:'cajas y flechas', cas:'casillas', flow:'recorrido', plot:'gráfica'};
+  $('#vista [data-w=auto]').textContent = 'Automática' + (w==='auto' ? ' · ' + nom[v] : '');
+  document.querySelectorAll('#vista button').forEach(b => b.setAttribute('aria-pressed', b.dataset.w===w));
+}
+function cond(ln, nxt){
+  const s = st.an.L[ln-1] || '', m = s.match(/^\s*(if|elif|while)\s+(.*):\s*$/), f = /^\s*for\b/.test(s);
+  if (!m && !f) return null;
+  const tv = st.an.blk[ln] ? st.an.blk[ln].has(nxt) : false;
+  return {kw: f ? 'for' : m[1], c: m ? m[2] : '', tv};
+}
+function allr(s){ return s && s.f ? s.f.flatMap((fr,i) => fr[1].map(([n,r]) => [i===s.f.length-1 ? n : n+' ('+fr[0]+')', r])) : []; }
+const pv = (s,r,d=0) => { const o = s.h[r]; return !o ? '?' : o[0]==='p' ? o[2] : o[0]==='l' ? (d>2 ? '[…]' : '['+o[1].map(e => pv(s,e,d+1)).join(', ')+']') : o[0]==='t' ? '('+o[1].map(e => pv(s,e,d+1)).join(', ')+')' : o[0]==='d' ? '{'+o[1].map(([a,b]) => pv(s,a,d+1)+': '+pv(s,b,d+1)).join(', ')+'}' : o[0]==='f' ? 'función '+o[1] : '…'; };
+const topn = s => s.f[s.f.length-1][0];
+function dk(s, o){ const m = {}; for (const [a,b] of o[1]) m[s.h[a] ? s.h[a][2] : a] = pv(s,b); return m; }
+function muts(p, s){ const all = allr(s), out = [], seen = new Set();
+  const reach = (S) => { const R = {}; const go = (r, path, d) => { const o = S.h[r]; if (!o || d>3) return; const fst = !R[r]; (R[r] = R[r] || []).push(path); if (fst && o[0]==='l') o[1].forEach((e,i) => { if (S.h[e][0]!=='p') go(e, path+'['+i+']', d+1); }); }; allr(S).forEach(([n,r]) => go(r, n, 0)); return R; };
+  const yj = a => { const c = a.map(x => '<code>'+esc(x)+'</code>'); return c.length>1 ? c.slice(0,-1).join(', ')+' y '+c[c.length-1] : c[0]; };
+  const RS = reach(s);
+  for (const r in RS){ const o = s.h[r], po = p.h[r];
+    if (!po || JSON.stringify(po)===JSON.stringify(o) || (o[0]!=='l' && o[0]!=='d')) continue;
+    const ns = all.filter(a => a[1]===+r).map(a => a[0]), who = ns.length ? ns : RS[r];
+    if (o[0]==='d'){ const A = dk(p,po), B = dk(s,o), d2 = [];
+      for (const key in B){ if (!(key in A)) d2.push(`se añade la clave ${esc(key)}`); else if (A[key]!==B[key]) d2.push(`${esc(who[0])}[${esc(key)}] pasa de ${esc(A[key])} a ${esc(B[key])}`); }
+      for (const key in A) if (!(key in B)) d2.push(`se borra la clave ${esc(key)}`);
+      out.push(d2.join(', ') + (ns.length>1 ? ` (lo ven ${yj(ns)})` : ''));
+    } else out.push(`cambia la lista ${who.length>1 ? 'a la que llegan '+yj(who) : 'de '+yj(who)}: ${esc(pv(p,+r))} → ${esc(pv(s,+r))}`);
+  }
+  return out; }
+function refs(s){ const r = {}; if (s && s.f && s.f.length) for (const [n,x] of s.f[s.f.length-1][1]) r[n] = x; return r; }
+function heapView(k){
+  const s = st.tr[k], p = k ? st.tr[k-1] : null;
+  if (!s.f) return '<p class="empty">Sin datos de memoria para este paso.</p>';
+  const H = s.h, PH = (p && p.h) || {}, show = [], seen = new Set();
+  const add = r => { if (seen.has(r)) return; seen.add(r); show.push(r); const o = H[r];
+    if (o && (o[0]==='l' || o[0]==='t')) o[1].forEach(e => { if (H[e][0]!=='p') add(e); });
+    if (o && o[0]==='d') o[1].forEach(([a,b]) => { if (H[b][0]!=='p') add(b); }); };
+  s.f.forEach(fr => fr[1].forEach(([n,r]) => add(r)));
+  if (s.r) add(s.r);
+  const cur = {};
+  if (s.f && s.f.length===1) for (const [n,r] of s.f[0][1]) if (H[r] && H[r][0]==='l' && s.v[n] && s.v[n][0]==='l'){ const c = cursor(k, n); if (c && c.c>=0) cur[r] = c.c; }
+  const lev = {}; let q = []; s.f.forEach(fr => fr[1].forEach(([n,r]) => { if (lev[r]===undefined){ lev[r] = 0; q.push(r); } })); if (s.r && lev[s.r]===undefined){ lev[s.r] = 0; q.push(s.r); }
+  while (q.length){ const nq = []; for (const r of q){ const o = H[r]; const ch = o && (o[0]==='l' || o[0]==='t') ? o[1] : o && o[0]==='d' ? o[1].map(x => x[1]) : [];
+    for (const e of ch) if (H[e][0]!=='p' && lev[e]===undefined){ lev[e] = lev[r]+1; nq.push(e); } } q = nq; }
+  const pref = (fi,n) => { const pf = p && p.f && p.f[fi]; if (!pf || pf[0]!==s.f[fi][0]) return undefined; const x = pf[1].find(a => a[0]===n); return x ? x[1] : undefined; };
+  const frs = s.f.map((fr,fi) => {
+    const top = fi===s.f.length-1;
+    const rows = fr[1].map(([n,r]) => `<div class="fv${k && pref(fi,n)!==r ? ' nu' : ''}"><span>${esc(n)}</span><span class="dot" data-to="${r}"></span></div>`).join('');
+    const ret = top && s.r ? `<div class="fv nu"><span>devuelve</span><span class="dot" data-to="${s.r}"></span></div>` : '';
+    return `<div class="frm${top?' top':''}"><h4>${fr[0]==='Global' ? 'Global' : esc(fr[0])+'()'}</h4>${rows || ret ? rows+ret : '<div class="fv"><span class="empty">vacío</span></div>'}</div>`;
+  }).join('');
+  const obh = {};
+  show.forEach(r => {
+    const o = H[r], old = PH[r], nu = k && !old, mu = k && old && JSON.stringify(old)!==JSON.stringify(o);
+    let ty, body;
+    if (o[0]==='p'){ ty = o[1]; body = `<div class="pv">${esc(o[2])}</div>`; }
+    else if (o[0]==='l' || o[0]==='t'){ ty = o[0]==='l' ? 'list' : 'tuple';
+      body = o[1].length ? `<div class="cls">${o[1].map((e,i) => { const x = H[e]; return `<div class="cl${cur[r]===i?' cur':''}">${x[0]==='p' ? esc(x[2]) : `<span class="dot" data-to="${e}"></span>`}<small>${i}</small></div>`; }).join('')}</div>` : '<div class="pv">vacía</div>'; }
+    else if (o[0]==='d'){ ty = 'dict'; const od = old && old[0]==='d' ? Object.fromEntries(old[1].map(([a,b]) => [PH[a] ? PH[a][2] : a, PH[b] ? JSON.stringify(PH[b]) : b])) : {};
+      body = o[1].length ? `<div class="rws">${o[1].map(([a,b]) => { const kk = H[a][2], chg = k && od[kk]!==JSON.stringify(H[b]); return `<span class="${chg?'ch':''}">${esc(kk||'?')}</span><span class="${chg?'ch':''}">${H[b][0]==='p' ? esc(H[b][2]) : `<span class="dot" data-to="${b}"></span>`}</span>`; }).join('')}</div>` : '<div class="pv">vacío</div>'; }
+    else if (o[0]==='f'){ ty = 'function'; body = `<div class="pv">${esc(o[1])}()</div>`; }
+    else { ty = o[1]; body = '<div class="pv">…</div>'; }
+    obh[r] = `<div class="ob${nu?' nu':''}${mu?' mu':''}" data-id="${r}"><span class="ty">${esc(ty)}</span>${body}</div>`;
+  });
+  const nl = Math.max(0, ...Object.values(lev)), cols = [];
+  for (let L2=0; L2<=nl; L2++) cols.push(`<div class="col">${show.filter(r => (lev[r]||0)===L2).map(r => obh[r]).join('')}</div>`);
+  return `<div class="hp" id="hp"><div class="frms">${frs}</div><div class="objs">${cols.join('')}</div><svg aria-hidden="true"></svg></div>`;
+}
+function arrows(){
+  const hp = $('#hp'); if (!hp) return;
+  const svg = hp.querySelector('svg'), R = hp.getBoundingClientRect();
+  let h = '<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" style="fill:var(--rule)"/></marker><marker id="ahn" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" style="fill:var(--acc)"/></marker></defs>';
+  hp.querySelectorAll('.dot[data-to]').forEach(d => {
+    const tg = hp.querySelector(`.ob[data-id="${d.dataset.to}"]`); if (!tg) return;
+    const a = d.getBoundingClientRect(), b = tg.getBoundingClientRect(), nu = !!d.closest('.nu');
+    const x1 = a.left + a.width/2 - R.left, y1 = a.top + a.height/2 - R.top, y2 = b.top + Math.min(b.height/2, 22) - R.top;
+    let x2 = b.left - R.left - 1, dd;
+    if (x2 < x1 + 12){ x2 = b.right - R.left + 1; const o = Math.max(x1, x2) + 36; dd = `M${x1},${y1} C${o},${y1} ${o},${y2} ${x2},${y2}`; }
+    else if (d.closest('.cl')){ const yb = d.closest('.ob').getBoundingClientRect().bottom - R.top + 22, yt = b.bottom - R.top - 12; dd = `M${x1},${y1} C${x1},${yb} ${x2-30},${yb} ${x2},${yt}`; }
+    else { const dx = Math.max(24, (x2 - x1)/2); dd = `M${x1},${y1} C${x1+dx},${y1} ${x2-dx},${y2} ${x2},${y2}`; }
+    h += `<path d="${dd}" style="fill:none;stroke:${nu?'var(--acc)':'var(--rule)'};stroke-width:${nu?2.5:1.5}" marker-end="url(#${nu?'ahn':'ah'})"/>`;
+  });
+  svg.innerHTML = h;
+}
+function champ(k, name){
+  const cc = st.p.champ && st.p.champ[st.v];
+  if (!cc || name!=='lista') return -1;
+  const vals = st.tr[k].v[name][1];
+  if (cc.k==='idx'){ const p = st.tr[k].v[cc.v]; return p && /^\d+$/.test(p[1]) ? +p[1] : -1; }
+  let ix = -1;
+  for (let j=0;j<=k;j++){
+    const a = st.tr[j].v[cc.v], b = j ? st.tr[j-1].v[cc.v] : null;
+    if (a && (!b || b[1]!==a[1])){ const cu = st.tr[j].v[name] ? cursor(j, name) : null; ix = cu && cu.c>=0 && vals[cu.c]===a[1] ? cu.c : vals.indexOf(a[1]); }
+  }
+  return ix;
+}
+function scalars(){
+  const order = [], hp = st.p.mem==='heap';
+  st.tr.forEach(s => { for (const k in s.v) if ((s.v[k][0]==='s' || (hp && (s.v[k][0]==='l' || s.v[k][0]==='d'))) && !order.includes(k)) order.push(k); });
+  return order;
+}
+function lists(k){ return Object.keys(st.tr[k].v).filter(n => st.tr[k].v[n][0]==='l'); }
+
+function draw(){
+  vista();
+  const tr = st.tr, k = st.k, s = tr[k], prev = k? tr[k-1] : null, an = st.an;
+  const cnt = {}, showc = st.p.mem!=='heap', last = k===tr.length-1;
+  for (let j=0;j<k;j++) cnt[tr[j].l] = (cnt[tr[j].l]||0) + 1;
+  const cd = prev ? cond(prev.l, s.l) : null;
+  $('#code').innerHTML = an.L.map((t,i) => {
+    const n=i+1, nx = s.l===n, pv = prev && prev.l===n && !nx;
+    const badge = pv && cd && cd.kw!=='for' ? (cd.tv ? ' · <b>True</b>' : ' · <i>False</i>') : '';
+    const ct = showc && t.trim() && (cnt[n] || badge) ? `×${cnt[n]||0}${badge}` : '';
+    return `<div class="ln${nx?' next':''}${pv?' prev':''}${showc && last && t.trim() && !cnt[n] && !/^\s*else\b/.test(t) ? ' never':''}"><span class="a">${nx||pv?'➜':''}</span><span class="n">${n}</span><span class="c">${esc(t)||' '}</span><span class="ct">${ct}</span></div>`;
+  }).join('');
+  $('#leg-ct').hidden = !showc;
+  const pth = $('#path'); pth.hidden = st.p.mem!=='flow';
+  if (!pth.hidden){ const ls = tr.slice(0, k+1).map(x => x.l), from = Math.max(0, ls.length-36);
+    pth.innerHTML = 'Recorrido de la flecha: ' + (from ? '<em>…</em>' : '') + ls.slice(from).map((l,i) => `<span class="${from+i===k?'on':''}">${l || 'fin'}</span>`).join(''); }
+  let lp = null;
+  const ls = lists(k).map(name => {
+    const al = st.p.algo, vals = s.v[name][1], cu = al ? null : cursor(k, name), ch = champ(k, name);
+    const A = al ? al(s.v, vals.length, k===tr.length-1) : null, pl = prev && prev.v[name] ? prev.v[name][1] : null;
+    if (cu && cu.lv) lp = cu.lv;
+    const cells = vals.map((x,i) => {
+      let c = 'cell';
+      if (cu){ if (i===cu.c) c+=' cur'; else if (i<cu.c || (cu.ghost!==false && i<cu.ghost)) c+=' seen'; if (cu.ghost!==false && i===cu.ghost) c+=' ghost'; }
+      if (i===ch) c+=' champ';
+      let mk = '';
+      if (A){ if (A.dim && A.dim(i)) c+=' dim'; if (A.fin && A.fin(i)) c+=' fin'; else if (A.ord && A.ord(i)) c+=' ord'; if (pl && pl[i]!==x) c+=' chg';
+        const ms = A.marks.filter(m => m[0]===i).map(m => `<span>${esc(m[1])}</span>`).join(''); if (ms) mk = `<div class="mk">${ms}</div>`; }
+      return `<div class="${c}"><div class="v">${esc(x)}</div><div class="i">${i}${i===ch?' <b>★</b>':''}</div>${mk}</div>`;
+    }).join('') + (al ? '' : `<div class="cell${cu && (cu.c>=vals.length || cu.ghost===vals.length)?' end ghost':' end'}"><div class="v">fin</div><div class="i">&nbsp;</div></div>`);
+    const pos = cu ? (cu.c>=0 ? cu.c : -1) : -1;
+    const mark = cu ? `<div class="cur-mark" style="transform:translateX(${Math.max(pos,0)*58}px);${pos<0?'opacity:0':''}">▼ ${cu.c>=vals.length?'fin':(st.p.cl?st.p.cl.cur:'cursor')}</div>` : '';
+    const cc = st.p.champ && st.p.champ[st.v];
+    const lg = cc ? `<p class="mleg"><b>▼</b> ${st.p.cl.cur} · <b>★</b> ${st.p.cl.ch}${st.p.cl.out && s.v[cc.v] && ch<0 ? ' · el campeón ('+esc(s.v[cc.v][1])+') no está en la lista' : ''}</p>` : '';
+    return `<div class="lrow"><div class="lname">${esc(name)} <em>●──▶</em></div><div class="track">${mark}<div class="cells">${cells}</div></div>${lg}</div>`;
+  }).join('');
+  const sc = st.p.mem==='heap' ? [] : scalars().filter(n => s.v[n]);
+  const vs = sc.map(n => {
+    const ch = prev && (!prev.v[n] || prev.v[n][1]!==s.v[n][1]);
+    return `<div class="var${ch?' nu':''}${n===lp?' lp':''}"><span class="k">${esc(n)}</span><span class="v">${esc(s.v[n][1])}</span></div>`;
+  }).join('');
+  document.querySelector('.bench').classList.toggle('stk', st.p.mem==='heap' || !!st.p.algo || !!st.p.plot);
+  if (st.p.mem==='heap'){ $('#mem').innerHTML = '<p class="mh">Memoria · nombres y objetos</p>' + heapView(k); requestAnimationFrame(arrows); }
+  else $('#mem').innerHTML = `<p class="mh">Memoria · marco global</p>${plot(k)}${st.p.cnt ? '<div class="mets">'+cuenta(k).map(([n,c]) => `<div><b>${c}</b>${n}</div>`).join('')+'</div>' : ''}${ls || ''}${vs?`<div class="vars">${vs}</div>`:''}${!ls&&!vs?'<p class="empty">Todavía no hay ninguna variable: la memoria está vacía.</p>':''}`;
+  $('#out').textContent = s.o;
+  $('#res').className = 'res' + (s.e?' e':'');
+  $('#res').innerHTML = narrate(k);
+  $('#k').max = tr.length-1; $('#k').value = k;
+  $('#o-k').textContent = `${k} de ${tr.length-1}`;
+  $('#b-ini').disabled = $('#b-ant').disabled = k===0;
+  $('#b-sig').disabled = k===tr.length-1;
+  table(); check(); ask();
+}
+
+function narrate(k){
+  const tr = st.tr, s = tr[k], L = st.an.L;
+  const line = n => `<code>${esc(L[n-1].trim())}</code>`;
+  if (k===0) return s.l ? `La flecha está en la línea ${s.l}: todavía no se ha ejecutado nada.` : 'No hay nada que ejecutar: escribe un programa y pulsa «Ejecutar y trazar».';
+  const p = tr[k-1], ch = [];
+  for (const n in s.v){
+    const a = p.v[n], b = s.v[n];
+    if (!a) ch.push(`nace <code>${esc(n)}</code>${b[0]==='s'?' = '+esc(b[1]):''}`);
+    else if (JSON.stringify(a)!==JSON.stringify(b) && !(st.p.mem==='heap' && b[0]!=='s')){
+      if (b[0]==='s') ch.push(`<code>${esc(n)}</code> pasa de ${esc(a[1])} a ${esc(b[1])}`);
+      else if (b[0]==='l' && a[0]==='l' && a[1].length===b[1].length){ const d = a[1].map((x,i) => i).filter(i => a[1][i]!==b[1][i]);
+        if (d.length===2 && a[1][d[0]]===b[1][d[1]] && a[1][d[1]]===b[1][d[0]]) ch.push(`se intercambian <code>${esc(n)}[${d[0]}]</code> y <code>${esc(n)}[${d[1]}]</code> (${esc(a[1][d[0]])} ↔ ${esc(a[1][d[1]])})`);
+        else d.forEach(i => ch.push(`<code>${esc(n)}[${i}]</code> pasa de ${esc(a[1][i])} a ${esc(b[1][i])}`)); }
+      else ch.push(b[0]==='l' ? `<code>${esc(n)}</code>: [${esc(a[1].join(', '))}] → [${esc(b[1].join(', '))}]` : `cambia <code>${esc(n)}</code>`); }
+  }
+  if (st.p.mem==='heap' && s.f && p.f && (s.f.length!==p.f.length || s.r)){
+    let x;
+    if (s.f.length > p.f.length){
+      const pr = s.f[s.f.length-1][1].map(([n,r]) => { const sh = allr(s).filter(([m,q]) => q===r && m!==n && s.h[r][0]!=='p'); return `<code>${esc(n)}</code> = ${esc(pv(s,r))}${sh.length ? ' (el mismo objeto que <code>'+esc(sh[0][0])+'</code>)' : ''}`; });
+      x = `En la línea ${p.l} ${line(p.l)} se llama a <code>${esc(topn(s))}</code> y se abre su marco${pr.length ? '; '+pr.join(', ') : ''}.`;
+    } else if (s.r && s.f.length < p.f.length) x = `<code>${esc(topn(p))}</code> ha devuelto ${esc(pv(p,p.r))} y su marco desaparece; con ese valor, <code>${esc(topn(s))}</code> devuelve ${esc(pv(s,s.r))}.`;
+    else if (s.r){ const m = muts(p,s), fin = !/^\s*return\b/.test(L[s.l-1]);
+      x = `Se ejecuta <code>${esc(L[s.l-1].trim())}</code>${m.length ? ' y '+m.join(', ') : ''}; ${fin ? 'la función llega al final sin return, así que ' : ''}<code>${esc(topn(s))}</code> devuelve ${esc(pv(s,s.r))}.`; }
+    else {
+      const d = s.f.length-1, old = Object.fromEntries((p.f[d]||['',[]])[1]), nw = s.f[d][1].filter(([n,r]) => old[n]!==r).map(([n,r]) => `<code>${esc(n)}</code> = ${esc(pv(s,r))}`);
+      x = `<code>${esc(topn(p))}</code> ha devuelto ${p.r ? esc(pv(p,p.r)) : 'su valor'} y su marco desaparece${nw.length ? '; '+nw.join(', ') : ''}.`;
+    }
+    const o2 = s.o.slice(p.o.length).trim();
+    return x + (o2 ? ` Se imprime ${esc(o2)}.` : '') + (s.e ? ` <b>${esc(s.e)}</b>` : '');
+  }
+  if (st.p.mem==='heap' && s.f && p.f){
+    const A = refs(p), B = refs(s), who = (M,r,n) => Object.keys(M).filter(m => m!==n && M[m]===r);
+    for (const n in B) if (A[n]!==B[n]){
+      const sh = who(B,B[n],n), was = A[n]!==undefined ? who(A,A[n],n) : [];
+      if (sh.length) ch.push(`<code>${esc(n)}</code> apunta al mismo objeto que <code>${sh.join(', ')}</code>`);
+      else { if (A[n]===undefined && s.h[B[n]][0]==='f') ch.push(`se define la función <code>${esc(n)}</code> (todavía no se ejecuta)`);
+        if (A[n]!==undefined && s.h[B[n]][0]!=='p' && !p.h[B[n]]) ch.push(`<code>${esc(n)}</code> apunta a una lista nueva`);
+        if (was.length) ch.push(`<code>${esc(n)}</code> deja de compartir objeto con <code>${was.join(', ')}</code>`); }
+    }
+    ch.push(...muts(p, s));
+    for (const r of new Set(Object.values(A))) if (!s.h[r]) ch.push(`el ${esc(p.h[r][0]==='p' ? p.h[r][2] : 'objeto')} se queda sin flechas y desaparece`);
+  }
+  const o = s.o.slice(p.o.length).trim();
+  if (o) ch.push(`se imprime ${esc(o)}`);
+  const cd = cond(p.l, s.l), ctl = /^\s*(if|elif|else|while|for|break|continue)\b/.test(L[p.l-1]), asg = L[p.l-1].match(/^\s*(\w+)\s*=[^=]/);
+  const nada = cd && cd.kw!=='for' ? `se evalúa <code>${esc(cd.c)}</code> → ${cd.tv ? '<b>True</b>: la flecha entra en su bloque' : '<b>False</b>: la flecha se salta su bloque' + (cd.kw==='while' ? ' y el bucle termina' : '')}`
+    : cd ? 'no quedan elementos: el for termina y la flecha sale del bucle'
+    : ctl ? 'ninguna variable cambia; solo decide adónde va la flecha' : asg && st.p.mem==='heap' ? `<code>${esc(asg[1])}</code> ya apuntaba a ese objeto: su flecha se queda donde estaba` : 'ninguna variable cambia';
+  if (cd && cd.kw==='for' && ch.length) ch[0] = 'el for toma el siguiente elemento: ' + ch[0];
+  let t = `Se ha ejecutado la línea ${p.l} ${line(p.l)}: ${ch.length ? ch.join(', ') : nada}.`;
+  if (s.e) t += ` <b>${esc(s.e)}</b>`;
+  else if (s.l===0) t += ' Fin del programa.';
+  return t;
+}
+
+function table(){
+  const sc = scalars(), ln = st.p.mem==='heap' || st.p.algo ? null : (lists(st.tr.length-1)[0] || lists(st.k)[0]);
+  const sh = v => v[0]==='l' ? '['+v[1].join(', ')+']' : v[0]==='d' ? '{'+v[1].map(([a,b]) => a+': '+b).join(', ')+'}' : v[1];
+  const fc = st.p.mem==='heap' && st.tr.some(s => s.f && s.f.length>1);
+  let h = `<thead><tr><th>Paso</th><th>Línea ejecutada</th>${fc?'<th>Marco</th>':''}${sc.map(n=>`<th>${esc(n)}</th>`).join('')}${ln?`<th>casilla de ${esc(ln)}</th>`:''}</tr></thead><tbody>`;
+  if (st.k===0) h += `<tr><td colspan="${sc.length+4}" style="text-align:left;font-family:Arimo,Arial,sans-serif;color:var(--mut)">La tabla se llena a medida que avanzas.</td></tr>`;
+  for (let j=1;j<=st.k;j++){
+    const s = st.tr[j], p = st.tr[j-1];
+    const cu = ln && s.v[ln] ? cursor(j, ln) : null;
+    h += `<tr class="${j===st.k?'hl':''}"><td>${j}</td><td class="src">${p.l} · ${esc(st.an.L[p.l-1].trim())}</td>${fc ? `<td class="src">${s.f ? esc(topn(s))+(s.r?' ↩':'') : ''}</td>` : ''}${sc.map(n => {
+      const v = s.v[n] ? sh(s.v[n]) : '', ch = s.v[n] && (!p.v[n] || sh(p.v[n])!==sh(s.v[n]));
+      return `<td class="${ch?'ch':''}">${esc(v)}</td>`; }).join('')}${ln?`<td>${cu && cu.c>=0 && cu.c<s.v[ln][1].length ? cu.c : (cu && cu.c>=s.v[ln][1].length?'fin':'')}</td>`:''}</tr>`;
+  }
+  $('#tt').innerHTML = h + '</tbody>';
+}
+
+function check(){
+  const el = $('#chk span'), f = st.tr[st.tr.length-1];
+  if (st.k !== st.tr.length-1){ el.className=''; el.textContent = 'Llega al final del programa para hacer el chequeo.'; return; }
+  if (f.e && st.p.id==='primero' && /IndexError/.test(f.e)){ el.className='x'; el.textContent = '✗ IndexError: con todas las casillas impares, i llega a len(lista) y lista[i] se evalúa antes de la protección i < len(lista). Cambia el orden del and.'; return; }
+  if (st.p.chk && (st.p.tu || st.p.vars.some(v => v.id===st.v))){ try { const r = st.p.chk(f); if (r){ el.className = r[0]; if (r[2]) el.innerHTML = r[2]; else el.textContent = r[1]; return; } } catch(e){} }
+  if (f.e){ el.className='x'; el.textContent = 'El programa ha terminado con un error: no hay resultado que chequear.'; return; }
+  if (st.p.id==='primero'){
+    const L = f.v.lista && f.v.lista[1].map(Number), a = L ? L.findIndex(x=>x%2===0) : -1, n = L ? L.length : 0;
+    const iff = st.an.L.findIndex(s => /^\s*(if|while)\b/.test(s)) + 1, mir = st.tr.filter(s => s.l===iff).length;
+    const vis = /while/.test(st.an.L[iff-1]) ? Math.min(mir, n) : mir;
+    if (f.v.encontrado){ const e = f.v.encontrado[1];
+      if (e==='None'){ el.className = a<0?'y':'x'; el.textContent = a<0 ? `✓ None: ninguna de las ${n} casillas es par, y el bucle las ha mirado todas (${vis}).` : `✗ None, pero lista[${a}] = ${L[a]} es par.`; return; }
+      const ok = a>=0 && +e===L[a];
+      el.className = ok?'y':'x'; el.textContent = ok ? `✓ encontrado = ${e}: es par, ninguna casilla anterior lo es, y el bucle se ha parado tras mirar ${vis} de ${n} casillas.` : `✗ encontrado = ${e}, pero el primero que cumple es ${L[a]} (índice ${a}): sin break, el bucle siguió y se quedó con el último.`; return; }
+    if (f.v.i){ const i = +f.v.i[1], ok = i===(a<0?n:a);
+      el.className = ok?'y':'x'; el.textContent = ok ? (a<0 ? `✓ i = ${i} = len(lista): no había ninguna casilla par.` : `✓ i = ${i}: lista[${i}] = ${L[i]} es la primera casilla par; se han mirado ${vis} de ${n}.`) : `✗ i = ${i}, pero la primera casilla par está en el índice ${a}.`; return; }
+  }
+  const l = f.v.lista && f.v.lista[0]==='l' ? f.v.lista[1].map(Number) : null;
+  if (!l || l.some(isNaN)){ el.className=''; el.textContent = 'El chequeo automático necesita una lista de números llamada lista.'; return; }
+  const sum = l.reduce((a,b)=>a+b,0), n = l.length;
+  const mx = Math.max(...l);
+  if (st.p.id==='maximo' && f.v.mayor){ const m = +f.v.mayor[1], inl = l.includes(m), ge = l.every(x=>m>=x);
+    el.className = inl&&ge?'y':'x'; el.textContent = inl&&ge ? `✓ mayor = ${m}: está en la lista y ninguna casilla le gana.` : !inl ? `✗ mayor = ${m}, pero ${m} no está en la lista: el campeón inicial nunca perdió. El máximo real es ${mx}.` : `✗ mayor = ${m}, pero la lista tiene un ${mx}.`; return; }
+  if (st.p.id==='maximo' && f.v.pos){ const p = +f.v.pos[1], ok = l[p]===mx, a = l.indexOf(mx), b = l.lastIndexOf(mx);
+    el.className = ok?'y':'x'; el.textContent = !ok ? `✗ lista[${p}] = ${l[p]}, pero el máximo es ${mx}.` : a===b ? `✓ lista[${p}] = ${mx} = max(lista), y no tiene empate.` : `✓ lista[${p}] = ${mx} = max(lista). Hay empate: con > gana el primero (índice ${a}); con >= el último (índice ${b}).`; return; }
+  if (f.v.total){ const t = +f.v.total[1], ok = t===sum;
+    el.className = ok?'y':'x'; el.textContent = ok ? `✓ total = ${t} = sum(lista). Cuadra.` : `✗ total = ${t}, pero sum(lista) = ${sum}. Algo se ha perdido por el camino.`; return; }
+  if (f.v.pares){ const t = +f.v.pares[1], ev = l.filter(x=>x%2===0).length, ok = t===ev;
+    el.className = ok?'y':'x'; el.textContent = ok ? `✓ pares = ${t}: entre 0 y len(lista) = ${n}, y coincide con las casillas pares.` : `✗ pares = ${t}, pero hay ${ev} casillas pares.`; return; }
+  el.className=''; el.textContent = `La lista tiene ${n} casillas y suma ${sum}: compáralo con tu acumulador.`;
+}
+
+function question(){
+  const k = st.k, a = st.tr[k], b = st.tr[k+1];
+  if (!b) return null;
+  const L = st.an.L, src = a.l ? `la línea ${a.l} <code>${esc(L[a.l-1].trim())}</code>` : '';
+  if (b.e) return {t:`Se va a ejecutar ${src}. ¿Qué se imprime? (si crees que da error, escribe error)`, a:'error'};
+  const o = b.o.slice(a.o.length).trim();
+  if (o) return {t:`Se va a ejecutar ${src}. ¿Qué se imprime?`, a:o};
+  if (st.p.mem==='heap' && a.f && b.f){
+    if (b.f.length > a.f.length){ const ps = b.f[b.f.length-1][1];
+      if (ps.length){ const [n,r] = ps[0], sh = allr(b).find(([m,q]) => q===r && m!==n && b.h[r][0]!=='p');
+        return sh ? {t:`Se va a ejecutar ${src}: se llama a <code>${esc(topn(b))}</code>. ¿El parámetro <code>${esc(n)}</code> apuntará al mismo objeto que <code>${esc(sh[0])}</code>? (sí / no)`, a:'sí'}
+                  : {t:`Se va a ejecutar ${src}: se llama a <code>${esc(topn(b))}</code>. ¿Qué valor recibirá el parámetro <code>${esc(n)}</code>?`, a:pv(b,r)}; } }
+    if (b.r) return {t:`Se va a ejecutar <code>${esc(L[b.l-1].trim())}</code>${b.f.length<a.f.length ? ' cuando vuelva la llamada interior' : ''}. ¿Qué devolverá <code>${esc(topn(b))}</code>?`, a:pv(b,b.r)};
+    if (a.f.length > b.f.length){ const d = b.f.length-1, old = Object.fromEntries((a.f[d]||['',[]])[1]), nw = b.f[d][1].find(([n,r]) => old[n]!==r);
+      if (nw) return {t:`<code>${esc(topn(a))}</code> termina y su marco desaparece. ¿Cuánto valdrá <code>${esc(nw[0])}</code>?`, a:pv(b,nw[1])}; }
+  }
+  if (st.p.mem==='heap' && a.f && b.f && a.f.length===b.f.length){
+    const A = refs(a), B = refs(b), who = (M,r,n) => Object.keys(M).filter(m => m!==n && M[m]===r), line = a.l ? L[a.l-1] : '';
+    for (const n in B) if (A[n]!==B[n]){
+      const sh = who(B,B[n],n), was = A[n]!==undefined ? who(A,A[n],n) : [];
+      if (sh.length) return {t:`Se va a ejecutar ${src}. Después, ¿<code>${esc(n)}</code> y <code>${esc(sh[0])}</code> apuntarán al mismo objeto? (sí / no)`, a:'sí'};
+      if (was.length) return {t:`Se va a ejecutar ${src}. Después, ¿<code>${esc(n)}</code> y <code>${esc(was[0])}</code> seguirán apuntando al mismo objeto? (sí / no)`, a:'no'};
+    }
+    const mut = Object.keys(B).filter(n => A[n]===B[n] && JSON.stringify(a.v[n])!==JSON.stringify(b.v[n]));
+    if (mut.length){ const n = mut.find(m => !new RegExp('\\b'+m+'\\b').test(line)) || mut[0], v = b.v[n];
+      if (v[0]==='d'){ const A = Object.fromEntries(a.v[n][1]), ky = v[1].find(([x,y]) => A[x]!==y); if (ky) return {t:`Se va a ejecutar ${src}. ¿Cuánto valdrá <code>${esc(n)}[${esc(ky[0])}]</code> después?`, a:ky[1]}; }
+      return {t:`Se va a ejecutar ${src}. ¿Cuánto valdrá <code>${esc(n)}</code> después?`, a: v[0]==='l' ? '['+v[1].join(', ')+']' : v[1]}; }
+  }
+  for (const n in b.v) if (b.v[n][0]==='s' && (!a.v[n] || a.v[n][1]!==b.v[n][1])) return {t:`Se va a ejecutar ${src}. ¿Cuánto valdrá <code>${esc(n)}</code> después?`, a:b.v[n][1]};
+  for (const n in b.v) if (b.v[n][0]==='l' && (!a.v[n] || JSON.stringify(a.v[n])!==JSON.stringify(b.v[n]))) return a.v[n] && a.v[n][1].length===b.v[n][1].length
+    ? {t:`Se va a ejecutar ${src}. ¿Cómo quedará <code>${esc(n)}</code>?`, a:'['+b.v[n][1].join(', ')+']'}
+    : {t:`Se va a ejecutar ${src}. ¿Cuántas casillas tendrá <code>${esc(n)}</code>?`, a:String(b.v[n][1].length)};
+  const cq = a.l ? cond(a.l, b.l) : null;
+  if (cq && cq.kw!=='for') return {t:`Se va a evaluar <code>${esc(cq.c)}</code>. ¿Será True o False?`, a: cq.tv ? 'true' : 'false'};
+  if (cq) return {t:`Se va a ejecutar ${src}. ¿Quedan elementos para otra vuelta? (sí / no)`, a: cq.tv ? 'sí' : 'no'};
+  return {t:`Se va a ejecutar ${src}. ¿Qué línea se ejecuta a continuación? (0 si el programa termina)`, a:String(b.l)};
+}
+const norm = x => String(x).trim().replace(/^['"]|['"]$/g,'').toLowerCase().replace(/\s+/g,'').replace(/^si$/,'sí');
+function ask(){
+  if (st.mode!=='pre') return;
+  const q = question();
+  $('#pq').innerHTML = q ? q.t : 'Has llegado al final. Mira el chequeo y vuelve al principio para intentarlo de nuevo.';
+  $('#pa').disabled = $('#p-ok').disabled = $('#p-skip').disabled = !q;
+  $('#score').textContent = st.tot ? `Aciertos: ${st.ok} de ${st.tot}` : '';
+}
+function answer(skip){
+  const q = question(); if (!q) return;
+  const v = $('#pa').value;
+  if (!skip && !v.trim()){ $('#pfb').innerHTML = '<span class="x">Escribe tu predicción antes de comprobar.</span>'; return; }
+  if (!skip){ st.tot++; const nv = norm(v), na = norm(q.a), ok = nv===na || (nv!=='' && !isNaN(+nv) && !isNaN(+na) && +nv===+na); if (ok) st.ok++;
+    $('#pfb').innerHTML = ok ? `<span class="y">✓ Exacto: ${esc(q.a)}.</span>` : `<span class="x">✗ Era ${esc(q.a)}; tú dijiste ${esc(v.trim())}. Mira la memoria.</span>`; }
+  else $('#pfb').textContent = `Era ${q.a}.`;
+  $('#pa').value = ''; go(st.k+1);
+}
+
+function go(k){ st.k = Math.max(0, Math.min(st.tr.length-1, k)); draw(); }
+function load(code, tr){ st.code = code; st.tr = tr; st.an = analyze(code); st.k = 0; stop(); draw(); }
+function puesto(pid, vid){
+  st.p = PUESTOS.find(p=>p.id===pid) || PUESTOS[0];
+  $('#areas').innerHTML = AREAS.map((a,i) => `<a href="#${PA(i).length?PA(i)[0].id:'a'+i}" class="${i===st.p.ar?'on':''}">${a.n}</a>`).join('');
+  $('#puestos').setAttribute('aria-label', 'Puestos del área ' + AREAS[st.p.ar].n);
+  $('#puestos').innerHTML = PA(st.p.ar).map((p,i) => `<a href="#${p.id}" class="${p===st.p?'on':''}" ${p===st.p?'aria-current="page"':''}><b>${i+1}</b> ${p.n}</a>`).join('') ;
+  $('#sub1').textContent = 'Cómo piensa tu código · ' + AREAS[st.p.ar].n + ' · ' + st.p.sub;
+  $('#vars').innerHTML = st.p.vars.map(v => `<button data-v="${v.id}" class="${v.tr?'tr':''}" aria-pressed="false">${v.n}</button>`).join('');
+  $('#tu').hidden = !st.p.tu; $('#var-lbl').textContent = st.p.tu ? 'Ejemplos de partida' : 'Variante'; $('#ed-lbl').textContent = st.p.tu ? 'Tu programa' : 'Cambia el código y míralo pensar';
+  $('#lec-t').textContent = st.p.lt; $('#lec').innerHTML = st.p.lec; $('#trp').innerHTML = st.p.trp;
+  pick(vid || st.p.vars[0].id);
+}
+function pick(id){
+  st.v = id; const v = st.p.vars.find(x=>x.id===id);
+  document.querySelectorAll('#vars button').forEach(b => b.setAttribute('aria-pressed', b.dataset.v===id));
+  $('#vname').textContent = v.n; $('#ta').value = PRE.code[id]; if (st.p.tu) $('#ent').value = (PRE.ent && PRE.ent[id]) || '';
+  load(PRE.code[id], PRE.trace[id]);
+}
+function stop(){ clearInterval(st.timer); st.timer = null; $('#b-play').textContent = '▷ Play'; }
+function play(){
+  if (st.timer) return stop();
+  if (st.k===st.tr.length-1) go(0);
+  $('#b-play').textContent = '❚❚ Pausa';
+  st.timer = setInterval(() => { if (st.k>=st.tr.length-1) return stop(); go(st.k+1); }, 900);
+}
+function mode(m){
+  st.mode = m; stop();
+  $('#m-exp').setAttribute('aria-pressed', m==='exp'); $('#m-pre').setAttribute('aria-pressed', m==='pre');
+  $('#pred').hidden = m!=='pre'; $('#nav').hidden = m==='pre';
+  st.ok = st.tot = 0; $('#pfb').textContent = ''; go(0);
+}
+
+let pyP = null;
+function script(u){ return new Promise((r,j) => { const s = document.createElement('script'); s.src = u; s.onload = r; s.onerror = j; document.head.appendChild(s); }); }
+async function diag(){
+  const r = [], t = async (n, f) => { try { const x = await tope(f(), 8000, n); r.push(n + ' OK' + (x ? ' ' + x : '')); } catch(e){ r.push(n + ' FALLA (' + (e && e.message ? e.message : e) + ')'); } };
+  await t('fetch CDN', async () => (await fetch(URLS[0] + 'pyodide-lock.json')).status);
+  await t('fetch propio', async () => (await fetch(location.href.split('#')[0])).status);
+  await t('fetch blob', async () => (await fetch(URL.createObjectURL(new Blob(['x'])))).status);
+  await t('WebAssembly', async () => { await WebAssembly.compile(new Uint8Array([0,97,115,109,1,0,0,0])); return ''; });
+  await t('import CDN', async () => { await import(URLS[0] + 'pyodide.mjs'); return ''; });
+  return r.join(' · ');
+}
+const tope = (pr, ms, que) => Promise.race([pr, new Promise((_,j) => setTimeout(() => j(new Error(que + ': sin respuesta en ' + ms/1000 + ' s')), ms))]);
+let pyErr = [];
+function py(){
+  if (!pyP) pyP = (async () => {
+    pyErr = [];
+    for (const u of URLS){ try {
+        $('#stat').textContent = 'Cargando Python (1/3): descargando pyodide.js…';
+        if (typeof loadPyodide === 'undefined') await tope(script(u+'pyodide.js'), 30000, 'pyodide.js');
+        const cfg = {indexURL:u};
+        if (u===URLS[0]){ $('#stat').textContent = 'Cargando Python (2/3): biblioteca estándar…';
+          const rb = await tope(fetch(u+'stdlib.b64.txt'), 60000, 'biblioteca');
+          if (rb.ok){ const bin = Uint8Array.from(atob((await rb.text()).trim()), c => c.charCodeAt(0));
+            cfg.stdLibURL = URL.createObjectURL(new Blob([bin], {type:'application/zip'})); } }
+        $('#stat').textContent = 'Cargando Python (3/3): iniciando el intérprete (unos 10 MB)…';
+        const p = await tope(loadPyodide(cfg), 90000, 'intérprete');
+        p.runPython(TRZ); return p;
+      } catch(e){ pyErr.push(u.replace('https://','') + ' → ' + (e && e.message ? e.message : e)); } }
+    throw new Error(pyErr.join(' | '));
+  })();
+  pyP.catch(() => { pyP = null; });
+  return pyP;
+}
+async function run(){
+  const code = $('#ta').value.replace(/\t/g,'    ').replace(/\s+$/,'');
+  const entv = st.p.tu ? $('#ent').value.replace(/\s+$/,'') : '', ents = entv ? entv.split('\n') : [];
+  const pre = Object.keys(PRE.code).find(k => PRE.code[k]===code && ((PRE.ent && PRE.ent[k]) || '')===entv);
+  if (pre){ const pp = PUESTOS.find(p=>p.vars.some(v=>v.id===pre)); if (pp!==st.p) puesto(pp.id, pre); else pick(pre); $('#stat').textContent = 'Es una de las variantes: traza ya calculada.'; return; }
+  $('#run').disabled = true;
+  try {
+    const p = await py();
+    $('#stat').textContent = 'Ejecutando y trazando…';
+    const tr = JSON.parse(p.globals.get('trazar')(code, 400, JSON.stringify(ents)));
+    document.querySelectorAll('#vars button').forEach(b => b.setAttribute('aria-pressed', 'false'));
+    if (!st.p.tu && false) {}
+    $('#vname').textContent = 'Tu código'; st.v = 'tu';
+    load(code, tr);
+    const e = tr[tr.length-1].e;
+    $('#stat').textContent = e ? `Trazado hasta el error (${tr.length-1} pasos).` : `Trazado: ${tr.length-1} pasos. Python ya está cargado.`;
+  } catch(e){
+    $('#stat').textContent = 'No se ha podido cargar Python aquí (' + (e && e.message ? e.message : e) + '). Diagnóstico: ' + await diag() + '. Las variantes siguen funcionando con su traza calculada.';
+  }
+  $('#run').disabled = false;
+}
+
+$('#vars').addEventListener('click', e => { const b = e.target.closest('button'); if (b) pick(b.dataset.v); });
+$('#b-ini').onclick = () => { stop(); go(0); };
+$('#b-ant').onclick = () => { stop(); go(st.k-1); };
+$('#b-sig').onclick = () => { stop(); go(st.k+1); };
+$('#b-play').onclick = play;
+$('#k').oninput = e => { stop(); go(+e.target.value); };
+$('#m-exp').onclick = () => mode('exp');
+$('#m-pre').onclick = () => mode('pre');
+$('#p-ok').onclick = () => answer(false);
+$('#p-skip').onclick = () => answer(true);
+$('#p-back').onclick = () => { $('#pfb').textContent=''; go(st.k-1); };
+$('#pa').addEventListener('keydown', e => { if (e.key==='Enter'){ e.preventDefault(); answer(false); } });
+$('#run').onclick = run;
+$('#vista').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; st.vista = b.dataset.w; draw(); });
+['#ex','#ey'].forEach(s => $(s).addEventListener('input', () => { if (st.vista==='plot') draw(); }));
+$('#rst').onclick = () => pick(st.p.vars.some(v=>v.id===st.v) ? st.v : st.p.vars[0].id);
+$('#trp').addEventListener('click', e => { const b = e.target.closest('[data-trap]'); if (b){ pick(b.dataset.trap || st.p.trap); $('#code').scrollIntoView({behavior:'smooth', block:'center'}); } });
+const route = () => { const h = location.hash.slice(1); if (PUESTOS.some(p=>p.id===h)){ puesto(h); return true; } return false; };
+window.addEventListener('hashchange', () => { if (route()) $('#puestos').scrollIntoView({behavior:'smooth'}); });
+$('#ta').addEventListener('keydown', e => { if (e.key==='Tab' && !e.shiftKey){ e.preventDefault(); const t = e.target, a = t.selectionStart; t.setRangeText('    ', a, t.selectionEnd, 'end'); } });
+document.addEventListener('keydown', e => {
+  if (st.mode!=='exp' || /INPUT|TEXTAREA/.test(document.activeElement.tagName)) return;
+  if (e.key==='ArrowRight'){ stop(); go(st.k+1); } else if (e.key==='ArrowLeft'){ stop(); go(st.k-1); }
+});
+if (window.ResizeObserver){ const ro = new ResizeObserver(() => arrows()); ro.observe($('#mem')); }
+if (!route()) puesto('recorrer', 'for'); go(4);
+}
+</script>
+</body>
+</html>

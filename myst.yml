@@ -16,6 +16,7 @@ project:
     - herramientas/**
     - README.md
     - node_modules/**
+    - mirar-y-ver/**
   toc:
     - file: index.md
     - file: capitulos/00-como-leer.md
