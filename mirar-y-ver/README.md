@@ -46,3 +46,23 @@ viaja con el artefacto de claude.ai, con la biblioteca estándar como
 - «Tu código» tiene «Abrir en el laboratorio del libro», que abre
   `capitulos/laboratorio#codigo=…&entradas=…`: allí se ven con más detalle las
   clases, los ficheros, los generadores y las excepciones con su `except`.
+
+## Diagrama de flujo
+
+El botón «◇ Diagrama de flujo» de la cabecera «Código y memoria» dibuja el
+diagrama del programa al lado del código, en todos los puestos y en «Tu código»,
+y lo recuerda para la próxima visita.
+
+- `tracer.py` → `diagrama(codigo)` lee la estructura con `ast` y la devuelve
+  como bloques: proceso, entrada/salida (`print`, `input`), rombo (`if`,
+  `while`), hexágono (`for`), terminales (`return`, `break`, `continue`,
+  `raise`), `try` con sus `except`, y un diagrama aparte por función o método.
+  Para las variantes se calcula al construir la página; para «Tu código», en el
+  navegador con el mismo Python.
+- `diagrama.js` (se inyecta en la plantilla) lo maqueta como bloques anidados
+  en SVG y, en cada paso, ilumina la fila que va a ejecutarse (la misma que la
+  flecha del código), cuenta las veces que se ha ejecutado cada bloque, marca la
+  rama que se acaba de tomar y cuántas veces ha salido cada condición por cada
+  lado.
+- En el modo Predecir, con el diagrama a la vista, las decisiones se preguntan
+  como «¿por qué salida sale el rombo?».

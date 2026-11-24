@@ -12,7 +12,7 @@ import json, os, sys
 
 D = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, D)
-from tracer import trazar
+from tracer import trazar, diagrama
 from presets import P, ENTRADAS
 
 # Puestos con vista de cajas y flechas: conservan pila de marcos y montón
@@ -49,9 +49,11 @@ def main():
             for e in tr:
                 e.pop('f', None); e.pop('h', None)
         trazas[k] = codificar(tr)
-    datos = {'ent': {k: '\n'.join(v) for k, v in ENTRADAS.items()}, 'code': P, 'trace': trazas}
+    diagramas = {k: json.loads(diagrama(codigo)) for k, codigo in P.items()}
+    datos = {'ent': {k: '\n'.join(v) for k, v in ENTRADAS.items()}, 'code': P, 'trace': trazas, 'dg': diagramas}
     html = open(os.path.join(D, 'plantilla.html'), encoding='utf-8').read()
     html = html.replace('__PRE__', json.dumps(datos, separators=(',', ':')))
+    html = html.replace('/*__DG__*/', open(os.path.join(D, 'diagrama.js'), encoding='utf-8').read())
     html = html.replace('__TRZ__', json.dumps(open(os.path.join(D, 'tracer.py'), encoding='utf-8').read()))
     open(salida, 'w', encoding='utf-8').write(html)
     print(f'{len(P)} programas trazados → {os.path.normpath(salida)} ({len(html) // 1024} KB)')
