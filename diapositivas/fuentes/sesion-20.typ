@@ -45,4 +45,4 @@
 #tarea-casa(([Crea la clase #raw("Producto") con dos atributos de clase: #raw("creados = 0") e #raw("IVA = 0.21").], [En el constructor guarda el nombre y llama a #raw("set_precio(precio)").], [#raw("set_precio") guarda el precio en #raw("self.__precio") y lanza #raw("ValueError") si no es positivo.], [Añade #raw("get_precio()") y #raw("precio_con_iva()"), redondeado a céntimos.], [Crea dos productos, intenta crear uno con precio 0 y comprueba cuántos se han creado.],), [Una libreta de 2 € cuesta 2,42 € con IVA, y el producto con precio 0 no cuenta.])
 
 == Antes de irte
-#cierre(qr: "https://achanesespigares.github.io/python-acinstitut/capitulos/clases-a-fondo/#preguntas-tipo-examen", siguiente: [Sesión 21 · Herencia múltiple, MRO e introspección])
+#cierre(qr: "https://python.antonychanes.com/capitulos/clases-a-fondo/#preguntas-tipo-examen", siguiente: [Sesión 21 · Herencia múltiple, MRO e introspección])

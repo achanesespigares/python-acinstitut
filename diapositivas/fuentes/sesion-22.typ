@@ -61,4 +61,4 @@
 #tarea-casa(([Los números positivos.], [Los cuadrados de todos los números.], [La lista con #raw("\"par\"") o #raw("\"impar\"") para cada número (expresión condicional).], [Un diccionario de cada palabra con su longitud.], [El conjunto de las iniciales de las palabras.], [Ampliación: la traspuesta de #raw("[[1, 2, 3], [4, 5, 6]]") con una comprensión anidada.],), [El conjunto de iniciales tiene 3 elementos y la traspuesta es #raw("[[1, 4], [2, 5], [3, 6]]").])
 
 == Antes de irte
-#cierre(qr: "https://achanesespigares.github.io/python-acinstitut/capitulos/comprensiones/#preguntas-tipo-examen", siguiente: [Sesión 23 · #raw("match") y lambdas])
+#cierre(qr: "https://python.antonychanes.com/capitulos/comprensiones/#preguntas-tipo-examen", siguiente: [Sesión 23 · #raw("match") y lambdas])

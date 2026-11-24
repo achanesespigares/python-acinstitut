@@ -61,4 +61,4 @@
 #tarea-casa(([Crea una sala de 5 filas y 8 asientos con una lista de listas: #raw("0") es libre y #raw("1") ocupado.], [Ocupa la primera fila entera y los dos primeros asientos de la segunda.], [Escribe una función #raw("primera_libre(sala)") que devuelva la tupla #raw("(fila, asiento)") del primer asiento libre, recorriendo…], [Escribe una función #raw("libres(sala)") que cuente los asientos libres.], [Reserva el asiento que te dé #raw("primera_libre"), desempaquetando la tupla, y dibuja la sala con #raw("X") y #raw("·").],), [Antes de reservar, el primer libre es #raw("(1, 2)") y hay 30 libres.])
 
 == Antes de irte
-#cierre(qr: "https://achanesespigares.github.io/python-acinstitut/capitulos/tuplas-y-conjuntos/#preguntas-tipo-examen", siguiente: [Sesión 11 · Cadenas y formato])
+#cierre(qr: "https://python.antonychanes.com/capitulos/tuplas-y-conjuntos/#preguntas-tipo-examen", siguiente: [Sesión 11 · Cadenas y formato])

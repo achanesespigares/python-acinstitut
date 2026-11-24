@@ -55,4 +55,4 @@
 #tarea-casa(([Pide con #raw("input") el nombre, el año de nacimiento y el año actual.], [Convierte los dos años a #raw("int") y calcula la edad que se cumple este año.], [Muestra la tarjeta en tres líneas: el nombre entre guiones, la edad y una despedida.], [Escribe la segunda línea con un solo #raw("print") y el parámetro #raw("sep").],), [Con «Ada», 2008 y 2026, la segunda línea debe decir que cumple 18 años.])
 
 == Antes de irte
-#cierre(qr: "https://achanesespigares.github.io/python-acinstitut/capitulos/como-funciona-python/#preguntas-tipo-examen", siguiente: [Sesión 5 · Tipos, literales y operadores])
+#cierre(qr: "https://python.antonychanes.com/capitulos/como-funciona-python/#preguntas-tipo-examen", siguiente: [Sesión 5 · Tipos, literales y operadores])

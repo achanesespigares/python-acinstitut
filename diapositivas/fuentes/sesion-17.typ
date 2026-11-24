@@ -51,4 +51,4 @@
 #tarea-casa(([Crea la clase #raw("FueraDeRango"), hija de #raw("ValueError"), cuyo constructor reciba el valor, el mínimo y el máximo, y prepare…], [Escribe #raw("a_entero(texto, minimo, maximo)"): convierte con #raw("int") y, si el número no está en el rango, lanza…], [Escribe #raw("pedir_entero(pregunta, minimo, maximo)"), que pregunta con #raw("input") hasta recibir un dato válido.], [Usa la rama #raw("else") del #raw("try") para devolver el número.], [¿Qué pasaría si capturaras #raw("ValueError") antes que #raw("FueraDeRango")?],), [Si se escribe #raw("doce"), luego #raw("150") y luego #raw("15"), con el rango 0–120, salen dos avisos distintos y se devuelve 15.])
 
 == Antes de irte
-#cierre(qr: "https://achanesespigares.github.io/python-acinstitut/capitulos/excepciones/#preguntas-tipo-examen", siguiente: [Sesión 18 · Clases y objetos])
+#cierre(qr: "https://python.antonychanes.com/capitulos/excepciones/#preguntas-tipo-examen", siguiente: [Sesión 18 · Clases y objetos])

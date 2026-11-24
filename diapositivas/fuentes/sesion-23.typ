@@ -49,4 +49,4 @@
 #tarea-casa(([Escribe #raw("calcula(linea)"): parte la línea con #raw("split") y usa #raw("match") sobre la lista de partes.], [Para la división, devuelve un aviso si el divisor es 0.], [Con #raw("notas = [(\"Eva\", 7.5), (\"Ana\", 9), (\"Luis\", 7.5), (\"Bea\", 5)]"), ordena con #raw("sorted") y una #raw("lambda") de mayor a…], [Con #raw("filter") y una #raw("lambda"), quédate con los que tienen 7 o más.],), [#raw("calcula(\"10 / 4\")") da 2,5 y el orden empieza por Ana, Eva, Luis.])
 
 == Antes de irte
-#cierre(qr: "https://achanesespigares.github.io/python-acinstitut/capitulos/funciones-valores/#preguntas-tipo-examen", siguiente: [Sesión 24 · Cierres y generadores])
+#cierre(qr: "https://python.antonychanes.com/capitulos/funciones-valores/#preguntas-tipo-examen", siguiente: [Sesión 24 · Cierres y generadores])

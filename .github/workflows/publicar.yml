@@ -21,10 +21,10 @@ jobs:
     runs-on: ubuntu-latest
     env:
       # Dirección pública de la web, sin barra final: la usan el mapa del sitio, robots.txt y
-      # las etiquetas para buscadores. Con dominio propio, p. ej. https://python.acinstitut.com
-      SITIO: https://achanesespigares.github.io/python-acinstitut
-      # Ruta bajo el dominio. Con dominio propio (la web en la raíz), borra esta línea
-      BASE_URL: /${{ github.event.repository.name }}
+      # las etiquetas para buscadores. La web vive en la raíz del subdominio, así que no hay BASE_URL.
+      # (En github.io sin dominio propio serían SITIO=https://python.antonychanes.com
+      #  y BASE_URL=/python-acinstitut.)
+      SITIO: https://python.antonychanes.com
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

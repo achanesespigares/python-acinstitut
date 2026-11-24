@@ -35,4 +35,4 @@
 #con-qr("https://colab.research.google.com/github/achanesespigares/python-acinstitut/blob/main/cuadernos/proyecto-2.ipynb", [Cuaderno del proyecto], situacion[#strong[Hito 3 del proyecto.] Ficheros, flujo de git y uso de la IA documentado.])
 
 == Antes de irte
-#cierre(qr: "https://achanesespigares.github.io/python-acinstitut/capitulos/probar-y-depurar/#preguntas-tipo-examen", siguiente: [Sesión 29 · Taller del proyecto y simulacro PCAP])
+#cierre(qr: "https://python.antonychanes.com/capitulos/probar-y-depurar/#preguntas-tipo-examen", siguiente: [Sesión 29 · Taller del proyecto y simulacro PCAP])

@@ -11,7 +11,7 @@ import sys
 from pathlib import Path
 
 LIBRO = Path(__file__).resolve().parent.parent
-WEB = "https://achanesespigares.github.io/python-acinstitut/"
+WEB = "https://python.antonychanes.com/"
 AQUI = Path(__file__).parent
 
 # Palabras que el conversor reconoce, por idioma

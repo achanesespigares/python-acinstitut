@@ -1,6 +1,6 @@
 ---
-title: Mirar y ver tu código pensar
-subtitle: Entendiendo Python, desde dentro
+title: Mirar y ver · Python
+subtitle: cómo piensa tu código
 description: "Libro gratuito de Python de AC Institut, de cero a PCEP y PCAP: cada programa se ve ejecutarse paso a paso, con laboratorio y diagrama de flujo."
 ---
 
@@ -35,7 +35,7 @@ Para crear un programa seguimos siempre el mismo camino:
 | Curso | [El curso en 30 sesiones](capitulos/curso-mapa.md): guion de cada sesión, tareas semiguiadas y dos proyectos · [guía en PDF](descargas/el-curso-en-30-sesiones.pdf) | Listo |
 
 :::{seealso} El laboratorio «Mirar y ver · cómo piensa tu código»
-Ocho áreas y 22 puestos, uno por construcción de Python, cada uno con cuatro lecturas: la memoria paso a paso, la predicción antes de ejecutar, la lectura operativa y la trampa con su chequeo. Incluye un área para pegar tu propio programa. [Abrir el laboratorio](https://achanesespigares.github.io/python-acinstitut/mirar-y-ver/)
+Ocho áreas y 22 puestos, uno por construcción de Python, cada uno con cuatro lecturas: la memoria paso a paso, la predicción antes de ejecutar, la lectura operativa y la trampa con su chequeo. Incluye un área para pegar tu propio programa. [Abrir el laboratorio](https://python.antonychanes.com/mirar-y-ver/)
 :::
 
 :::{tip} Sobre el código de este libro

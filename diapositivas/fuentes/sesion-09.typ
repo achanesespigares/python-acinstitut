@@ -61,4 +61,4 @@
 #tarea-casa(([Recorre la lista una vez y calcula a la vez el máximo, el mínimo y la suma.], [Calcula la media.], [Recorre la lista otra vez y cuenta cuántos datos están por encima de la media.], [Comprueba tus tres primeros resultados con #raw("max"), #raw("min") y #raw("sum").],), [La media es 18 y hay 2 datos por encima.])
 
 == Antes de irte
-#cierre(qr: "https://achanesespigares.github.io/python-acinstitut/capitulos/listas-a-fondo/#preguntas-tipo-examen", siguiente: [Sesión 10 · Tablas, tuplas y conjuntos])
+#cierre(qr: "https://python.antonychanes.com/capitulos/listas-a-fondo/#preguntas-tipo-examen", siguiente: [Sesión 10 · Tablas, tuplas y conjuntos])

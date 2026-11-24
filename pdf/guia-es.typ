@@ -27,8 +27,8 @@
 #creditos(titulo: [El curso en 30 sesiones], obra: "El curso en 30 sesiones",
   filas: (
     ("Autor", [Antonio Chanes Espigares]),
-    ("Obra", [Guía del curso del libro _Mirar y ver tu código pensar · Entendiendo Python, desde dentro_]),
-    ("En la web", [#link("https://achanesespigares.github.io/python-acinstitut/")[achanesespigares.github.io/python-acinstitut]: el libro, con los visualizadores, las preguntas tipo examen y los simulacros]),
+    ("Obra", [Guía del curso del libro _Mirar y ver · Python · cómo piensa tu código_]),
+    ("En la web", [#link("https://python.antonychanes.com/")[python.antonychanes.com]: el libro, con los visualizadores, las preguntas tipo examen y los simulacros]),
     ("Edición", [Primera edición · noviembre de 2026]),
     ("Código", [Todos los programas, tareas y soluciones de referencia se han ejecutado con Python 3 y dan exactamente lo que dice el texto.]),
   ))

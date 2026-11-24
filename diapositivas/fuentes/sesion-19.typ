@@ -39,4 +39,4 @@
 #tarea-casa(([Crea la clase #raw("Figura") con un método #raw("area()") que lance #raw("NotImplementedError") y un #raw("__str__") que escriba el nombre de…], [Crea #raw("Rectangulo(base, altura)") y #raw("Circulo(radio)"), hijas de #raw("Figura"), cada una con su #raw("area()") y su #raw("perimetro()").], [Haz una lista con dos rectángulos y dos círculos, ordénala por área con #raw("sort") y #raw("key"), e imprime cada figura.], [¿Por qué no hace falta escribir #raw("__str__") en las hijas?],), [La figura más pequeña de la lista #raw("[Rectangulo(3, 4), Circulo(1), Rectangulo(1, 1), Circulo(2)]") es el rectángulo de 1 × 1.])
 
 == Antes de irte
-#cierre(qr: "https://achanesespigares.github.io/python-acinstitut/capitulos/clases/#preguntas-tipo-examen", siguiente: [Sesión 20 · Nombres ocultos y polimorfismo])
+#cierre(qr: "https://python.antonychanes.com/capitulos/clases/#preguntas-tipo-examen", siguiente: [Sesión 20 · Nombres ocultos y polimorfismo])

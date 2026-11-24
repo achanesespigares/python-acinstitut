@@ -1,7 +1,7 @@
 # Mirar y ver · cómo piensa tu código
 
 Laboratorio de programación de AC Institut, hermano del libro. Se publica en
-<https://achanesespigares.github.io/python-acinstitut/mirar-y-ver/>.
+<https://python.antonychanes.com/mirar-y-ver/>.
 
 Ocho áreas (Variables, Decisiones, Patrones, Funciones, Colecciones, Algoritmos,
 Física y código, Tu código) y 22 puestos. Cada puesto es una construcción de

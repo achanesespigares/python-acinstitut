@@ -39,4 +39,4 @@
 #tarea-casa(([Escribe #raw("descuento(pct)"), que devuelve una función #raw("aplica(precio)") con el precio rebajado y redondeado a céntimos.], [Crea #raw("rebajas = descuento(20)") y #raw("black_friday = descuento(35)") y aplícalas a 50 €.], [Escribe el generador #raw("fibonacci(limite)"), que produce los términos de la sucesión (0, 1, 1, 2, 3…) mientras no pasen…], [Convierte en lista los de hasta 100, y saca los tres primeros de otro generador con #raw("next").],), [Las rebajas dejan 50 € en 40 €; el último término hasta 100 es 89.])
 
 == Antes de irte
-#cierre(qr: "https://achanesespigares.github.io/python-acinstitut/capitulos/funciones-valores/#preguntas-tipo-examen", siguiente: [Sesión 25 · Ficheros, bytes y rutas])
+#cierre(qr: "https://python.antonychanes.com/capitulos/funciones-valores/#preguntas-tipo-examen", siguiente: [Sesión 25 · Ficheros, bytes y rutas])

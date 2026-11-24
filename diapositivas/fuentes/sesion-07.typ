@@ -49,4 +49,4 @@
 #tarea-casa(([Pide un número #raw("n").], [Escribe su tabla del 1 al 10 con un #raw("for") y #raw("range"), con este formato: #raw("7 x 3 = 21").], [Escríbela otra vez con un #raw("while"). ¿Qué tienes que hacer a mano que el #raw("for") hacía solo?], [Ampliación: escribe solo las líneas cuyo resultado sea par.],), [La última línea de la tabla del 7 es #raw("7 x 10 = 70").])
 
 == Antes de irte
-#cierre(qr: "https://achanesespigares.github.io/python-acinstitut/capitulos/bucles/#preguntas-tipo-examen", siguiente: [Sesión 8 · #raw("break"), #raw("continue"), centinelas y bucles anidados])
+#cierre(qr: "https://python.antonychanes.com/capitulos/bucles/#preguntas-tipo-examen", siguiente: [Sesión 8 · #raw("break"), #raw("continue"), centinelas y bucles anidados])

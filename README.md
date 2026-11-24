@@ -1,4 +1,4 @@
-# Mirar y ver tu código pensar · Entendiendo Python, desde dentro
+# Mirar y ver · Python · cómo piensa tu código
 
 Libro de Python de Antonio Chanes Espigares, hecho con **Jupyter Book 2** (motor MyST). Su seña de identidad: los programas se ven ejecutarse paso a paso, con la lista dibujada como casillas, el puntero que avanza, las variables, las condiciones evaluadas y la tabla de traza.
 

@@ -10,7 +10,7 @@
 
 == El simulacro PCAP
 
-#con-qr("https://achanesespigares.github.io/python-acinstitut/capitulos/simulacro-pcap/", [Simulacro en el libro], situacion[#strong[Simulacro PCAP]: 42 preguntas en 65 minutos, con el temporizador del libro.])
+#con-qr("https://python.antonychanes.com/capitulos/simulacro-pcap/", [Simulacro en el libro], situacion[#strong[Simulacro PCAP]: 42 preguntas en 65 minutos, con el temporizador del libro.])
 
 == Antes de irte
 #cierre(siguiente: [Sesión 30 · Proyecto 2: exposiciones])

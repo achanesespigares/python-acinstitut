@@ -315,7 +315,7 @@ footer p{margin:0 0 4px}
 
 <footer class="band">
 <div class="wrap">
-<p>AC Institut · Antonio Chanes Espigares · CC BY-NC-ND 4.0 · Acompaña al libro <a href="https://achanesespigares.github.io/python-acinstitut/">Mirar y ver tu código pensar</a></p>
+<p>AC Institut · Antonio Chanes Espigares · CC BY-NC-ND 4.0 · Acompaña al libro <a href="https://python.antonychanes.com/">Mirar y ver · Python</a></p>
 <p>Motor: Pyodide 314.0.7 (Python 3.14) con <code>sys.settrace</code>. Las variantes llevan su traza ya calculada con este mismo trazador.</p>
 </div>
 </footer>
@@ -329,7 +329,7 @@ const TRZ = __TRZ__;
 const CDN = ['https://cdn.jsdelivr.net/npm/pyodide@314.0.7/', 'https://cdn.jsdelivr.net/pyodide/v314.0.7/full/'];
 const URLS = [new URL('../pyodide/', location.href).href, new URL('py/', location.href).href, ...CDN];
 // El libro: si esta página se sirve dentro de su web (…/mirar-y-ver/), el libro está un nivel más arriba
-const LIBRO = /\/mirar-y-ver\/?$/.test(location.pathname.replace(/index\.html$/, '')) ? new URL('../', location.href).href : 'https://achanesespigares.github.io/python-acinstitut/';
+const LIBRO = /\/mirar-y-ver\/?$/.test(location.pathname.replace(/index\.html$/, '')) ? new URL('../', location.href).href : 'https://python.antonychanes.com/';
 const CAP = {va:['variables-asignacion','Variables y asignación'], co:['condicionales','Condicionales'], bu:['bucles','Bucles while y for'],
   bf:['bucles-a-fondo','Bucles a fondo'], rl:['recorrer-listas','Recorrer listas'], fu:['funciones','Funciones'], ff:['funciones-a-fondo','Funciones a fondo'],
   di:['diccionarios','Diccionarios'], la:['listas-a-fondo','Listas a fondo'], lab:['laboratorio','Laboratorio']};

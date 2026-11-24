@@ -51,4 +51,4 @@
 #tarea-casa(([Pide una nota con decimales.], [Si no está entre 0 y 10, escribe #raw("Nota no válida") y no sigas.], [Si es válida, escribe la calificación: Suspenso (\< 5), Suficiente (\< 6), Bien (\< 7), Notable (\< 9) o Sobresaliente.], [Ordena las condiciones para que cada una solo tenga que comprobar un límite.], [Prueba los bordes: 4,99, 5, 9, 10 y 10,5.],), [Un 6,5 es Bien y un 9 es Sobresaliente.])
 
 == Antes de irte
-#cierre(qr: "https://achanesespigares.github.io/python-acinstitut/capitulos/condicionales/#preguntas-tipo-examen", siguiente: [Sesión 7 · Repetir: #raw("while"), #raw("for") y #raw("range")])
+#cierre(qr: "https://python.antonychanes.com/capitulos/condicionales/#preguntas-tipo-examen", siguiente: [Sesión 7 · Repetir: #raw("while"), #raw("for") y #raw("range")])

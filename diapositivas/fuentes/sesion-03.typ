@@ -49,4 +49,4 @@
 #tarea-casa(([Dibuja una tabla con una columna para #raw("x"), otra para #raw("y") y otra para la condición #raw("x > y").], [Rellénala fila a fila, una por vuelta del bucle.], [Escribe lo que imprime el programa.], [Comprueba en Colab. Si no coincide, busca la primera fila en la que te equivocaste.],), [El bucle da exactamente dos vueltas.])
 
 == Antes de irte
-#cierre(qr: "https://achanesespigares.github.io/python-acinstitut/capitulos/trazas/#preguntas-tipo-examen", siguiente: [Sesión 4 · Variables, #raw("input") y #raw("print")])
+#cierre(qr: "https://python.antonychanes.com/capitulos/trazas/#preguntas-tipo-examen", siguiente: [Sesión 4 · Variables, #raw("input") y #raw("print")])
