@@ -1,6 +1,6 @@
 ---
-title: Mirar y ver tu código pensar
-subtitle: Entendiendo Python, desde dentro
+title: Mirar y ver · Python
+subtitle: cómo piensa tu código
 description: "Libro gratuito de Python de AC Institut, de cero a PCEP y PCAP: cada programa se ve ejecutarse paso a paso, con laboratorio y diagrama de flujo."
 ---
 

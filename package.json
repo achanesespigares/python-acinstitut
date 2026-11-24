@@ -1,7 +1,7 @@
 {
   "name": "python-acinstitut",
   "version": "0.1.0",
-  "description": "Mirar y ver tu código pensar · Entendiendo Python, desde dentro · AC Institut (Jupyter Book 2 / MyST)",
+  "description": "Mirar y ver · Python · cómo piensa tu código · AC Institut (Jupyter Book 2 / MyST)",
   "scripts": {
     "trazas": "python3 herramientas/trazar.py capitulos/*.md && python3 herramientas/preguntas.py && python3 herramientas/cobertura.py",
     "build": "myst build --html",
