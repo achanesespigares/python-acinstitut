@@ -28,6 +28,9 @@ const ESTILOS = `
 .tz-barra.negro{ background:var(--tinta); }
 .tz-micro{ font:600 10.5px/1.2 var(--titulo); letter-spacing:.12em; text-transform:uppercase; color:var(--banda); margin-bottom:6px !important; }
 .tz-micro.acento{ color:var(--acento); margin:0 !important; }
+.tz-puente{ display:flex; align-items:baseline; gap:4px 12px; flex-wrap:wrap; border-top:1px solid var(--fila); padding-top:10px; font-size:13.5px; color:var(--banda); }
+.tz-puente a{ font:600 13px/1.2 var(--titulo); color:var(--acento); text-decoration:none; border-bottom:1.5px solid currentColor; }
+.tz-puente a:hover{ color:var(--oscuro); }
 
 pre.tz-codigo{ margin:0; font:400 14px/1.85 var(--mono); overflow-x:auto; background:var(--fondo); padding:6px 0; border:0; border-radius:0; }
 .tz .ln{ display:flex; align-items:center; white-space:pre; padding-right:12px; border-left:4px solid transparent; }
@@ -493,10 +496,11 @@ function simulacro(raiz, C, banco, nombres) {
 // congele la página). El worker carga herramientas/trazar.py y herramientas/laboratorio.py,
 // que la publicación copia en <web>/datos/, y devuelve la misma traza que pinta renderTraza.
 // Python se sirve junto al libro (la publicación copia Pyodide en <web>/pyodide/); si no está, de la CDN.
-const PYODIDE_CDN = "https://cdn.jsdelivr.net/pyodide/v0.29.5/full/";
+// Es el mismo Python que usa el laboratorio «Mirar y ver» (<web>/mirar-y-ver/): una sola descarga para toda la web.
+const PYODIDE_CDN = "https://cdn.jsdelivr.net/npm/pyodide@314.0.7/";
 function basePyodide() {
   const local = new URL("../pyodide/", import.meta.url).href;
-  return fetch(local + "pyodide.js", { method: "HEAD" }).then(r => r.ok ? local : PYODIDE_CDN).catch(() => PYODIDE_CDN);
+  return fetch(local + "pyodide.mjs", { method: "HEAD" }).then(r => r.ok ? local : PYODIDE_CDN).catch(() => PYODIDE_CDN);
 }
 const LAB_EJEMPLOS = [
   { nombre: "La media de una lista", codigo: "notas = [7, 5, 9, 6]\ntotal = 0\nfor n in notas:\n    total = total + n\nmedia = total / len(notas)\nprint(\"Media:\", media)" },
@@ -526,14 +530,34 @@ const LAB_ESTILOS = `
 .lab .lab-tec{ margin-top:8px; font-size:12.5px; color:var(--banda); }
 .lab .lab-tec code{ font:400 12px/1.4 var(--mono); }
 .lab .tz-b[aria-pressed="true"]{ background:var(--tinta); color:#fff; }
+.lab .lab-myv{ text-decoration:none; display:inline-block; }
 .lab:fullscreen{ overflow:auto; padding:28px 4vw; border:0; border-radius:0; margin:0; }
 .lab:fullscreen .lab-ed, .lab:fullscreen .lab-res{ zoom:1.3; }
 .lab:fullscreen .tz-idea{ display:none; }
 @media (max-width: 700px){ .lab{ padding:12px; } .lab .lab-acc .lab-estado{ flex-basis:100%; } }
 `;
+// ── Puente con «Mirar y ver · cómo piensa tu código» ─────────────────────────────────────
+// Lleva un programa (y sus respuestas para input()) al puesto «Tu código» de Mirar y ver,
+// que lo ejecuta con el mismo Python y lo enseña en cajas y flechas, con modo Predecir.
+const MIRAR_Y_VER = new URL("../mirar-y-ver/", import.meta.url).href;
+function enlaceMirarYVer(codigo, entradas) {
+  const q = new URLSearchParams({ codigo: codigo || "" });
+  const e = (entradas || []).join("\n");
+  if (e) q.set("entradas", e);
+  return MIRAR_Y_VER + "#tucodigo?" + q.toString();
+}
+// Lo contrario: Mirar y ver abre el laboratorio del libro con #codigo=…&entradas=…
+function programaDelEnlace() {
+  const h = (typeof location !== "undefined" && location.hash) || "";
+  if (!/^#(.*&)?codigo=/.test(h)) return null;
+  const q = new URLSearchParams(h.slice(1));
+  return { codigo: q.get("codigo") || "", entradas: q.get("entradas") || "" };
+}
+
 let LAB = null;   // { worker, listo }: un solo Python por página, cargado la primera vez
 function trabajadorLab(PYODIDE) {
-  const fuente = `importScripts("${PYODIDE}pyodide.js");
+  // Worker de módulo: Pyodide 314 ya no admite los workers clásicos (importScripts)
+  const fuente = `import { loadPyodide } from "${PYODIDE}pyodide.mjs";
 let py = null;
 self.onmessage = async (e) => {
   const m = e.data;
@@ -551,7 +575,7 @@ self.onmessage = async (e) => {
     }
   } catch (err) { self.postMessage({ tipo: "fallo", error: String(err) }); }
 };`;
-  return new Worker(URL.createObjectURL(new Blob([fuente], { type: "text/javascript" })));
+  return new Worker(URL.createObjectURL(new Blob([fuente], { type: "text/javascript" })), { type: "module" });
 }
 function preparaLab() {
   if (LAB) return LAB.listo;
@@ -594,7 +618,7 @@ function renderLaboratorio({ model, el }) {
     '<div class="lab-ed"><pre class="lab-num" aria-hidden="true"></pre><textarea class="lab-cod" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="Tu programa en Python"></textarea></div></div>' +
     '<details class="lab-ent"><summary>Si tu programa usa input()</summary><p>Escribe lo que se teclearía en cada <code>input()</code>, una respuesta por línea.</p>' +
     '<textarea class="lab-in" spellcheck="false" aria-label="Respuestas para input()"></textarea></details>' +
-    '<div class="lab-acc"><button type="button" class="tz-b prim lab-run">Ejecutar y ver</button><button type="button" class="tz-b lab-proy" aria-pressed="false">Proyectar</button><span class="lab-estado" aria-live="polite"></span></div>' +
+    '<div class="lab-acc"><button type="button" class="tz-b prim lab-run">Ejecutar y ver</button><button type="button" class="tz-b lab-proy" aria-pressed="false">Proyectar</button><a class="tz-b lab-myv" target="_blank" rel="noopener" title="Abre este programa en el laboratorio «Mirar y ver»: cajas y flechas, modo Predecir y gráficas">Abrir en Mirar y ver ↗</a><span class="lab-estado" aria-live="polite"></span></div>' +
     '<div class="lab-res"></div></div>';
   const q = s => el.querySelector(s);
   const cod = q(".lab-cod"), num = q(".lab-num"), ent = q(".lab-in"), res = q(".lab-res"), estado = q(".lab-estado"), boton = q(".lab-run");
@@ -611,8 +635,19 @@ function renderLaboratorio({ model, el }) {
   }
   cod.value = lee("codigo") || LAB_EJEMPLOS[0].codigo;
   ent.value = lee("entradas") || "";
+  // ¿llega un programa desde Mirar y ver? (#codigo=…&entradas=…)
+  const llega = programaDelEnlace();
+  if (llega) {
+    cod.value = llega.codigo; ent.value = llega.entradas;
+    escribe("codigo", cod.value); escribe("entradas", ent.value);
+    try { history.replaceState(null, "", location.pathname + location.search); } catch (e) { /* sin historial */ }
+  }
   if (ent.value) q(".lab-ent").open = true;
   ajusta();
+  const myv = q(".lab-myv");
+  const actualizaMyv = () => { myv.href = enlaceMirarYVer(cod.value, ent.value === "" ? [] : ent.value.replace(/\n$/, "").split("\n")); };
+  actualizaMyv();
+  myv.addEventListener("pointerdown", actualizaMyv); myv.addEventListener("focus", actualizaMyv);
   // Proyectar: el laboratorio a pantalla completa y con letra grande (Esc para salir)
   const proy = q(".lab-proy"), caja = q(".lab");
   if (!document.fullscreenEnabled || !caja.requestFullscreen) proy.remove();
@@ -664,7 +699,7 @@ function renderLaboratorio({ model, el }) {
         return;
       }
       const div = document.createElement("div"); res.appendChild(div);
-      renderTraza({ model: { get: k => k === "config" ? r.config : k === "traza" ? r.traza : undefined }, el: div });
+      renderTraza({ model: { get: k => k === "config" ? Object.assign({ sinPuente: true }, r.config) : k === "traza" ? r.traza : undefined }, el: div });
       if (r.pista) {
         const caja = document.createElement("div"); caja.className = "tz-caja lab-pista";
         caja.innerHTML = '<div class="tz-barra negro"><span>Pista</span><span>para el error del final</span></div><p>' + esc(r.pista) + "</p>";
@@ -686,6 +721,7 @@ function renderLaboratorio({ model, el }) {
       res.innerHTML = '<p class="lab-error">' + esc(msg) + "</p>";
     }).finally(() => { boton.disabled = false; });
   });
+  if (llega) { el.scrollIntoView({ block: "start" }); boton.click(); }
 }
 
 function render({ model, el }) {
@@ -701,6 +737,12 @@ function renderTraza({ model, el }) {
   if (!D || !D.pasos) { el.textContent = "Falta la traza: ejecuta herramientas/trazar.py sobre este capítulo."; return; }
   el.innerHTML = "<style>" + ESTILOS + "</style>" + PLANTILLA;
   const q = s => el.querySelector(s);
+  if (!C.sinPuente && D.codigo) {
+    const pie = document.createElement("p"); pie.className = "tz-puente";
+    pie.innerHTML = '<a target="_blank" rel="noopener">Ábrelo en Mirar y ver ↗</a><span>el mismo programa en cajas y flechas, para predecir cada paso o cambiarlo</span>';
+    pie.firstChild.href = enlaceMirarYVer(D.codigo, C.entradas);
+    q(".tz").appendChild(pie);
+  }
   const P = D.pasos, L = D.codigo.split("\n"), lista = C.lista, cab = C.cabecera;
   const columnas = C.columnas.concat(C.fila_en === "comprobacion" ? ["¿sigue?"] : []);
   // valor tal como lo escribe Python (True, 4.0, 'texto'), si la traza lo trae

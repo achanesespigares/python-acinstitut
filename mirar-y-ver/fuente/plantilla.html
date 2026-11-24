@@ -108,7 +108,9 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible{
 .pred .q code{font:600 14px var(--mono);background:var(--bg);padding:1px 5px}
 .pin{display:flex;gap:8px}
 .pin input{flex:1;font:16px var(--mono);min-height:44px;padding:0 10px;border:1.5px solid var(--ink);background:var(--bg);color:var(--ink)}
-.act{display:flex;gap:8px;margin-top:8px}.act button{flex:1}
+.act{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}.act button{flex:1}
+.act a.btn{flex:1 1 100%;display:flex;align-items:center;justify-content:center;font:600 14px Montserrat,Arial,sans-serif;min-height:44px;border:1px solid var(--rule);border-radius:6px;color:var(--acc);background:var(--bg);text-decoration:none}.act a.btn:hover{border-color:var(--accf)}.act a.btn[hidden]{display:none}
+.bb p.libro{border-top:1px solid var(--row);padding-top:10px;margin:14px 0 0;font-size:14px}.libro b{font:600 11px/1 Montserrat,Arial,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);margin-right:8px}.libro a{color:var(--acc);font-weight:600}
 .fb{font-size:14px;margin:8px 0 0;min-height:20px}.fb .y{color:var(--ok)}.fb .x{color:var(--ko)}
 .score{font:600 13px Montserrat,Arial,sans-serif;color:var(--acc)}
 .ed textarea{width:100%;min-height:190px;font:14px/1.6 var(--mono);padding:10px;border:1.5px solid var(--ink);background:var(--bg);color:var(--ink);resize:vertical;tab-size:4}
@@ -260,7 +262,7 @@ footer p{margin:0 0 4px}
 </div>
 <p class="lbl" id="ed-lbl">Cambia el código y míralo pensar</p>
 <textarea id="ta" spellcheck="false" aria-label="Código Python"></textarea>
-<div class="act"><button class="pri" id="run">Ejecutar y trazar</button><button id="rst">Restaurar variante</button></div>
+<div class="act"><button class="pri" id="run">Ejecutar y trazar</button><button id="rst">Restaurar variante</button><a class="btn" id="a-libro" target="_blank" rel="noopener" hidden title="Clases, ficheros, generadores y excepciones con su except se ven con más detalle en el laboratorio del libro">Abrir en el laboratorio del libro ↗</a></div>
 <p class="stat" id="stat">Las variantes se ven al instante. Tu código se ejecuta con Python de verdad en el navegador: la primera vez hay que descargar el intérprete.</p>
 </div>
 </div>
@@ -307,7 +309,19 @@ footer p{margin:0 0 4px}
 const PRE = __PRE__;
 for (const k in PRE.trace){ let v = {}, o = ''; PRE.trace[k] = PRE.trace[k].map(e => { v = Object.assign({}, v, e.d || {}); (e.x || []).forEach(n => delete v[n]); if ('o' in e) o = e.o; const r = {l:e.l, v, o}; for (const q of ['f','h','r','e']) if (q in e) r[q] = e[q]; return r; }); }
 const TRZ = __TRZ__;
-const URLS = [new URL('py/', location.href).href, 'https://cdn.jsdelivr.net/pyodide/v314.0.7/full/','https://cdn.jsdelivr.net/npm/pyodide@314.0.7/'];
+// Python: el mismo que usa el libro (<web>/pyodide/), después el que viaja con el artefacto (py/), y por último la CDN
+const CDN = ['https://cdn.jsdelivr.net/npm/pyodide@314.0.7/', 'https://cdn.jsdelivr.net/pyodide/v314.0.7/full/'];
+const URLS = [new URL('../pyodide/', location.href).href, new URL('py/', location.href).href, ...CDN];
+// El libro: si esta página se sirve dentro de su web (…/mirar-y-ver/), el libro está un nivel más arriba
+const LIBRO = /\/mirar-y-ver\/?$/.test(location.pathname.replace(/index\.html$/, '')) ? new URL('../', location.href).href : 'https://achanesespigares.github.io/python-acinstitut/';
+const CAP = {va:['variables-asignacion','Variables y asignación'], co:['condicionales','Condicionales'], bu:['bucles','Bucles while y for'],
+  bf:['bucles-a-fondo','Bucles a fondo'], rl:['recorrer-listas','Recorrer listas'], fu:['funciones','Funciones'], ff:['funciones-a-fondo','Funciones a fondo'],
+  di:['diccionarios','Diccionarios'], la:['listas-a-fondo','Listas a fondo'], lab:['laboratorio','Laboratorio']};
+const EN_LIBRO = {asignar:['va'], intercambiar:['va'], mutar:['va','la'], ramas:['co'], 'mientras-que':['bu','bf'], 'for-range':['bu','bf'],
+  recorrer:['rl'], maximo:['rl'], primero:['rl','bf'], llamar:['fu','ff'], locales:['ff'], recursion:['fu'],
+  listas:['la'], copiar:['la'], diccionarios:['di'], buscar:['rl'], burbuja:['la'], insercion:['la'],
+  caida:['bu'], muelle:['bu'], tiro:['bu'], tucodigo:['lab']};
+const enLibro = id => (EN_LIBRO[id] || []).map(k => `<a href="${LIBRO}capitulos/${CAP[k][0]}" target="_blank" rel="noopener">${CAP[k][1]}</a>`).join(' · ');
 const PUESTOS = [
  {id:'recorrer', ar:2, n:'Recorrer y acumular', sub:'Puesto 1: recorrer una lista y acumular', lt:'el patrón acumulador', trap:'trampa',
   vars:[{id:'for',n:'for x in lista'},{id:'indice',n:'Por índice'},{id:'while',n:'Con while'},{id:'contar',n:'Contar pares'},{id:'trampa',n:'Trampa',tr:1}],
@@ -662,7 +676,7 @@ const PUESTOS = [
   lec:`<p class="say">Si tu programa no hace lo que esperas, no lo releas: míralo pensar. Predice qué va a pasar en la siguiente línea antes de avanzar y detente en el primer paso en que la memoria te lleve la contraria: ahí está el error.</p>
 <div class="anat"><div><b>Predice</b>Antes de cada paso, di qué valor cambiará. El modo Predecir te lo pregunta.</div><div><b>Avanza</b>Un paso cada vez, mirando la memoria y la tabla de traza.</div><div><b>Para</b>En la primera sorpresa: esa línea, con esos valores, es la pista.</div></div>
 <p><b>Qué vista elegir.</b> «Automática» decide por ti: cajas y flechas si hay funciones, diccionarios o listas compartidas; casillas si hay listas; recorrido en lo demás. La gráfica dibuja un punto por vuelta con las dos variables que elijas.</p>`,
-  trp:`<p><b>Lo que el laboratorio no enseña.</b> Corta a los 400 pasos y a las 50 llamadas anidadas. Solo usa la biblioteca estándar (sin numpy ni otros paquetes). <code>input()</code> no abre ventana: lee de la caja «Entradas». Los objetos de clases propias aparecen como una caja con su tipo.</p>
+  trp:`<p><b>Lo que el laboratorio no enseña.</b> Corta a los 400 pasos y a las 50 llamadas anidadas. Solo usa la biblioteca estándar (sin numpy ni otros paquetes). <code>input()</code> no abre ventana: lee de la caja «Entradas». Los objetos de clases propias aparecen como una caja con su tipo. Para verlos con sus atributos, o para ver ficheros y generadores, usa «Abrir en el laboratorio del libro».</p>
 <p><b>Chequeo de bolsillo.</b> Si al final una variable vale algo que no esperabas, busca el último paso en que cambió en la tabla de traza. Si una lista cambió sin aparecer a la izquierda de un <code>=</code>, otra variable apunta a la misma.</p>`}
 ];
 const AREAS = [
@@ -1084,7 +1098,8 @@ function puesto(pid, vid){
   $('#sub1').textContent = 'Cómo piensa tu código · ' + AREAS[st.p.ar].n + ' · ' + st.p.sub;
   $('#vars').innerHTML = st.p.vars.map(v => `<button data-v="${v.id}" class="${v.tr?'tr':''}" aria-pressed="false">${v.n}</button>`).join('');
   $('#tu').hidden = !st.p.tu; $('#var-lbl').textContent = st.p.tu ? 'Ejemplos de partida' : 'Variante'; $('#ed-lbl').textContent = st.p.tu ? 'Tu programa' : 'Cambia el código y míralo pensar';
-  $('#lec-t').textContent = st.p.lt; $('#lec').innerHTML = st.p.lec; $('#trp').innerHTML = st.p.trp;
+  $('#lec-t').textContent = st.p.lt; $('#lec').innerHTML = st.p.lec + (EN_LIBRO[st.p.id] ? `<p class="libro"><b>En el libro</b> ${enLibro(st.p.id)}</p>` : ''); $('#trp').innerHTML = st.p.trp;
+  $('#a-libro').hidden = !st.p.tu;
   pick(vid || st.p.vars[0].id);
 }
 function pick(id){
@@ -1127,8 +1142,8 @@ function py(){
         $('#stat').textContent = 'Cargando Python (1/3): descargando pyodide.js…';
         if (typeof loadPyodide === 'undefined') await tope(script(u+'pyodide.js'), 30000, 'pyodide.js');
         const cfg = {indexURL:u};
-        if (u===URLS[0]){ $('#stat').textContent = 'Cargando Python (2/3): biblioteca estándar…';
-          const rb = await tope(fetch(u+'stdlib.b64.txt'), 60000, 'biblioteca');
+        if (!CDN.includes(u)){ $('#stat').textContent = 'Cargando Python (2/3): biblioteca estándar…';
+          const rb = await tope(fetch(u+'stdlib.b64.txt').catch(() => ({ok:false})), 60000, 'biblioteca');
           if (rb.ok){ const bin = Uint8Array.from(atob((await rb.text()).trim()), c => c.charCodeAt(0));
             cfg.stdLibURL = URL.createObjectURL(new Blob([bin], {type:'application/zip'})); } }
         $('#stat').textContent = 'Cargando Python (3/3): iniciando el intérprete (unos 10 MB)…';
@@ -1179,7 +1194,15 @@ $('#vista').addEventListener('click', e => { const b = e.target.closest('button'
 ['#ex','#ey'].forEach(s => $(s).addEventListener('input', () => { if (st.vista==='plot') draw(); }));
 $('#rst').onclick = () => pick(st.p.vars.some(v=>v.id===st.v) ? st.v : st.p.vars[0].id);
 $('#trp').addEventListener('click', e => { const b = e.target.closest('[data-trap]'); if (b){ pick(b.dataset.trap || st.p.trap); $('#code').scrollIntoView({behavior:'smooth', block:'center'}); } });
-const route = () => { const h = location.hash.slice(1); if (PUESTOS.some(p=>p.id===h)){ puesto(h); return true; } return false; };
+const route = () => {
+  const [h, qs] = location.hash.slice(1).split(/\?(.*)/s);
+  if (h==='tucodigo' && qs){                       // un programa que llega del libro: #tucodigo?codigo=…&entradas=…
+    const q = new URLSearchParams(qs);
+    if (q.has('codigo')){ puesto('tucodigo'); $('#ta').value = q.get('codigo'); $('#ent').value = q.get('entradas') || ''; run(); return true; }
+  }
+  if (PUESTOS.some(p=>p.id===h)){ puesto(h); return true; } return false; };
+const enlaceLibro = () => { const q = new URLSearchParams({codigo: $('#ta').value}); const e = $('#ent').value.replace(/\s+$/,''); if (e) q.set('entradas', e); return LIBRO + 'capitulos/laboratorio#' + q.toString(); };
+['pointerdown','focus'].forEach(ev => $('#a-libro').addEventListener(ev, () => { $('#a-libro').href = enlaceLibro(); }));
 window.addEventListener('hashchange', () => { if (route()) $('#puestos').scrollIntoView({behavior:'smooth'}); });
 $('#ta').addEventListener('keydown', e => { if (e.key==='Tab' && !e.shiftKey){ e.preventDefault(); const t = e.target, a = t.selectionStart; t.setRangeText('    ', a, t.selectionEnd, 'end'); } });
 document.addEventListener('keydown', e => {

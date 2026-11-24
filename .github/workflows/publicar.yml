@@ -31,7 +31,7 @@ jobs:
           node-version: 22
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.13"
+          python-version: "3.14"
       - name: Instalar MyST (versión fijada en package.json)
         run: npm ci
       - name: Regenerar las trazas de los visualizadores
@@ -46,19 +46,17 @@ jobs:
         run: |
           mkdir -p _build/html/diapositivas
           cp diapositivas/pdf/ac-institut/*.pdf _build/html/diapositivas/
-      - name: Copiar Python (Pyodide) para el laboratorio
+      - name: Copiar Python (Pyodide 314.0.7) para los dos laboratorios
+        # Un solo Python para toda la web: lo usan el laboratorio del libro y «Mirar y ver».
         run: |
           mkdir -p _build/html/pyodide
-          for f in pyodide.js pyodide.asm.js pyodide.asm.wasm python_stdlib.zip pyodide-lock.json; do
-            curl -sSfL -o _build/html/pyodide/$f https://cdn.jsdelivr.net/pyodide/v0.29.5/full/$f
+          for f in pyodide.js pyodide.mjs pyodide.asm.mjs pyodide.asm.wasm python_stdlib.zip pyodide-lock.json; do
+            curl -sSfL -o _build/html/pyodide/$f https://cdn.jsdelivr.net/npm/pyodide@314.0.7/$f
           done
       - name: Laboratorio «Mirar y ver · cómo piensa tu código»
         run: |
-          mkdir -p _build/html/mirar-y-ver/py
+          mkdir -p _build/html/mirar-y-ver
           python3 mirar-y-ver/fuente/construir.py _build/html/mirar-y-ver/index.html
-          for f in pyodide.js pyodide.asm.mjs pyodide.asm.wasm python_stdlib.zip pyodide-lock.json; do
-            curl -sSfL -o _build/html/mirar-y-ver/py/$f https://cdn.jsdelivr.net/npm/pyodide@314.0.7/$f
-          done
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
