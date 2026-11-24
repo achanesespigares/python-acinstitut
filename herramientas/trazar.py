@@ -31,6 +31,7 @@ variables locales, y el paso del return muestra el valor devuelto.
 Los objetos de las clases del alumno se dibujan con un número (Cuenta nº1):
 si dos variables muestran el mismo número, son el mismo objeto.
 Si una línea lanza una excepción, el paso la muestra y el siguiente es el except.
+Cada traza lleva también el diagrama de flujo del programa (herramientas/diagrama.py).
 Las lambdas y los cierres guardados en variables se ven como valores; los generadores
 se pausan en cada yield y se reanudan; las comprensiones de listas muestran, vuelta a
 vuelta, el elemento que calculan; y si el programa escribe ficheros, se dibuja el disco
@@ -42,6 +43,7 @@ Para programas sin lista ni bucle: omite "lista" y "cabecera", y usa
 """
 import ast, builtins, contextlib, copy, dis, inspect, io, json, linecache, os, re, shutil, sys, tempfile, traceback, types
 from pathlib import Path, PurePath
+from diagrama import diagrama                    # diagrama de flujo (común con «Mirar y ver»)
 
 ENTORNO = {"len": len, "range": range, "sum": sum, "max": max, "min": min, "abs": abs}
 
@@ -501,7 +503,7 @@ def traza(codigo, cfg):
         if hay_clases:
             paso["clases"] = tras["clases"]
         pasos.append(paso)
-    return {"codigo": codigo, "pasos": pasos, "filas": filas}
+    return {"codigo": codigo, "pasos": pasos, "filas": filas, "diagrama": json.loads(diagrama(codigo))}
 
 
 CELDA = re.compile(r"^```\{code-cell\}[^\n]*\n(.*?)^```", re.S | re.M)

@@ -51,18 +51,22 @@ viaja con el artefacto de claude.ai, con la biblioteca estándar como
 
 El botón «◇ Diagrama de flujo» de la cabecera «Código y memoria» dibuja el
 diagrama del programa al lado del código, en todos los puestos y en «Tu código»,
-y lo recuerda para la próxima visita.
+y lo recuerda para la próxima visita. El libro usa exactamente las mismas piezas
+(botón «Diagrama de flujo» en cada visualizador y en el laboratorio, tecla D).
 
-- `tracer.py` → `diagrama(codigo)` lee la estructura con `ast` y la devuelve
-  como bloques: proceso, entrada/salida (`print`, `input`), rombo (`if`,
-  `while`), hexágono (`for`), terminales (`return`, `break`, `continue`,
+- `herramientas/diagrama.py` → `diagrama(codigo)` lee la estructura con `ast`
+  y la devuelve como bloques: proceso, entrada/salida (`print`, `input`), rombo
+  (`if`, `while`), hexágono (`for`), terminales (`return`, `break`, `continue`,
   `raise`), `try` con sus `except`, y un diagrama aparte por función o método.
-  Para las variantes se calcula al construir la página; para «Tu código», en el
-  navegador con el mismo Python.
-- `diagrama.js` (se inyecta en la plantilla) lo maqueta como bloques anidados
-  en SVG y, en cada paso, ilumina la fila que va a ejecutarse (la misma que la
-  flecha del código), cuenta las veces que se ha ejecutado cada bloque, marca la
-  rama que se acaba de tomar y cuántas veces ha salido cada condición por cada
-  lado.
+  Aquí se calcula al construir la página (variantes) y en el navegador (Tu
+  código); en el libro lo añade `trazar.py` a cada traza.
+- `widgets/diagrama.js` lo maqueta como bloques anidados en SVG y, en cada
+  paso, ilumina el bloque que toca (aquí, el que va a ejecutarse; en el libro,
+  el que se acaba de ejecutar, con el siguiente punteado), cuenta las veces que
+  se ha ejecutado cada bloque, marca la rama que se acaba de tomar y cuántas
+  veces ha salido cada condición por cada lado. `break` dibuja su flecha hasta
+  la salida del bucle y `continue` hasta la vuelta. Los colores salen de
+  variables `--dg-*` que pone cada página. La publicación copia ambos ficheros
+  en `<web>/datos/` para el libro.
 - En el modo Predecir, con el diagrama a la vista, las decisiones se preguntan
   como «¿por qué salida sale el rombo?».

@@ -39,6 +39,8 @@ Los dos funcionan con el mismo Python, que el navegador descarga una sola vez, y
 - **Abrir en Mirar y ver ↗**, junto a «Ejecutar y ver», lleva tu programa a Mirar y ver: allí lo ves en **cajas y flechas** (qué nombre apunta a qué objeto), puedes **predecir** cada paso antes de darlo o dibujar una **gráfica** con sus variables. Todos los visualizadores del libro tienen el mismo enlace, debajo.
 - **Abrir en el laboratorio del libro ↗**, en «Tu código» de Mirar y ver, lo trae de vuelta aquí, donde se ven con más detalle las clases, los ficheros, los generadores y las excepciones con su `except`.
 
+Todos los visualizadores, también el de este laboratorio, tienen el botón **Diagrama de flujo** (o la tecla D): dibuja el diagrama del programa debajo del código y, paso a paso, ilumina el bloque que se acaba de ejecutar, marca con un borde punteado el siguiente y cuenta cuántas veces ha salido cada condición por el Sí y por el No.
+
 ## Ideas para practicar
 
 - Copia un ejercicio de cualquier capítulo, **predice** qué hará y compruébalo aquí.
