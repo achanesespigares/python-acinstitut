@@ -14,7 +14,7 @@
 
 == El simulacro PCEP
 
-#con-qr("https://achanesespigares.github.io/python-acinstitut/capitulos/simulacro-pcep/", [Simulacro en el libro], situacion[#strong[Simulacro PCEP]: 35 preguntas en 50 minutos, en silencio, con el temporizador del libro.])
+#con-qr("https://python.antonychanes.com/capitulos/simulacro-pcep/", [Simulacro en el libro], situacion[#strong[Simulacro PCEP]: 35 preguntas en 50 minutos, en silencio, con el temporizador del libro.])
 
 == Si el grupo es grande
 

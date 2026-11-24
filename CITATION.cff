@@ -6,6 +6,6 @@ authors:
   - family-names: "Chanes Espigares"
     given-names: "Antonio"
 license: CC-BY-NC-SA-4.0
-url: "https://achanesespigares.github.io/python-acinstitut/"
+url: "https://python.antonychanes.com/"
 repository-code: "https://github.com/achanesespigares/python-acinstitut"
 keywords: ["Python", "programación", "educación", "PCEP", "PCAP", "visualización de código", "Jupyter Book"]

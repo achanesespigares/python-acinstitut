@@ -57,4 +57,4 @@
 #colab("https://colab.research.google.com/github/achanesespigares/python-acinstitut/blob/main/cuadernos/sesion-14.ipynb", ([¿Qué imprime?], [Pedir un número], [El orden. ¿Qué imprime este programa? ¿Cómo lo arreglarías?], [Nota media. Escribe un programa que lea notas.csv (el del apartado 1)…], [Añadir una fila], [¿Qué imprime? print(math.ceil(4.01), math.floor(-0.5),…],))
 
 == Antes de irte
-#cierre(qr: "https://achanesespigares.github.io/python-acinstitut/capitulos/csv-math-random/#preguntas-tipo-examen", siguiente: [Sesión 15 · Proyecto 1 y simulacro PCEP])
+#cierre(qr: "https://python.antonychanes.com/capitulos/csv-math-random/#preguntas-tipo-examen", siguiente: [Sesión 15 · Proyecto 1 y simulacro PCEP])

@@ -57,4 +57,4 @@
 #tarea-casa(([Crea cuatro clases en rombo: #raw("Base"), #raw("Izq(Base)"), #raw("Der(Base)") y #raw("Abajo(Izq, Der)").], [#strong[Predice] en qué orden salen los cuatro nombres al crear un #raw("Abajo()"), y después compruébalo con #raw("Abajo.__mro__").], [Crea una clase #raw("Robot") con los métodos #raw("saluda()") y #raw("avanza()").], [Con una lista de órdenes en texto, #raw("[\"saluda\", \"baila\", \"avanza\"]"), ejecuta cada una con #raw("getattr") si el robot la tiene…],), [#raw("Base") se imprime una sola vez, la última.])
 
 == Antes de irte
-#cierre(qr: "https://achanesespigares.github.io/python-acinstitut/capitulos/clases-a-fondo/#preguntas-tipo-examen", siguiente: [Sesión 22 · Comprensiones y el #raw("else") de los bucles])
+#cierre(qr: "https://python.antonychanes.com/capitulos/clases-a-fondo/#preguntas-tipo-examen", siguiente: [Sesión 22 · Comprensiones y el #raw("else") de los bucles])

@@ -53,4 +53,4 @@
 #con-qr("https://colab.research.google.com/github/achanesespigares/python-acinstitut/blob/main/cuadernos/proyecto-1.ipynb", [Cuaderno del proyecto], situacion[#strong[Hito 1 del proyecto.] La especificación y el algoritmo del gestor de notas (ver Proyecto 1).])
 
 == Antes de irte
-#cierre(qr: "https://achanesespigares.github.io/python-acinstitut/capitulos/diccionarios/#preguntas-tipo-examen", siguiente: [Sesión 13 · Funciones])
+#cierre(qr: "https://python.antonychanes.com/capitulos/diccionarios/#preguntas-tipo-examen", siguiente: [Sesión 13 · Funciones])

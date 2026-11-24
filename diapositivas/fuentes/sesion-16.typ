@@ -55,4 +55,4 @@
 #tarea-casa(([En una celda de Colab escribe #raw("%%writefile geometria.py") en la primera línea y debajo el módulo.], [Define una constante #raw("PI") tomada de #raw("math") y las funciones #raw("area_circulo(r)") y #raw("area_rectangulo(base, altura)").], [Añade un bloque #raw("if __name__ == \"__main__\":") con dos pruebas que impriman resultados.], [En otra celda, haz #raw("import geometria") y usa las dos funciones.], [Ejecuta el módulo como programa con #raw("!python geometria.py").],), [#raw("geometria.area_rectangulo(3, 4)") devuelve 12, y al importarlo no se imprime nada.])
 
 == Antes de irte
-#cierre(qr: "https://achanesespigares.github.io/python-acinstitut/capitulos/modulos/#preguntas-tipo-examen", siguiente: [Sesión 17 · Excepciones a fondo])
+#cierre(qr: "https://python.antonychanes.com/capitulos/modulos/#preguntas-tipo-examen", siguiente: [Sesión 17 · Excepciones a fondo])

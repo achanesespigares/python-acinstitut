@@ -14,4 +14,4 @@
 
 == Y ahora, la certificación
 
-#con-qr("https://achanesespigares.github.io/python-acinstitut/capitulos/cobertura/", [El temario oficial en el libro], situacion[Para presentarte al *PCEP* y al *PCAP*: repite los simulacros del libro hasta superar el aprobado con margen y repasa, objetivo a objetivo, lo que aún falle.])
+#con-qr("https://python.antonychanes.com/capitulos/cobertura/", [El temario oficial en el libro], situacion[Para presentarte al *PCEP* y al *PCAP*: repite los simulacros del libro hasta superar el aprobado con margen y repasa, objetivo a objetivo, lo que aún falle.])

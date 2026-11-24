@@ -45,4 +45,4 @@
 #tarea-casa(([Escribe en lenguaje natural, con pasos numerados, un algoritmo que encuentre #strong[el menor] de una lista de números.], [Pruébalo a mano con la lista 7, 3, 9, 3, 5.], [¿Qué hace tu algoritmo si la lista tiene un solo número?],), [Con 7, 3, 9, 3, 5 debe salir 3.])
 
 == Antes de irte
-#cierre(qr: "https://achanesespigares.github.io/python-acinstitut/capitulos/algoritmo/#preguntas-tipo-examen", siguiente: [Sesión 3 · Seguir un programa con una traza])
+#cierre(qr: "https://python.antonychanes.com/capitulos/algoritmo/#preguntas-tipo-examen", siguiente: [Sesión 3 · Seguir un programa con una traza])

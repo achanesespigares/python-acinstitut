@@ -57,4 +57,4 @@
 #tarea-casa(([Con #raw("pathlib"), crea la carpeta #raw("diario") si no existe.], [Escribe #raw("escribe(fecha, texto)"), que añade el texto al fichero #raw("diario/<fecha>.txt").], [Escribe #raw("entradas()"), que devuelve las fechas con entrada, ordenadas (usa #raw("glob") y #raw("stem")).], [Escribe #raw("lee(fecha)"), que devuelve el texto o #raw("None") si ese día no hay fichero.], [Escribe #raw("copia(origen, destino)"), que copia un fichero binario en bloques de 1024 bytes y devuelve cuántos bytes copió.],), [Dos llamadas a #raw("escribe") con la misma fecha dejan dos líneas en el mismo fichero.])
 
 == Antes de irte
-#cierre(qr: "https://achanesespigares.github.io/python-acinstitut/capitulos/ficheros/#preguntas-tipo-examen", siguiente: [Sesión 26 · Cadenas a fondo])
+#cierre(qr: "https://python.antonychanes.com/capitulos/ficheros/#preguntas-tipo-examen", siguiente: [Sesión 26 · Cadenas a fondo])

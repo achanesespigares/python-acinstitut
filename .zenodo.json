@@ -6,5 +6,5 @@
   "license": "cc-by-nc-sa-4.0",
   "language": "spa",
   "keywords": ["Python", "programación", "educación", "PCEP", "PCAP", "visualización de código", "Jupyter Book"],
-  "related_identifiers": [{ "identifier": "https://achanesespigares.github.io/python-acinstitut/", "relation": "isDocumentedBy", "resource_type": "publication-book" }]
+  "related_identifiers": [{ "identifier": "https://python.antonychanes.com/", "relation": "isDocumentedBy", "resource_type": "publication-book" }]
 }

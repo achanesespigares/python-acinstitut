@@ -37,4 +37,4 @@
 #tarea-casa(([Escribe las #strong[entradas]: qué datos necesita el programa y de qué tipo son.], [Escribe la #strong[salida]: qué devuelve y en qué unidad.], [Escribe las #strong[precondiciones]: qué valores no tienen sentido (¿un descuento del 150 %?).], [Escribe #strong[tres ejemplos de prueba] con su resultado, calculado a mano.], [Busca la #strong[grieta]: un caso en el que la especificación no dice qué hacer.],), [Con precio 100 € y descuento 20 %, tu especificación debe dar 80 €.])
 
 == Antes de irte
-#cierre(qr: "https://achanesespigares.github.io/python-acinstitut/capitulos/especificacion/#preguntas-tipo-examen", siguiente: [Sesión 2 · Diseñar el algoritmo])
+#cierre(qr: "https://python.antonychanes.com/capitulos/especificacion/#preguntas-tipo-examen", siguiente: [Sesión 2 · Diseñar el algoritmo])

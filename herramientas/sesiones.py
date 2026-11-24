@@ -26,7 +26,7 @@ from md2typ import cadena, celdas, inline, plano, secciones, sin_frontmatter, ur
 
 CAP = RAIZ / "capitulos"
 REPO = "achanesespigares/python-acinstitut"
-WEB = "https://achanesespigares.github.io/python-acinstitut/"
+WEB = "https://python.antonychanes.com/"
 COLAB = f"https://colab.research.google.com/github/{REPO}/blob/main/cuadernos/"
 INSIGNIA = "https://colab.research.google.com/assets/colab-badge.svg"
 

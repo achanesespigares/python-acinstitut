@@ -61,4 +61,4 @@
 #tarea-casa(([Pide una contraseña.], [Recorre sus caracteres una vez y anota con tres variables #raw("bool") si has visto mayúscula, minúscula y cifra.], [Guarda en una lista el texto de cada regla que no se cumple.], [Si la lista está vacía, escribe #raw("válida"); si no, escribe cada fallo en una línea.],), [#raw("Python2026") es válida; #raw("python 2026A") solo falla por el espacio.])
 
 == Antes de irte
-#cierre(qr: "https://achanesespigares.github.io/python-acinstitut/capitulos/cadenas-y-formato/#preguntas-tipo-examen", siguiente: [Sesión 12 · Diccionarios])
+#cierre(qr: "https://python.antonychanes.com/capitulos/cadenas-y-formato/#preguntas-tipo-examen", siguiente: [Sesión 12 · Diccionarios])

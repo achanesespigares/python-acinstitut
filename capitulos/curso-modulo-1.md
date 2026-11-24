@@ -23,7 +23,7 @@ Las respuestas de los «Predice» y las soluciones de las tareas están juntas a
 
 **En el libro.** [Cómo leer este libro](00-como-leer.md) y [Especificación](01-especificacion.md).
 
-**Material.** [Cuaderno en Colab](https://colab.research.google.com/github/achanesespigares/python-acinstitut/blob/main/cuadernos/sesion-01.ipynb) · [Diapositivas en PDF](https://achanesespigares.github.io/python-acinstitut/diapositivas/sesion-01.pdf)
+**Material.** [Cuaderno en Colab](https://colab.research.google.com/github/achanesespigares/python-acinstitut/blob/main/cuadernos/sesion-01.ipynb) · [Diapositivas en PDF](https://python.antonychanes.com/diapositivas/sesion-01.pdf)
 
 ### Predice
 
@@ -66,7 +66,7 @@ Una tienda quiere un programa que calcule lo que paga un cliente con un descuent
 
 **En el libro.** [Algoritmo](02-algoritmo.md).
 
-**Material.** [Cuaderno en Colab](https://colab.research.google.com/github/achanesespigares/python-acinstitut/blob/main/cuadernos/sesion-02.ipynb) · [Diapositivas en PDF](https://achanesespigares.github.io/python-acinstitut/diapositivas/sesion-02.pdf)
+**Material.** [Cuaderno en Colab](https://colab.research.google.com/github/achanesespigares/python-acinstitut/blob/main/cuadernos/sesion-02.ipynb) · [Diapositivas en PDF](https://python.antonychanes.com/diapositivas/sesion-02.pdf)
 
 ### Predice
 
@@ -103,7 +103,7 @@ Sin código todavía: se lee en voz alta este algoritmo y se pregunta qué núme
 
 **En el libro.** [Trazas](03-trazas.md).
 
-**Material.** [Cuaderno en Colab](https://colab.research.google.com/github/achanesespigares/python-acinstitut/blob/main/cuadernos/sesion-03.ipynb) · [Diapositivas en PDF](https://achanesespigares.github.io/python-acinstitut/diapositivas/sesion-03.pdf)
+**Material.** [Cuaderno en Colab](https://colab.research.google.com/github/achanesespigares/python-acinstitut/blob/main/cuadernos/sesion-03.ipynb) · [Diapositivas en PDF](https://python.antonychanes.com/diapositivas/sesion-03.pdf)
 
 ### Predice
 
@@ -153,7 +153,7 @@ print(x, y)
 
 **En el libro.** [Variables y asignación](04-variables-asignacion.md) y [Cómo funciona Python](21-como-funciona-python.md) § 1–2.
 
-**Material.** [Cuaderno en Colab](https://colab.research.google.com/github/achanesespigares/python-acinstitut/blob/main/cuadernos/sesion-04.ipynb) · [Diapositivas en PDF](https://achanesespigares.github.io/python-acinstitut/diapositivas/sesion-04.pdf)
+**Material.** [Cuaderno en Colab](https://colab.research.google.com/github/achanesespigares/python-acinstitut/blob/main/cuadernos/sesion-04.ipynb) · [Diapositivas en PDF](https://python.antonychanes.com/diapositivas/sesion-04.pdf)
 
 ### Predice
 
@@ -192,7 +192,7 @@ print(x, y)
 
 **En el libro.** [Tipos de datos](05-tipos-de-datos.md) y [Cómo funciona Python](21-como-funciona-python.md) § 3–5.
 
-**Material.** [Cuaderno en Colab](https://colab.research.google.com/github/achanesespigares/python-acinstitut/blob/main/cuadernos/sesion-05.ipynb) · [Diapositivas en PDF](https://achanesespigares.github.io/python-acinstitut/diapositivas/sesion-05.pdf)
+**Material.** [Cuaderno en Colab](https://colab.research.google.com/github/achanesespigares/python-acinstitut/blob/main/cuadernos/sesion-05.ipynb) · [Diapositivas en PDF](https://python.antonychanes.com/diapositivas/sesion-05.pdf)
 
 ### Predice
 
@@ -232,7 +232,7 @@ print(-7 // 2)
 
 **En el libro.** [Condicionales](06-condicionales.md).
 
-**Material.** [Cuaderno en Colab](https://colab.research.google.com/github/achanesespigares/python-acinstitut/blob/main/cuadernos/sesion-06.ipynb) · [Diapositivas en PDF](https://achanesespigares.github.io/python-acinstitut/diapositivas/sesion-06.pdf)
+**Material.** [Cuaderno en Colab](https://colab.research.google.com/github/achanesespigares/python-acinstitut/blob/main/cuadernos/sesion-06.ipynb) · [Diapositivas en PDF](https://python.antonychanes.com/diapositivas/sesion-06.pdf)
 
 ### Predice
 
@@ -277,7 +277,7 @@ else:
 
 **En el libro.** [Bucles](07-bucles.md).
 
-**Material.** [Cuaderno en Colab](https://colab.research.google.com/github/achanesespigares/python-acinstitut/blob/main/cuadernos/sesion-07.ipynb) · [Diapositivas en PDF](https://achanesespigares.github.io/python-acinstitut/diapositivas/sesion-07.pdf)
+**Material.** [Cuaderno en Colab](https://colab.research.google.com/github/achanesespigares/python-acinstitut/blob/main/cuadernos/sesion-07.ipynb) · [Diapositivas en PDF](https://python.antonychanes.com/diapositivas/sesion-07.pdf)
 
 ### Predice
 
@@ -319,7 +319,7 @@ print(n)
 
 **En el libro.** [Bucles a fondo](25-bucles-a-fondo.md).
 
-**Material.** [Cuaderno en Colab](https://colab.research.google.com/github/achanesespigares/python-acinstitut/blob/main/cuadernos/sesion-08.ipynb) · [Diapositivas en PDF](https://achanesespigares.github.io/python-acinstitut/diapositivas/sesion-08.pdf)
+**Material.** [Cuaderno en Colab](https://colab.research.google.com/github/achanesespigares/python-acinstitut/blob/main/cuadernos/sesion-08.ipynb) · [Diapositivas en PDF](https://python.antonychanes.com/diapositivas/sesion-08.pdf)
 
 ### Predice
 
@@ -360,7 +360,7 @@ for n in range(1, 10):
 
 **En el libro.** [Recorrer listas](08-recorrer-listas.md) y [Listas a fondo](22-listas-a-fondo.md) § 1–4.
 
-**Material.** [Cuaderno en Colab](https://colab.research.google.com/github/achanesespigares/python-acinstitut/blob/main/cuadernos/sesion-09.ipynb) · [Diapositivas en PDF](https://achanesespigares.github.io/python-acinstitut/diapositivas/sesion-09.pdf)
+**Material.** [Cuaderno en Colab](https://colab.research.google.com/github/achanesespigares/python-acinstitut/blob/main/cuadernos/sesion-09.ipynb) · [Diapositivas en PDF](https://python.antonychanes.com/diapositivas/sesion-09.pdf)
 
 ### Predice
 
@@ -403,7 +403,7 @@ Con la lista `datos = [4, 8, 15, 16, 23, 42]`, y **sin usar** `max`, `min` ni `s
 
 **En el libro.** [Listas a fondo](22-listas-a-fondo.md) § 5 y [Tuplas y conjuntos](23-tuplas-y-conjuntos.md).
 
-**Material.** [Cuaderno en Colab](https://colab.research.google.com/github/achanesespigares/python-acinstitut/blob/main/cuadernos/sesion-10.ipynb) · [Diapositivas en PDF](https://achanesespigares.github.io/python-acinstitut/diapositivas/sesion-10.pdf)
+**Material.** [Cuaderno en Colab](https://colab.research.google.com/github/achanesespigares/python-acinstitut/blob/main/cuadernos/sesion-10.ipynb) · [Diapositivas en PDF](https://python.antonychanes.com/diapositivas/sesion-10.pdf)
 
 ### Predice
 
@@ -445,7 +445,7 @@ print(m)
 
 **En el libro.** [Cadenas](10-cadenas.md) y [Cadenas y formato](26-cadenas-y-formato.md).
 
-**Material.** [Cuaderno en Colab](https://colab.research.google.com/github/achanesespigares/python-acinstitut/blob/main/cuadernos/sesion-11.ipynb) · [Diapositivas en PDF](https://achanesespigares.github.io/python-acinstitut/diapositivas/sesion-11.pdf)
+**Material.** [Cuaderno en Colab](https://colab.research.google.com/github/achanesespigares/python-acinstitut/blob/main/cuadernos/sesion-11.ipynb) · [Diapositivas en PDF](https://python.antonychanes.com/diapositivas/sesion-11.pdf)
 
 ### Predice
 
@@ -486,7 +486,7 @@ Una contraseña es válida si tiene al menos 8 caracteres, alguna mayúscula, al
 
 **En el libro.** [Diccionarios](11-diccionarios.md). Al final de la sesión se presenta el [Proyecto 1](curso-proyecto-1.md).
 
-**Material.** [Cuaderno en Colab](https://colab.research.google.com/github/achanesespigares/python-acinstitut/blob/main/cuadernos/sesion-12.ipynb) · [Diapositivas en PDF](https://achanesespigares.github.io/python-acinstitut/diapositivas/sesion-12.pdf) · [Cuaderno del proyecto](https://colab.research.google.com/github/achanesespigares/python-acinstitut/blob/main/cuadernos/proyecto-1.ipynb)
+**Material.** [Cuaderno en Colab](https://colab.research.google.com/github/achanesespigares/python-acinstitut/blob/main/cuadernos/sesion-12.ipynb) · [Diapositivas en PDF](https://python.antonychanes.com/diapositivas/sesion-12.pdf) · [Cuaderno del proyecto](https://colab.research.google.com/github/achanesespigares/python-acinstitut/blob/main/cuadernos/proyecto-1.ipynb)
 
 ### Predice
 
@@ -532,7 +532,7 @@ for k, v in stock.items():
 
 **En el libro.** [Funciones](09-funciones.md) y [Funciones a fondo](24-funciones-a-fondo.md).
 
-**Material.** [Cuaderno en Colab](https://colab.research.google.com/github/achanesespigares/python-acinstitut/blob/main/cuadernos/sesion-13.ipynb) · [Diapositivas en PDF](https://achanesespigares.github.io/python-acinstitut/diapositivas/sesion-13.pdf) · [Cuaderno del proyecto](https://colab.research.google.com/github/achanesespigares/python-acinstitut/blob/main/cuadernos/proyecto-1.ipynb)
+**Material.** [Cuaderno en Colab](https://colab.research.google.com/github/achanesespigares/python-acinstitut/blob/main/cuadernos/sesion-13.ipynb) · [Diapositivas en PDF](https://python.antonychanes.com/diapositivas/sesion-13.pdf) · [Cuaderno del proyecto](https://colab.research.google.com/github/achanesespigares/python-acinstitut/blob/main/cuadernos/proyecto-1.ipynb)
 
 ### Predice
 
@@ -583,7 +583,7 @@ Vuelve a tres tareas anteriores y conviértelas en funciones que **devuelven** e
 
 **En el libro.** [Excepciones](13-excepciones.md) § 1–2 y [CSV, math y random](27-csv-math-random.md).
 
-**Material.** [Cuaderno en Colab](https://colab.research.google.com/github/achanesespigares/python-acinstitut/blob/main/cuadernos/sesion-14.ipynb) · [Diapositivas en PDF](https://achanesespigares.github.io/python-acinstitut/diapositivas/sesion-14.pdf)
+**Material.** [Cuaderno en Colab](https://colab.research.google.com/github/achanesespigares/python-acinstitut/blob/main/cuadernos/sesion-14.ipynb) · [Diapositivas en PDF](https://python.antonychanes.com/diapositivas/sesion-14.pdf)
 
 ### Predice
 
@@ -619,7 +619,7 @@ finally:
 
 **En el libro.** [Proyecto 1](curso-proyecto-1.md) y [Simulacro PCEP](simulacro-pcep.md).
 
-**Material.** [Cuaderno en Colab](https://colab.research.google.com/github/achanesespigares/python-acinstitut/blob/main/cuadernos/sesion-15.ipynb) · [Diapositivas en PDF](https://achanesespigares.github.io/python-acinstitut/diapositivas/sesion-15.pdf) · [Cuaderno del proyecto](https://colab.research.google.com/github/achanesespigares/python-acinstitut/blob/main/cuadernos/proyecto-1.ipynb)
+**Material.** [Cuaderno en Colab](https://colab.research.google.com/github/achanesespigares/python-acinstitut/blob/main/cuadernos/sesion-15.ipynb) · [Diapositivas en PDF](https://python.antonychanes.com/diapositivas/sesion-15.pdf) · [Cuaderno del proyecto](https://colab.research.google.com/github/achanesespigares/python-acinstitut/blob/main/cuadernos/proyecto-1.ipynb)
 
 | Tiempo | Qué se hace |
 |---|---|

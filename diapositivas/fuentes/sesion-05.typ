@@ -61,4 +61,4 @@
 #tarea-casa(([Pide un número entero de segundos.], [Calcula las horas con #raw("//").], [Calcula lo que sobra con #raw("%"), y de ahí los minutos y los segundos.], [Muestra el resultado con un f-string: #raw("1 h 6 min 40 s").], [Prueba con 3600 y con 59 antes de dar la tarea por buena.],), [4000 segundos son 1 h 6 min 40 s.])
 
 == Antes de irte
-#cierre(qr: "https://achanesespigares.github.io/python-acinstitut/capitulos/como-funciona-python/#preguntas-tipo-examen", siguiente: [Sesión 6 · Decidir: #raw("if"), #raw("elif"), #raw("else")])
+#cierre(qr: "https://python.antonychanes.com/capitulos/como-funciona-python/#preguntas-tipo-examen", siguiente: [Sesión 6 · Decidir: #raw("if"), #raw("elif"), #raw("else")])

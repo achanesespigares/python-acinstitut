@@ -39,4 +39,4 @@
 #tarea-casa(([Crea la clase #raw("Termometro") con un constructor que reciba los grados Celsius, 0 por defecto.], [Guarda también la temperatura máxima registrada, que al principio es la inicial.], [Añade #raw("a_fahrenheit()"), que devuelve la temperatura en °F (por 9\/5, más 32).], [Añade #raw("cambiar(grados)"), que sube o baja la temperatura y actualiza la máxima si hace falta.], [Crea un termómetro a 20 °C, súbelo 5 y bájalo 8.],), [Queda a 17 °C, con máxima de 25 °C, que son 62,6 °F.])
 
 == Antes de irte
-#cierre(qr: "https://achanesespigares.github.io/python-acinstitut/capitulos/clases/#preguntas-tipo-examen", siguiente: [Sesión 19 · Atributos de clase, #raw("__str__") y herencia])
+#cierre(qr: "https://python.antonychanes.com/capitulos/clases/#preguntas-tipo-examen", siguiente: [Sesión 19 · Atributos de clase, #raw("__str__") y herencia])

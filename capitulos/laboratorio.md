@@ -33,7 +33,7 @@ En el resto del libro los visualizadores enseñan programas que ya están escrit
 
 ## El laboratorio completo
 
-Este laboratorio tiene un hermano: [«Mirar y ver · cómo piensa tu código»](https://achanesespigares.github.io/python-acinstitut/mirar-y-ver/). Está organizado en ocho áreas (Variables, Decisiones, Patrones, Funciones, Colecciones, Algoritmos, Física y código, y Tu código) y 22 puestos. Cada puesto trae varias versiones del mismo programa, una con una trampa típica, y un chequeo automático al final.
+Este laboratorio tiene un hermano: [«Mirar y ver · cómo piensa tu código»](https://python.antonychanes.com/mirar-y-ver/). Está organizado en ocho áreas (Variables, Decisiones, Patrones, Funciones, Colecciones, Algoritmos, Física y código, y Tu código) y 22 puestos. Cada puesto trae varias versiones del mismo programa, una con una trampa típica, y un chequeo automático al final.
 
 Los dos funcionan con el mismo Python, que el navegador descarga una sola vez, y se pasan los programas:
 

@@ -61,4 +61,4 @@
 #tarea-casa(([Pide notas una a una hasta que se escriba #raw("-1").], [Si una nota no está entre 0 y 10, avisa y sáltala con #raw("continue").], [Lleva dos acumuladores: la suma y cuántas notas válidas van.], [Al terminar, escribe la media con dos decimales, o #raw("No hay notas") si no se escribió ninguna válida.],), [Con 7, 12, 5, 8 y −1, el 12 se ignora y la media es 6,67.])
 
 == Antes de irte
-#cierre(qr: "https://achanesespigares.github.io/python-acinstitut/capitulos/bucles-a-fondo/#preguntas-tipo-examen", siguiente: [Sesión 9 · Recorrer y modificar listas])
+#cierre(qr: "https://python.antonychanes.com/capitulos/bucles-a-fondo/#preguntas-tipo-examen", siguiente: [Sesión 9 · Recorrer y modificar listas])
