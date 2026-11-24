@@ -2,7 +2,7 @@
 #import "../comun-diapos.typ": *
 #show: diapos.with(sesion: 5, tema: "Sesión 5 · Tipos, literales y operadores")
 
-#portada([Tipos, literales y operadores], subtitulo: [Distinguir #raw("int"), #raw("float"), #raw("str") y #raw("bool"), y predecir el resultado de cualquier expresión con sus operadores y prioridades.], kicker: "Sesión 5 · Módulo 1", firma: [Antonio Chanes Espigares · CC BY-NC-SA 4.0])
+#portada([Tipos, literales y operadores], subtitulo: [Distinguir #raw("int"), #raw("float"), #raw("str") y #raw("bool"), y predecir el resultado de cualquier expresión con sus operadores y prioridades.], kicker: "Sesión 5 · Módulo 1", firma: [Antonio Chanes Espigares · CC BY-NC-ND 4.0])
 
 == Hoy
 

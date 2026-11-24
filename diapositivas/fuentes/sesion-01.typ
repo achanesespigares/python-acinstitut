@@ -2,7 +2,7 @@
 #import "../comun-diapos.typ": *
 #show: diapos.with(sesion: 1, tema: "Sesión 1 · Especificar un problema")
 
-#portada([Especificar un problema], subtitulo: [Decir con precisión qué entra, qué sale y qué se supone antes de escribir una sola línea.], kicker: "Sesión 1 · Módulo 1", firma: [Antonio Chanes Espigares · CC BY-NC-SA 4.0])
+#portada([Especificar un problema], subtitulo: [Decir con precisión qué entra, qué sale y qué se supone antes de escribir una sola línea.], kicker: "Sesión 1 · Módulo 1", firma: [Antonio Chanes Espigares · CC BY-NC-ND 4.0])
 
 == Hoy
 

@@ -2,7 +2,7 @@
 #import "../comun-diapos.typ": *
 #show: diapos.with(sesion: 14, tema: "Sesión 14 · Errores, ficheros, CSV y módulos")
 
-#portada([Errores, ficheros, CSV y módulos], subtitulo: [Que un programa no se rompa con datos inesperados, leer y escribir ficheros CSV, y usar #raw("math") y #raw("random").], kicker: "Sesión 14 · Módulo 1", firma: [Antonio Chanes Espigares · CC BY-NC-SA 4.0])
+#portada([Errores, ficheros, CSV y módulos], subtitulo: [Que un programa no se rompa con datos inesperados, leer y escribir ficheros CSV, y usar #raw("math") y #raw("random").], kicker: "Sesión 14 · Módulo 1", firma: [Antonio Chanes Espigares · CC BY-NC-ND 4.0])
 
 == Hoy
 

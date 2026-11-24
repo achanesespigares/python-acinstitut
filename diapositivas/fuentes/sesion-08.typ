@@ -2,7 +2,7 @@
 #import "../comun-diapos.typ": *
 #show: diapos.with(sesion: 8, tema: "Sesión 8 · break, continue, centinelas y bucles anidados")
 
-#portada([#raw("break"), #raw("continue"), centinelas y bucles anidados], subtitulo: [Salir de un bucle antes de tiempo, saltar una vuelta y repetir hasta que llegue un valor especial.], kicker: "Sesión 8 · Módulo 1", firma: [Antonio Chanes Espigares · CC BY-NC-SA 4.0])
+#portada([#raw("break"), #raw("continue"), centinelas y bucles anidados], subtitulo: [Salir de un bucle antes de tiempo, saltar una vuelta y repetir hasta que llegue un valor especial.], kicker: "Sesión 8 · Módulo 1", firma: [Antonio Chanes Espigares · CC BY-NC-ND 4.0])
 
 == Hoy
 

@@ -2,7 +2,7 @@
 #import "../comun-diapos.typ": *
 #show: diapos.with(sesion: 24, tema: "Sesión 24 · Cierres y generadores")
 
-#portada([Cierres y generadores], subtitulo: [Fabricar funciones que recuerdan un dato, y producir valores uno a uno sin guardarlos todos.], kicker: "Sesión 24 · Módulo 2", firma: [Antonio Chanes Espigares · CC BY-NC-SA 4.0])
+#portada([Cierres y generadores], subtitulo: [Fabricar funciones que recuerdan un dato, y producir valores uno a uno sin guardarlos todos.], kicker: "Sesión 24 · Módulo 2", firma: [Antonio Chanes Espigares · CC BY-NC-ND 4.0])
 
 == Hoy
 

@@ -91,4 +91,4 @@ Después ejecuta `npm run trazas`: el script ejecuta el código de la celda y es
 - Los estilos del widget van dentro de `traza.mjs`, no en un `.css` aparte: con mystmd 1.12.0 la opción `:css:` descargaba la hoja pero no la aplicaba.
 - Las celdas `{code-cell}` se pueden ejecutar en el navegador (JupyterLite, `jupyter: lite: true` en `myst.yml`).
 
-Licencia: CC BY-NC-SA 4.0.
+Licencia: [CC BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/deed.es). Además, los programas de ejemplo del libro y del laboratorio pueden copiarse, modificarse y compartirse libremente para aprender o enseñar.

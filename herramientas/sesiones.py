@@ -467,7 +467,7 @@ def diapositivas(s, caps, siguiente):
     T = []
     add = T.append
     add(f'#portada([{inline(s["titulo"])}], subtitulo: [{inline(s["objetivo"])}], '
-        f'kicker: "Sesión {s["n"]} · Módulo {s["modulo"]}", firma: [Antonio Chanes Espigares · CC BY-NC-SA 4.0])')
+        f'kicker: "Sesión {s["n"]} · Módulo {s["modulo"]}", firma: [Antonio Chanes Espigares · CC BY-NC-ND 4.0])')
     if s["clase"]:
         add("== Hoy")
         filas = ", ".join(f'[{inline(t)}], [{inline(frase(q, 110))}]' for t, q in s["clase"])

@@ -2,7 +2,7 @@
 #import "../comun-diapos.typ": *
 #show: diapos.with(sesion: 27, tema: "Sesión 27 · Probar y depurar")
 
-#portada([Probar y depurar], subtitulo: [Leer un traceback de abajo arriba, escribir pruebas unitarias y buscar el porqué de un error con método.], kicker: "Sesión 27 · Módulo 2", firma: [Antonio Chanes Espigares · CC BY-NC-SA 4.0])
+#portada([Probar y depurar], subtitulo: [Leer un traceback de abajo arriba, escribir pruebas unitarias y buscar el porqué de un error con método.], kicker: "Sesión 27 · Módulo 2", firma: [Antonio Chanes Espigares · CC BY-NC-ND 4.0])
 
 == Hoy
 

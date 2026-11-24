@@ -2,7 +2,7 @@
 #import "../comun-diapos.typ": *
 #show: diapos.with(sesion: 10, tema: "Sesión 10 · Tablas, tuplas y conjuntos")
 
-#portada([Tablas, tuplas y conjuntos], subtitulo: [Representar una tabla con una lista de listas y elegir entre lista, tupla y conjunto según lo que haga falta.], kicker: "Sesión 10 · Módulo 1", firma: [Antonio Chanes Espigares · CC BY-NC-SA 4.0])
+#portada([Tablas, tuplas y conjuntos], subtitulo: [Representar una tabla con una lista de listas y elegir entre lista, tupla y conjunto según lo que haga falta.], kicker: "Sesión 10 · Módulo 1", firma: [Antonio Chanes Espigares · CC BY-NC-ND 4.0])
 
 == Hoy
 

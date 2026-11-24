@@ -2,7 +2,7 @@
 #import "../comun-diapos.typ": *
 #show: diapos.with(sesion: 17, tema: "Sesión 17 · Excepciones a fondo")
 
-#portada([Excepciones a fondo], subtitulo: [Lanzar excepciones, crear las propias y controlar exactamente qué parte de un #raw("try") se ejecuta.], kicker: "Sesión 17 · Módulo 2", firma: [Antonio Chanes Espigares · CC BY-NC-SA 4.0])
+#portada([Excepciones a fondo], subtitulo: [Lanzar excepciones, crear las propias y controlar exactamente qué parte de un #raw("try") se ejecuta.], kicker: "Sesión 17 · Módulo 2", firma: [Antonio Chanes Espigares · CC BY-NC-ND 4.0])
 
 == Hoy
 

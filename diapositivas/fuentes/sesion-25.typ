@@ -2,7 +2,7 @@
 #import "../comun-diapos.typ": *
 #show: diapos.with(sesion: 25, tema: "Sesión 25 · Ficheros, bytes y rutas")
 
-#portada([Ficheros, bytes y rutas], subtitulo: [Leer y escribir ficheros de texto y binarios con #raw("with"), y moverse por carpetas con #raw("pathlib").], kicker: "Sesión 25 · Módulo 2", firma: [Antonio Chanes Espigares · CC BY-NC-SA 4.0])
+#portada([Ficheros, bytes y rutas], subtitulo: [Leer y escribir ficheros de texto y binarios con #raw("with"), y moverse por carpetas con #raw("pathlib").], kicker: "Sesión 25 · Módulo 2", firma: [Antonio Chanes Espigares · CC BY-NC-ND 4.0])
 
 == Hoy
 

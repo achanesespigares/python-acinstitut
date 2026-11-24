@@ -2,7 +2,7 @@
 #import "../comun-diapos.typ": *
 #show: diapos.with(sesion: 2, tema: "Sesión 2 · Diseñar el algoritmo")
 
-#portada([Diseñar el algoritmo], subtitulo: [Escribir los pasos de una solución en lenguaje natural, numerados, y probarlos a mano.], kicker: "Sesión 2 · Módulo 1", firma: [Antonio Chanes Espigares · CC BY-NC-SA 4.0])
+#portada([Diseñar el algoritmo], subtitulo: [Escribir los pasos de una solución en lenguaje natural, numerados, y probarlos a mano.], kicker: "Sesión 2 · Módulo 1", firma: [Antonio Chanes Espigares · CC BY-NC-ND 4.0])
 
 == Hoy
 

@@ -2,7 +2,7 @@
 #import "../comun-diapos.typ": *
 #show: diapos.with(sesion: 6, tema: "Sesión 6 · Decidir: if, elif, else")
 
-#portada([Decidir: #raw("if"), #raw("elif"), #raw("else")], subtitulo: [Elegir entre varios caminos y saber exactamente cuál se toma.], kicker: "Sesión 6 · Módulo 1", firma: [Antonio Chanes Espigares · CC BY-NC-SA 4.0])
+#portada([Decidir: #raw("if"), #raw("elif"), #raw("else")], subtitulo: [Elegir entre varios caminos y saber exactamente cuál se toma.], kicker: "Sesión 6 · Módulo 1", firma: [Antonio Chanes Espigares · CC BY-NC-ND 4.0])
 
 == Hoy
 

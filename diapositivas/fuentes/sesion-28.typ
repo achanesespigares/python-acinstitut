@@ -2,7 +2,7 @@
 #import "../comun-diapos.typ": *
 #show: diapos.with(sesion: 28, tema: "Sesión 28 · Trabajar en equipo y con IA")
 
-#portada([Trabajar en equipo y con IA], subtitulo: [Usar ramas, commits y revisiones, y validar código generado por una IA antes de darlo por bueno.], kicker: "Sesión 28 · Módulo 2", firma: [Antonio Chanes Espigares · CC BY-NC-SA 4.0])
+#portada([Trabajar en equipo y con IA], subtitulo: [Usar ramas, commits y revisiones, y validar código generado por una IA antes de darlo por bueno.], kicker: "Sesión 28 · Módulo 2", firma: [Antonio Chanes Espigares · CC BY-NC-ND 4.0])
 
 == Hoy
 

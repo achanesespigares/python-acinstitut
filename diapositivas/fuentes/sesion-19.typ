@@ -2,7 +2,7 @@
 #import "../comun-diapos.typ": *
 #show: diapos.with(sesion: 19, tema: "Sesión 19 · Atributos de clase, __str__ y herencia")
 
-#portada([Atributos de clase, #raw("__str__") y herencia], subtitulo: [Compartir datos entre todos los objetos de una clase, darles una representación legible y reutilizar una clase con la herencia.], kicker: "Sesión 19 · Módulo 2", firma: [Antonio Chanes Espigares · CC BY-NC-SA 4.0])
+#portada([Atributos de clase, #raw("__str__") y herencia], subtitulo: [Compartir datos entre todos los objetos de una clase, darles una representación legible y reutilizar una clase con la herencia.], kicker: "Sesión 19 · Módulo 2", firma: [Antonio Chanes Espigares · CC BY-NC-ND 4.0])
 
 == Hoy
 

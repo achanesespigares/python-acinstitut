@@ -2,7 +2,7 @@
 #import "../comun-diapos.typ": *
 #show: diapos.with(sesion: 3, tema: "Sesión 3 · Seguir un programa con una traza")
 
-#portada([Seguir un programa con una traza], subtitulo: [Ejecutar un programa a mano, línea a línea, apuntando el valor de cada variable.], kicker: "Sesión 3 · Módulo 1", firma: [Antonio Chanes Espigares · CC BY-NC-SA 4.0])
+#portada([Seguir un programa con una traza], subtitulo: [Ejecutar un programa a mano, línea a línea, apuntando el valor de cada variable.], kicker: "Sesión 3 · Módulo 1", firma: [Antonio Chanes Espigares · CC BY-NC-ND 4.0])
 
 == Hoy
 

@@ -7,7 +7,7 @@
     "build": "myst build --html",
     "start": "myst start"
   },
-  "license": "CC-BY-NC-SA-4.0",
+  "license": "CC-BY-NC-ND-4.0",
   "dependencies": {
     "mystmd": "1.12.0"
   },

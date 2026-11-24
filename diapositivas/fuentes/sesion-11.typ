@@ -2,7 +2,7 @@
 #import "../comun-diapos.typ": *
 #show: diapos.with(sesion: 11, tema: "Sesión 11 · Cadenas y formato")
 
-#portada([Cadenas y formato], subtitulo: [Recorrer y trocear texto, usar sus métodos y presentar resultados con f-strings.], kicker: "Sesión 11 · Módulo 1", firma: [Antonio Chanes Espigares · CC BY-NC-SA 4.0])
+#portada([Cadenas y formato], subtitulo: [Recorrer y trocear texto, usar sus métodos y presentar resultados con f-strings.], kicker: "Sesión 11 · Módulo 1", firma: [Antonio Chanes Espigares · CC BY-NC-ND 4.0])
 
 == Hoy
 

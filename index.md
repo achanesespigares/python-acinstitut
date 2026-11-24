@@ -41,3 +41,7 @@ Ocho áreas y 22 puestos, uno por construcción de Python, cada uno con cuatro l
 :::{tip} Sobre el código de este libro
 Todas las celdas se pueden ejecutar aquí mismo, sin instalar nada: Python funciona dentro del navegador. Las ejecuciones paso a paso las ha generado Python real.
 :::
+
+:::{note} Licencia
+Texto, diagramas, diseño y laboratorio: [CC BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/deed.es) © Antonio Chanes Espigares. Además, los programas de ejemplo del libro y del laboratorio pueden copiarse, modificarse y compartirse libremente para aprender o enseñar.
+:::

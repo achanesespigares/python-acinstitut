@@ -2,7 +2,7 @@
 #import "../comun-diapos.typ": *
 #show: diapos.with(sesion: 21, tema: "Sesión 21 · Herencia múltiple, MRO e introspección")
 
-#portada([Herencia múltiple, MRO e introspección], subtitulo: [Saber qué método se ejecuta cuando hay varias clases madre, y preguntar a un objeto por sus atributos y su clase.], kicker: "Sesión 21 · Módulo 2", firma: [Antonio Chanes Espigares · CC BY-NC-SA 4.0])
+#portada([Herencia múltiple, MRO e introspección], subtitulo: [Saber qué método se ejecuta cuando hay varias clases madre, y preguntar a un objeto por sus atributos y su clase.], kicker: "Sesión 21 · Módulo 2", firma: [Antonio Chanes Espigares · CC BY-NC-ND 4.0])
 
 == Hoy
 
