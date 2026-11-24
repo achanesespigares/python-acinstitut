@@ -25,11 +25,24 @@ python3 mirar-y-ver/fuente/construir.py
 
 Escribe `mirar-y-ver/index.html` (no se versiona: lo genera la publicación).
 Las variantes de los puestos funcionan sin más. Para ejecutar código propio
-hace falta Pyodide 314.0.7 en `mirar-y-ver/py/` (`pyodide.js`,
-`pyodide.asm.mjs`, `pyodide.asm.wasm`, `python_stdlib.zip`,
-`pyodide-lock.json`); la publicación los descarga de jsDelivr. Si no están,
-la página intenta cargarlos desde la CDN.
+hace falta Python en el navegador: Pyodide 314.0.7.
 
-En la versión dentro de claude.ai (artefacto), el marco no permite leer datos
-de la CDN, así que Pyodide va dentro del propio artefacto y la biblioteca
-estándar viaja como `py/stdlib.b64.txt`; la página la detecta y la usa.
+## Un solo Python para los dos laboratorios
+
+El libro y «Mirar y ver» usan el mismo Python, que la publicación descarga una
+sola vez en `<web>/pyodide/` (`pyodide.js`, `pyodide.mjs`, `pyodide.asm.mjs`,
+`pyodide.asm.wasm`, `python_stdlib.zip`, `pyodide-lock.json`). La página lo
+busca en este orden: `../pyodide/` (la web del libro), `py/` (la copia que
+viaja con el artefacto de claude.ai, con la biblioteca estándar como
+`py/stdlib.b64.txt` porque el artefacto no sirve `.zip`) y, por último, la CDN.
+
+## Puentes con el libro
+
+- Cada visualizador del libro y su laboratorio tienen «Ábrelo en Mirar y ver»:
+  abren `mirar-y-ver/#tucodigo?codigo=…&entradas=…`, que carga el programa en
+  «Tu código» y lo ejecuta.
+- Cada puesto termina su lectura operativa con «En el libro» y los capítulos
+  que lo explican (tabla `EN_LIBRO` de la plantilla).
+- «Tu código» tiene «Abrir en el laboratorio del libro», que abre
+  `capitulos/laboratorio#codigo=…&entradas=…`: allí se ven con más detalle las
+  clases, los ficheros, los generadores y las excepciones con su `except`.
