@@ -4,6 +4,7 @@ subtitle: Fabricar tus propios tipos de datos
 kernelspec:
   name: python3
   display_name: Python 3
+description: "Clases y objetos: fabricar tus propios tipos de datos. Python paso a paso, con visualizadores y diagrama de flujo."
 ---
 
 ## Punto de partida

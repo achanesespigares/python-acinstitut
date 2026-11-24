@@ -5,10 +5,18 @@ project:
   id: python-acinstitut
   title: Mirar y ver tu código pensar
   subtitle: Entendiendo Python, desde dentro
+  description: Libro gratuito de Python de AC Institut, de cero a PCEP y PCAP, en el que cada programa se ve ejecutarse paso a paso.
+  keywords:
+    - Python
+    - aprender a programar
+    - PCEP
+    - PCAP
+    - visualizador de código
+    - diagrama de flujo
   authors:
     - name: Antonio Chanes Espigares
   license: CC-BY-NC-SA-4.0
-  github: https://github.com/antonychanes/python-acinstitut
+  github: https://github.com/achanesespigares/python-acinstitut
   # Las celdas de código se pueden ejecutar en el propio navegador (JupyterLite + Pyodide)
   jupyter:
     lite: true

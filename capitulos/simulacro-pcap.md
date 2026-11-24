@@ -1,6 +1,7 @@
 ---
 title: Simulacro del examen PCAP
 subtitle: 42 preguntas, 65 minutos, como el de verdad
+description: "Simulacro del examen PCAP: 42 preguntas, 65 minutos, como el de verdad. Python paso a paso, con visualizadores y diagrama de flujo."
 ---
 
 ## Cómo es el examen

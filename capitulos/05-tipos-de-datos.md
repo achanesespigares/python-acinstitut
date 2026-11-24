@@ -4,6 +4,7 @@ subtitle: No todo lo que parece un número es un número
 kernelspec:
   name: python3
   display_name: Python 3
+description: "Tipos de datos: no todo lo que parece un número es un número. Python paso a paso, con visualizadores y diagrama de flujo."
 ---
 
 ## Punto de partida

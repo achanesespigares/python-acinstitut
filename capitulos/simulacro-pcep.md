@@ -1,6 +1,7 @@
 ---
 title: Simulacro del examen PCEP
 subtitle: 35 preguntas, 50 minutos, como el de verdad
+description: "Simulacro del examen PCEP: 35 preguntas, 50 minutos, como el de verdad. Python paso a paso, con visualizadores y diagrama de flujo."
 ---
 
 ## Cómo es el examen

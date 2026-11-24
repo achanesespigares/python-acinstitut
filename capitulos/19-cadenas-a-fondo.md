@@ -4,6 +4,7 @@ subtitle: Lo que hay debajo de cada carácter
 kernelspec:
   name: python3
   display_name: Python 3
+description: "Cadenas a fondo: lo que hay debajo de cada carácter. Python paso a paso, con visualizadores y diagrama de flujo."
 ---
 
 ## Punto de partida

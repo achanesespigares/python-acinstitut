@@ -4,6 +4,7 @@ subtitle: El texto también es una fila de casillas
 kernelspec:
   name: python3
   display_name: Python 3
+description: "Cadenas: el texto también es una fila de casillas. Python paso a paso, con visualizadores y diagrama de flujo."
 ---
 
 ## Punto de partida

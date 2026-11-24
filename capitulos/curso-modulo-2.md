@@ -1,6 +1,7 @@
 ---
 title: "Módulo 2 · Del PCEP al PCAP"
 subtitle: Sesiones 16 a 30, con su guion, su programa para predecir y su tarea
+description: "Módulo 2 · Del PCEP al PCAP: sesiones 16 a 30, con su guion, su programa para predecir y su tarea. Python paso a paso, con visualizadores y diagrama de flujo."
 ---
 
 ## Cómo leer esta página

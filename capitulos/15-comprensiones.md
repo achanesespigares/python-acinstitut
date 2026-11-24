@@ -4,6 +4,7 @@ subtitle: Decir mucho con poco, y elegir por la forma
 kernelspec:
   name: python3
   display_name: Python 3
+description: "Comprensiones, for…else y match: decir mucho con poco, y elegir por la forma. Python paso a paso, con visualizadores y diagrama de flujo."
 ---
 
 ## Punto de partida

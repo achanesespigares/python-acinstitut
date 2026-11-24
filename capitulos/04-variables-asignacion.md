@@ -4,6 +4,7 @@ subtitle: Guardar un dato y cambiarlo
 kernelspec:
   name: python3
   display_name: Python 3
+description: "Variables y asignación: guardar un dato y cambiarlo. Python paso a paso, con visualizadores y diagrama de flujo."
 ---
 
 ## Punto de partida

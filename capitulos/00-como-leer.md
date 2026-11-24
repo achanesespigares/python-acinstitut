@@ -1,5 +1,6 @@
 ---
 title: Cómo leer este libro
+description: "Cómo leer este libro. Python paso a paso, con visualizadores y diagrama de flujo."
 ---
 
 Cada capítulo sigue el mismo recorrido, el del método genético-constructivo: un **punto de partida** cotidiano, la **pregunta** que lo generaliza, la **idea** mínima que lo sostiene, la **construcción** con código, las **conexiones** con otros temas y una **grieta** que deja abierta la puerta al siguiente capítulo.

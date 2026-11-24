@@ -4,6 +4,7 @@ subtitle: No hace falta fabricar cada herramienta
 kernelspec:
   name: python3
   display_name: Python 3
+description: "Módulos y paquetes: no hace falta fabricar cada herramienta. Python paso a paso, con visualizadores y diagrama de flujo."
 ---
 
 ## Punto de partida

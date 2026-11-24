@@ -1,6 +1,7 @@
 ---
 title: "Proyecto 2 · Una biblioteca orientada a objetos"
 subtitle: El proyecto de cierre del módulo 2, de la sesión 26 a la 30
+description: "Proyecto 2 · Una biblioteca orientada a objetos: el proyecto de cierre del módulo 2, de la sesión 26 a la 30."
 ---
 
 ## El encargo

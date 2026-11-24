@@ -20,7 +20,10 @@ jobs:
   construir:
     runs-on: ubuntu-latest
     env:
-      # Si publicas en un dominio propio (p. ej. python.acinstitut.com), borra esta línea
+      # Dirección pública de la web, sin barra final: la usan el mapa del sitio, robots.txt y
+      # las etiquetas para buscadores. Con dominio propio, p. ej. https://python.acinstitut.com
+      SITIO: https://achanesespigares.github.io/python-acinstitut
+      # Ruta bajo el dominio. Con dominio propio (la web en la raíz), borra esta línea
       BASE_URL: /${{ github.event.repository.name }}
     steps:
       - uses: actions/checkout@v4
@@ -55,6 +58,13 @@ jobs:
         run: |
           mkdir -p _build/html/mirar-y-ver
           python3 mirar-y-ver/fuente/construir.py _build/html/mirar-y-ver/index.html
+      - name: Mapa del sitio y robots.txt con la dirección real
+        # MyST deja «http://pre.render» como dirección provisional; aquí se pone la de verdad y se
+        # añade «Mirar y ver», que se construye aparte.
+        run: |
+          sed -i "s#http://pre.render#${SITIO}#g" _build/html/sitemap.xml _build/html/robots.txt
+          sed -i "s#</urlset>#  <url>\n    <loc>${SITIO}/mirar-y-ver/</loc>\n  </url>\n</urlset>#" _build/html/sitemap.xml
+          ! grep -q "pre.render" _build/html/sitemap.xml _build/html/robots.txt
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

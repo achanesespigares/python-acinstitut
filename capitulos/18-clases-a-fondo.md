@@ -4,6 +4,7 @@ subtitle: Atributos compartidos, nombres ocultos, herencia múltiple y polimorfi
 kernelspec:
   name: python3
   display_name: Python 3
+description: "Clases a fondo: atributos compartidos, nombres ocultos, herencia múltiple y polimorfismo. Python paso a paso, con visualizadores y diagrama de flujo."
 ---
 
 ## Punto de partida

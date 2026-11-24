@@ -4,6 +4,7 @@ subtitle: Copiar, insertar, quitar y guardar tablas enteras
 kernelspec:
   name: python3
   display_name: Python 3
+description: "Listas a fondo: copiar, insertar, quitar y guardar tablas enteras. Python paso a paso, con visualizadores y diagrama de flujo."
 ---
 
 ## Punto de partida

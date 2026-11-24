@@ -4,6 +4,7 @@ subtitle: Hacer una cosa u otra según lo que pase
 kernelspec:
   name: python3
   display_name: Python 3
+description: "Condicionales: hacer una cosa u otra según lo que pase. Python paso a paso, con visualizadores y diagrama de flujo."
 ---
 
 ## Punto de partida

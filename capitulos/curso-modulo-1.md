@@ -1,6 +1,7 @@
 ---
 title: "Módulo 1 · De cero al PCEP"
 subtitle: Sesiones 1 a 15, con su guion, su programa para predecir y su tarea
+description: "Módulo 1 · De cero al PCEP: sesiones 1 a 15, con su guion, su programa para predecir y su tarea. Python paso a paso, con visualizadores y diagrama de flujo."
 ---
 
 ## Cómo leer esta página

@@ -4,6 +4,7 @@ subtitle: Colecciones que no se tocan y colecciones sin repetidos
 kernelspec:
   name: python3
   display_name: Python 3
+description: "Tuplas y conjuntos: colecciones que no se tocan y colecciones sin repetidos. Python paso a paso, con visualizadores y diagrama de flujo."
 ---
 
 ## Punto de partida

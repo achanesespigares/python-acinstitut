@@ -4,6 +4,7 @@ subtitle: Qué entra, qué sale y cómo lo compruebo
 kernelspec:
   name: python3
   display_name: Python 3
+description: "Especificar el problema: qué entra, qué sale y cómo lo compruebo. Python paso a paso, con visualizadores y diagrama de flujo."
 ---
 
 ## Punto de partida

@@ -4,6 +4,7 @@ subtitle: Parámetros flexibles y el alcance de cada variable
 kernelspec:
   name: python3
   display_name: Python 3
+description: "Funciones a fondo: parámetros flexibles y el alcance de cada variable. Python paso a paso, con visualizadores y diagrama de flujo."
 ---
 
 ## Punto de partida

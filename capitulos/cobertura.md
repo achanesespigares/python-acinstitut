@@ -1,6 +1,7 @@
 ---
 title: El temario oficial, objetivo a objetivo
 subtitle: Dónde cubre este libro cada punto del PCEP y del PCAP
+description: "El temario oficial, objetivo a objetivo: dónde cubre este libro cada punto del PCEP y del PCAP. Python paso a paso, con visualizadores y diagrama de flujo."
 ---
 
 El Python Institute publica el temario de cada examen como una lista de **objetivos** numerados. Esta página los recorre todos, resumidos en castellano, y dice en qué capítulos del libro se trabaja cada uno.

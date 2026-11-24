@@ -4,6 +4,7 @@ subtitle: Saber que el programa funciona, y no programar solo
 kernelspec:
   name: python3
   display_name: Python 3
+description: "Probar, depurar y trabajar en equipo: saber que el programa funciona, y no programar solo. Python paso a paso, con visualizadores y diagrama de flujo."
 ---
 
 ## Punto de partida
