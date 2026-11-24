@@ -640,7 +640,6 @@ function renderLaboratorio({ model, el }) {
   if (llega) {
     cod.value = llega.codigo; ent.value = llega.entradas;
     escribe("codigo", cod.value); escribe("entradas", ent.value);
-    try { history.replaceState(null, "", location.pathname + location.search); } catch (e) { /* sin historial */ }
   }
   if (ent.value) q(".lab-ent").open = true;
   ajusta();
@@ -721,7 +720,13 @@ function renderLaboratorio({ model, el }) {
       res.innerHTML = '<p class="lab-error">' + esc(msg) + "</p>";
     }).finally(() => { boton.disabled = false; });
   });
-  if (llega) { el.scrollIntoView({ block: "start" }); boton.click(); }
+  // La página del libro puede volver a dibujar el widget al terminar de cargar: solo la copia que
+  // sigue en la página consume el enlace (borra el #codigo=…) y ejecuta el programa.
+  if (llega) setTimeout(() => {
+    if (!el.isConnected || !programaDelEnlace()) return;
+    try { history.replaceState(null, "", location.pathname + location.search); } catch (e) { /* sin historial */ }
+    el.scrollIntoView({ block: "start" }); boton.click();
+  }, 600);
 }
 
 function render({ model, el }) {
