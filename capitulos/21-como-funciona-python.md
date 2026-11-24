@@ -4,6 +4,7 @@ subtitle: Del texto que escribes a lo que hace el ordenador
 kernelspec:
   name: python3
   display_name: Python 3
+description: "Cómo funciona Python: del texto que escribes a lo que hace el ordenador. Python paso a paso, con visualizadores y diagrama de flujo."
 ---
 
 ## Punto de partida

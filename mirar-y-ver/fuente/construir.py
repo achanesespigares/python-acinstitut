@@ -56,6 +56,8 @@ def main():
     datos = {'ent': {k: '\n'.join(v) for k, v in ENTRADAS.items()}, 'code': P, 'trace': trazas, 'dg': diagramas}
     html = open(os.path.join(D, 'plantilla.html'), encoding='utf-8').read()
     html = html.replace('__PRE__', json.dumps(datos, separators=(',', ':')))
+    sitio = os.environ.get('SITIO', 'https://achanesespigares.github.io/python-acinstitut').rstrip('/')
+    html = html.replace('__SITIO__', sitio)
     html = html.replace('/*__DG__*/', open(os.path.join(HERR, '..', 'widgets', 'diagrama.js'), encoding='utf-8').read())
     trz = open(os.path.join(D, 'tracer.py'), encoding='utf-8').read() + '\n\n' + open(os.path.join(HERR, 'diagrama.py'), encoding='utf-8').read()
     html = html.replace('__TRZ__', json.dumps(trz))

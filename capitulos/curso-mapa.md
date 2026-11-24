@@ -1,6 +1,7 @@
 ---
 title: El curso en 30 sesiones
 subtitle: De cero al PCEP, y del PCEP al PCAP, en sesiones de dos horas
+description: "El curso en 30 sesiones: de cero al PCEP, y del PCEP al PCAP, en sesiones de dos horas. Python paso a paso, con visualizadores y diagrama de flujo."
 ---
 
 ## Para quién es esta guía

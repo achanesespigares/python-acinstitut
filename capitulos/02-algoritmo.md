@@ -4,6 +4,7 @@ subtitle: Tres piezas bastan para cualquier programa
 kernelspec:
   name: python3
   display_name: Python 3
+description: "Diseñar el algoritmo: tres piezas bastan para cualquier programa. Python paso a paso, con visualizadores y diagrama de flujo."
 ---
 
 ## Punto de partida

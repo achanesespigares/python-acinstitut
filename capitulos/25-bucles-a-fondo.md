@@ -4,6 +4,7 @@ subtitle: Saltar, anidar y parar a tiempo
 kernelspec:
   name: python3
   display_name: Python 3
+description: "Bucles a fondo: saltar, anidar y parar a tiempo. Python paso a paso, con visualizadores y diagrama de flujo."
 ---
 
 ## Punto de partida

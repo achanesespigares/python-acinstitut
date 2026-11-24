@@ -4,6 +4,7 @@ subtitle: Tener un plan B cuando algo sale mal
 kernelspec:
   name: python3
   display_name: Python 3
+description: "Excepciones: tener un plan B cuando algo sale mal. Python paso a paso, con visualizadores y diagrama de flujo."
 ---
 
 ## Punto de partida

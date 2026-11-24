@@ -4,6 +4,7 @@ subtitle: Ser el ordenador por un rato
 kernelspec:
   name: python3
   display_name: Python 3
+description: "Trazas a mano: ser el ordenador por un rato. Python paso a paso, con visualizadores y diagrama de flujo."
 ---
 
 ## Punto de partida

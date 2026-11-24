@@ -4,6 +4,7 @@ subtitle: Repetir sin copiar
 kernelspec:
   name: python3
   display_name: Python 3
+description: "Bucles while y for: repetir sin copiar. Python paso a paso, con visualizadores y diagrama de flujo."
 ---
 
 ## Punto de partida

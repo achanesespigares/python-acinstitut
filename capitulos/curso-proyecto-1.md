@@ -1,6 +1,7 @@
 ---
 title: "Proyecto 1 · Gestor de notas de clase"
 subtitle: El proyecto de cierre del módulo 1, de la sesión 12 a la 15
+description: "Proyecto 1 · Gestor de notas de clase: el proyecto de cierre del módulo 1, de la sesión 12 a la 15. Python paso a paso, con visualizadores y diagrama de flujo."
 ---
 
 ## El encargo

@@ -4,6 +4,7 @@ subtitle: Tablas en ficheros, redondeos y azar
 kernelspec:
   name: python3
   display_name: Python 3
+description: "CSV, math y random: tablas en ficheros, redondeos y azar. Python paso a paso, con visualizadores y diagrama de flujo."
 ---
 
 ## Punto de partida

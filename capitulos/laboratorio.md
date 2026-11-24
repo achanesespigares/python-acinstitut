@@ -1,6 +1,7 @@
 ---
 title: Laboratorio
 subtitle: Escribe tu propio programa y míralo pensar, paso a paso
+description: "Laboratorio: escribe tu propio programa y míralo pensar, paso a paso. Libro de Python con visualizadores y diagrama de flujo."
 ---
 
 En el resto del libro los visualizadores enseñan programas que ya están escritos. Aquí el programa lo escribes tú: pulsa **Ejecutar y ver** y recórrelo paso a paso, igual que en los capítulos.
