@@ -188,6 +188,31 @@ footer p{margin:0 0 4px}
 .ob .cl:last-child{border-right:0}.ob .cl small{display:block;font:11px var(--mono);color:var(--mut)}
 @media (prefers-reduced-motion:reduce){.cur-mark,.cell .v,.var .v{transition:none}}
 @media(max-width:980px){.lab,.two{grid-template-columns:minmax(0,1fr)}}
+/* diagrama de flujo */
+.bhr{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.bhb{font:600 11px/1 Montserrat,Arial,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#fff;background:transparent;border:1px solid rgba(255,255,255,.7);border-radius:14px;padding:6px 10px;cursor:pointer;min-height:26px}
+.bhb:hover{background:rgba(255,255,255,.14)}.bhb[aria-pressed=true]{background:#fff;color:var(--accf);border-color:#fff}
+.dgc{border-right:1px solid var(--row);padding:10px 12px 14px;overflow:auto;max-height:min(78vh,820px);display:flex;flex-wrap:wrap;gap:22px;align-content:flex-start}
+.bench.dg{grid-template-columns:fit-content(56%) minmax(0,1fr)}.bench.dg .mem{grid-column:1/-1;border-top:1px solid var(--row)}.bench.dg .dgc{border-right:0}
+.bench.dg .code{border-right:1px solid var(--row);border-bottom:0}
+.dgf{margin:0;flex:none;max-width:100%}.dgf figcaption{font:600 11px Montserrat,Arial,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);margin:0 0 6px}
+.dgf svg{display:block;max-width:100%;height:auto;overflow:visible}
+.dgc .ds{fill:var(--bg);stroke:var(--ink);stroke-width:1.3}.dgc .kio .ds{fill:var(--bg)}
+.dgc .kd .ds{fill:var(--soft)}.dgc .kf .ds{stroke-dasharray:0}.dgc .ko .ds{fill:var(--band);stroke:var(--band)}.dgc .ko .dk,.dgc .ko .dt{fill:#fff}
+.dgc .dt{font:12px var(--mono);fill:var(--ink)}.dgc .dk{font:600 11px Montserrat,Arial,sans-serif;fill:var(--sub)}
+.dgc .dn2{font:italic 10.5px Arimo,Arial,sans-serif;fill:var(--mut)}
+.dgc .dc{font:600 10.5px Montserrat,Arial,sans-serif;fill:var(--mut)}
+.dgc .hl{fill:transparent}.dgc .dfr{fill:none;stroke:var(--mut);stroke-dasharray:5 4}.dgc .kx .dfr{fill:none}
+.dgc .de{fill:none;stroke:var(--mut);stroke-width:1.3}.dgc .de.dsh{stroke-dasharray:4 3}.dgc .dar{fill:var(--mut)}.dgc .dm{fill:var(--mut)}
+.dgc .dl{font:600 10.5px Montserrat,Arial,sans-serif;fill:var(--mut)}
+.dgc .de.on{stroke:var(--acc);stroke-width:2.6}.dgc .dl.on{fill:var(--acc)}
+.dgc .dn.act .hl{fill:var(--soft)}.dgc .dn.act .dt{font-weight:600}.dgc .dn.act .ds{stroke:var(--acc);stroke-width:2.4}
+.dgc .dn.act .hl2{fill:var(--soft)}.dgc .kp .dn.act .hl,.dgc .kio .dn.act .hl{fill:var(--soft);stroke:var(--acc);stroke-width:2}
+.dgc .ko.act .ds{fill:var(--accf);stroke:var(--accf)}
+.dgc .dn.act .dc{fill:var(--acc)}.dgc .dn.prev .dt{fill:var(--sub)}
+.dgc .dn.never .dt{fill:var(--mut);opacity:.55}
+.dge{color:var(--ko);font-size:14px;margin:0}
+@media(max-width:900px){.bench.dg{grid-template-columns:minmax(0,1fr)}.bench.dg .code{border-right:0;border-bottom:1px solid var(--row)}.dgc{border-right:0;border-bottom:1px solid var(--row)}}
 @media(max-width:640px){body{border-left-width:6px}.bench{grid-template-columns:minmax(0,1fr)}.code{border-right:0;border-bottom:1px solid var(--row)}.anat{grid-template-columns:minmax(0,1fr)}table{font-size:13px}}
 </style>
 </head>
@@ -212,13 +237,14 @@ footer p{margin:0 0 4px}
 <div class="wrap">
 <div class="lab">
 <div class="box">
-<div class="bh"><span>Código y memoria</span><span class="t" id="vname"></span></div>
+<div class="bh"><span>Código y memoria</span><span class="bhr"><span class="t" id="vname"></span><button type="button" class="bhb" id="b-dg" aria-pressed="false" title="Dibuja el diagrama de flujo del programa junto al código y sigue la ejecución en él">◇ Diagrama de flujo</button></span></div>
 <div class="bench">
 <div>
 <div class="code" id="code" aria-label="Código con la flecha de ejecución"></div>
 <div class="leg"><span><b>➜</b> va a ejecutarse</span><span><b style="color:var(--mut)">➜</b> acaba de ejecutarse</span><span id="leg-ct">×n veces ejecutada</span></div>
 <div class="path" id="path" hidden></div>
 </div>
+<div class="dgc" id="dg" hidden aria-label="Diagrama de flujo del programa"></div>
 <div class="mem" id="mem" aria-live="polite"></div>
 </div>
 <div class="out"><span>Salida</span><pre id="out"></pre></div>
@@ -876,6 +902,15 @@ function scalars(){
 }
 function lists(k){ return Object.keys(st.tr[k].v).filter(n => st.tr[k].v[n][0]==='l'); }
 
+/*__DG__*/
+function dgPinta(){
+  const on = !!st.dgOn, el = $('#dg');
+  el.hidden = !on; document.querySelector('.bench').classList.toggle('dg', on);
+  $('#b-dg').setAttribute('aria-pressed', on);
+  if (!on) return;
+  if (st.dgHecho !== st.dgD){ el.innerHTML = DG.html(st.dgD); st.dgHecho = st.dgD; }
+  DG.pinta(el, st.tr, st.k);
+}
 function draw(){
   vista();
   const tr = st.tr, k = st.k, s = tr[k], prev = k? tr[k-1] : null, an = st.an;
@@ -927,6 +962,7 @@ function draw(){
   $('#o-k').textContent = `${k} de ${tr.length-1}`;
   $('#b-ini').disabled = $('#b-ant').disabled = k===0;
   $('#b-sig').disabled = k===tr.length-1;
+  dgPinta();
   table(); check(); ask();
 }
 
@@ -1066,6 +1102,9 @@ function question(){
     ? {t:`Se va a ejecutar ${src}. ¿Cómo quedará <code>${esc(n)}</code>?`, a:'['+b.v[n][1].join(', ')+']'}
     : {t:`Se va a ejecutar ${src}. ¿Cuántas casillas tendrá <code>${esc(n)}</code>?`, a:String(b.v[n][1].length)};
   const cq = a.l ? cond(a.l, b.l) : null;
+  const sd = st.dgOn && st.dgD && !st.dgD.error ? DG.salida(st.tr, k) : null;   // con el diagrama a la vista, se pregunta por la salida del rombo
+  if (sd && cq && sd.kind==='for') return {t:`En el diagrama, el hexágono <code>${esc(L[a.l-1].trim().replace(/:$/,''))}</code> va a decidir. ¿Por qué salida sale: <b>siguiente</b> (otra vuelta) o <b>terminado</b>?`, a: sd.r==='si' ? 'siguiente' : 'terminado'};
+  if (sd && cq) return {t:`En el diagrama, el rombo <code>${esc(cq.c)}</code> va a decidir. ¿Por qué salida sale: <b>Sí</b> o <b>No</b>?`, a: sd.r==='si' ? 'sí' : 'no'};
   if (cq && cq.kw!=='for') return {t:`Se va a evaluar <code>${esc(cq.c)}</code>. ¿Será True o False?`, a: cq.tv ? 'true' : 'false'};
   if (cq) return {t:`Se va a ejecutar ${src}. ¿Quedan elementos para otra vuelta? (sí / no)`, a: cq.tv ? 'sí' : 'no'};
   return {t:`Se va a ejecutar ${src}. ¿Qué línea se ejecuta a continuación? (0 si el programa termina)`, a:String(b.l)};
@@ -1089,7 +1128,7 @@ function answer(skip){
 }
 
 function go(k){ st.k = Math.max(0, Math.min(st.tr.length-1, k)); draw(); }
-function load(code, tr){ st.code = code; st.tr = tr; st.an = analyze(code); st.k = 0; stop(); draw(); }
+function load(code, tr, dg){ st.code = code; st.tr = tr; st.dgD = dg || null; st.an = analyze(code); st.k = 0; stop(); draw(); }
 function puesto(pid, vid){
   st.p = PUESTOS.find(p=>p.id===pid) || PUESTOS[0];
   $('#areas').innerHTML = AREAS.map((a,i) => `<a href="#${PA(i).length?PA(i)[0].id:'a'+i}" class="${i===st.p.ar?'on':''}">${a.n}</a>`).join('');
@@ -1106,7 +1145,7 @@ function pick(id){
   st.v = id; const v = st.p.vars.find(x=>x.id===id);
   document.querySelectorAll('#vars button').forEach(b => b.setAttribute('aria-pressed', b.dataset.v===id));
   $('#vname').textContent = v.n; $('#ta').value = PRE.code[id]; if (st.p.tu) $('#ent').value = (PRE.ent && PRE.ent[id]) || '';
-  load(PRE.code[id], PRE.trace[id]);
+  load(PRE.code[id], PRE.trace[id], PRE.dg[id]);
 }
 function stop(){ clearInterval(st.timer); st.timer = null; $('#b-play').textContent = '▷ Play'; }
 function play(){
@@ -1165,10 +1204,11 @@ async function run(){
     const p = await py();
     $('#stat').textContent = 'Ejecutando y trazando…';
     const tr = JSON.parse(p.globals.get('trazar')(code, 400, JSON.stringify(ents)));
+    const dg = JSON.parse(p.globals.get('diagrama')(code));
     document.querySelectorAll('#vars button').forEach(b => b.setAttribute('aria-pressed', 'false'));
     if (!st.p.tu && false) {}
     $('#vname').textContent = 'Tu código'; st.v = 'tu';
-    load(code, tr);
+    load(code, tr, dg);
     const e = tr[tr.length-1].e;
     $('#stat').textContent = e ? `Trazado hasta el error (${tr.length-1} pasos).` : `Trazado: ${tr.length-1} pasos. Python ya está cargado.`;
   } catch(e){
@@ -1182,6 +1222,8 @@ $('#b-ini').onclick = () => { stop(); go(0); };
 $('#b-ant').onclick = () => { stop(); go(st.k-1); };
 $('#b-sig').onclick = () => { stop(); go(st.k+1); };
 $('#b-play').onclick = play;
+try { st.dgOn = localStorage.getItem('myv-diagrama') === '1'; } catch (e) { st.dgOn = false; }
+$('#b-dg').onclick = () => { st.dgOn = !st.dgOn; try { localStorage.setItem('myv-diagrama', st.dgOn ? '1' : '0'); } catch (e) {} draw(); if (st.dgOn) $('#dg').scrollIntoView({behavior:'smooth', block:'nearest'}); };
 $('#k').oninput = e => { stop(); go(+e.target.value); };
 $('#m-exp').onclick = () => mode('exp');
 $('#m-pre').onclick = () => mode('pre');
