@@ -2,7 +2,7 @@
 #import "../comun-diapos.typ": *
 #show: diapos.with(sesion: 7, tema: "Sesión 7 · Repetir: while, for y range")
 
-#portada([Repetir: #raw("while"), #raw("for") y #raw("range")], subtitulo: [Repetir un bloque un número fijo de veces o mientras se cumpla una condición, y saber cuál de los dos usar.], kicker: "Sesión 7 · Módulo 1", firma: [Antonio Chanes Espigares · CC BY-NC-SA 4.0])
+#portada([Repetir: #raw("while"), #raw("for") y #raw("range")], subtitulo: [Repetir un bloque un número fijo de veces o mientras se cumpla una condición, y saber cuál de los dos usar.], kicker: "Sesión 7 · Módulo 1", firma: [Antonio Chanes Espigares · CC BY-NC-ND 4.0])
 
 == Hoy
 

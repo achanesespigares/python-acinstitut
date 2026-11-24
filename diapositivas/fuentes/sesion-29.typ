@@ -2,7 +2,7 @@
 #import "../comun-diapos.typ": *
 #show: diapos.with(sesion: 29, tema: "Sesión 29 · Taller del proyecto y simulacro PCAP")
 
-#portada([Taller del proyecto y simulacro PCAP], subtitulo: [Dejar el proyecto listo para exponer y comprobar en condiciones de examen el nivel PCAP.], kicker: "Sesión 29 · Módulo 2", firma: [Antonio Chanes Espigares · CC BY-NC-SA 4.0])
+#portada([Taller del proyecto y simulacro PCAP], subtitulo: [Dejar el proyecto listo para exponer y comprobar en condiciones de examen el nivel PCAP.], kicker: "Sesión 29 · Módulo 2", firma: [Antonio Chanes Espigares · CC BY-NC-ND 4.0])
 
 == Hoy
 

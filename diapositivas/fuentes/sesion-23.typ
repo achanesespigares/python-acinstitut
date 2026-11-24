@@ -2,7 +2,7 @@
 #import "../comun-diapos.typ": *
 #show: diapos.with(sesion: 23, tema: "Sesión 23 · match y lambdas")
 
-#portada([#raw("match") y lambdas], subtitulo: [Elegir según la forma de un dato, y pasar funciones cortas como argumento para ordenar, transformar y filtrar.], kicker: "Sesión 23 · Módulo 2", firma: [Antonio Chanes Espigares · CC BY-NC-SA 4.0])
+#portada([#raw("match") y lambdas], subtitulo: [Elegir según la forma de un dato, y pasar funciones cortas como argumento para ordenar, transformar y filtrar.], kicker: "Sesión 23 · Módulo 2", firma: [Antonio Chanes Espigares · CC BY-NC-ND 4.0])
 
 == Hoy
 

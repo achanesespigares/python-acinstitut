@@ -2,7 +2,7 @@
 #import "../comun-diapos.typ": *
 #show: diapos.with(sesion: 4, tema: "Sesión 4 · Variables, input y print")
 
-#portada([Variables, #raw("input") y #raw("print")], subtitulo: [Guardar datos en variables, pedirlos al usuario y mostrarlos con el formato que se quiera.], kicker: "Sesión 4 · Módulo 1", firma: [Antonio Chanes Espigares · CC BY-NC-SA 4.0])
+#portada([Variables, #raw("input") y #raw("print")], subtitulo: [Guardar datos en variables, pedirlos al usuario y mostrarlos con el formato que se quiera.], kicker: "Sesión 4 · Módulo 1", firma: [Antonio Chanes Espigares · CC BY-NC-ND 4.0])
 
 == Hoy
 

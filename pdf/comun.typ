@@ -121,9 +121,9 @@
     text(size: 8pt)[proyecto, simulacro o exposición])
 }
 
-// Créditos con licencia CC BY-NC-SA 4.0 (la del libro en la web)
+// Créditos con licencia CC BY-NC-ND 4.0 (la del libro en la web), más el permiso para los programas
 #let creditos(titulo: none, filas: (), obra: none, autor: "Antonio Chanes Espigares", anio: "2026") = {
-  let deed = "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  let deed = "https://creativecommons.org/licenses/by-nc-nd/4.0/deed.es"
   pagebreak(weak: true)
   context {
     let pal = estado-paleta.get()
@@ -136,23 +136,24 @@
     v(5mm)
     filas-ficha(filas)
     v(12mm)
-    caja-hoja("Licencia", "CC BY-NC-SA 4.0", pal: pal, {
+    caja-hoja("Licencia", "CC BY-NC-ND 4.0", pal: pal, {
       set par(justify: false, leading: 0.55em)
       grid(columns: (auto, 1fr), column-gutter: 5mm, align: horizon,
         link(deed, stack(dir: ltr, spacing: 1.1mm,
-          ..("cc", "by", "nc", "sa").map(i => image("marcas/cc-" + i + ".svg", height: 7.5mm)))),
+          ..("cc", "by", "nc", "nd").map(i => image("marcas/cc-" + i + ".svg", height: 7.5mm)))),
         text(size: 9.5pt)[«#obra» © #anio de #autor está bajo una licencia Creative Commons
-          Atribución-NoComercial-CompartirIgual 4.0 Internacional. Para ver una copia de esta licencia,
-          visita #link(deed)[creativecommons.org/licenses/by-nc-sa/4.0/deed.es].])
+          Atribución-NoComercial-SinDerivadas 4.0 Internacional. Para ver una copia de esta licencia,
+          visita #link(deed)[creativecommons.org/licenses/by-nc-nd/4.0/deed.es].])
       v(3.5mm)
       filas-ficha((
-        ("Puedes", [*Compartir* el material en cualquier medio o formato y *adaptarlo*: remezclarlo,
-          transformarlo y crear a partir de él.]),
+        ("Puedes", [*Compartir* el material: copiarlo y redistribuirlo en cualquier medio o formato.]),
         ("Atribución", [Dar crédito de manera adecuada, enlazar la licencia e indicar si se han hecho
           cambios, sin sugerir que el autor respalda tu uso.]),
         ("No comercial", [No usar el material con propósitos comerciales.]),
-        ("Compartir igual", [Si lo remezclas, transformas o creas a partir de él, distribuye tu versión
-          con la misma licencia.]),
+        ("Sin derivadas", [Si lo remezclas, transformas o creas a partir de él, no puedes difundir
+          el material modificado.]),
+        ("Además", [Los programas de ejemplo del libro y del laboratorio pueden copiarse, modificarse
+          y compartirse libremente para aprender o enseñar.]),
       ), talla: 9pt)
       v(3mm)
       text(size: 8pt, fill: gris.banda)[Resumen orientativo: prevalece el texto legal de la licencia.]

@@ -2,7 +2,7 @@
 #import "../comun-diapos.typ": *
 #show: diapos.with(sesion: 9, tema: "Sesión 9 · Recorrer y modificar listas")
 
-#portada([Recorrer y modificar listas], subtitulo: [Guardar muchos datos en una lista, recorrerla, cambiarla y no confundir una copia con un alias.], kicker: "Sesión 9 · Módulo 1", firma: [Antonio Chanes Espigares · CC BY-NC-SA 4.0])
+#portada([Recorrer y modificar listas], subtitulo: [Guardar muchos datos en una lista, recorrerla, cambiarla y no confundir una copia con un alias.], kicker: "Sesión 9 · Módulo 1", firma: [Antonio Chanes Espigares · CC BY-NC-ND 4.0])
 
 == Hoy
 

@@ -2,7 +2,7 @@
 #import "../comun-diapos.typ": *
 #show: diapos.with(sesion: 13, tema: "Sesión 13 · Funciones")
 
-#portada([Funciones], subtitulo: [Dar nombre a un trozo de programa, pasarle datos y recibir un resultado, y entender qué ve cada función.], kicker: "Sesión 13 · Módulo 1", firma: [Antonio Chanes Espigares · CC BY-NC-SA 4.0])
+#portada([Funciones], subtitulo: [Dar nombre a un trozo de programa, pasarle datos y recibir un resultado, y entender qué ve cada función.], kicker: "Sesión 13 · Módulo 1", firma: [Antonio Chanes Espigares · CC BY-NC-ND 4.0])
 
 == Hoy
 

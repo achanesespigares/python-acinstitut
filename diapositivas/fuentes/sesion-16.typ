@@ -2,7 +2,7 @@
 #import "../comun-diapos.typ": *
 #show: diapos.with(sesion: 16, tema: "Sesión 16 · Módulos y paquetes")
 
-#portada([Módulos y paquetes], subtitulo: [Usar módulos de la biblioteca estándar con cualquier forma de #raw("import"), y escribir un módulo propio que se pueda importar y también ejecutar.], kicker: "Sesión 16 · Módulo 2", firma: [Antonio Chanes Espigares · CC BY-NC-SA 4.0])
+#portada([Módulos y paquetes], subtitulo: [Usar módulos de la biblioteca estándar con cualquier forma de #raw("import"), y escribir un módulo propio que se pueda importar y también ejecutar.], kicker: "Sesión 16 · Módulo 2", firma: [Antonio Chanes Espigares · CC BY-NC-ND 4.0])
 
 == Hoy
 

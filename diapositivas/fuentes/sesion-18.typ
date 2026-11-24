@@ -2,7 +2,7 @@
 #import "../comun-diapos.typ": *
 #show: diapos.with(sesion: 18, tema: "Sesión 18 · Clases y objetos")
 
-#portada([Clases y objetos], subtitulo: [Definir una clase con su constructor y sus métodos, crear objetos y distinguir dos objetos iguales de dos nombres para el mismo objeto.], kicker: "Sesión 18 · Módulo 2", firma: [Antonio Chanes Espigares · CC BY-NC-SA 4.0])
+#portada([Clases y objetos], subtitulo: [Definir una clase con su constructor y sus métodos, crear objetos y distinguir dos objetos iguales de dos nombres para el mismo objeto.], kicker: "Sesión 18 · Módulo 2", firma: [Antonio Chanes Espigares · CC BY-NC-ND 4.0])
 
 == Hoy
 

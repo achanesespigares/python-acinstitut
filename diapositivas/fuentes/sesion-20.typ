@@ -2,7 +2,7 @@
 #import "../comun-diapos.typ": *
 #show: diapos.with(sesion: 20, tema: "Sesión 20 · Nombres ocultos y polimorfismo")
 
-#portada([Nombres ocultos y polimorfismo], subtitulo: [Proteger los datos internos de un objeto y escribir código que funcione con cualquier clase que tenga los métodos adecuados.], kicker: "Sesión 20 · Módulo 2", firma: [Antonio Chanes Espigares · CC BY-NC-SA 4.0])
+#portada([Nombres ocultos y polimorfismo], subtitulo: [Proteger los datos internos de un objeto y escribir código que funcione con cualquier clase que tenga los métodos adecuados.], kicker: "Sesión 20 · Módulo 2", firma: [Antonio Chanes Espigares · CC BY-NC-ND 4.0])
 
 == Hoy
 

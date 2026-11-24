@@ -2,7 +2,7 @@
 #import "../comun-diapos.typ": *
 #show: diapos.with(sesion: 30, tema: "Sesión 30 · Proyecto 2: exposiciones")
 
-#portada([Proyecto 2: exposiciones], subtitulo: [Explicar a otros un programa propio, su diseño y sus decisiones.], kicker: "Sesión 30 · Módulo 2", firma: [Antonio Chanes Espigares · CC BY-NC-SA 4.0])
+#portada([Proyecto 2: exposiciones], subtitulo: [Explicar a otros un programa propio, su diseño y sus decisiones.], kicker: "Sesión 30 · Módulo 2", firma: [Antonio Chanes Espigares · CC BY-NC-ND 4.0])
 
 == Hoy
 

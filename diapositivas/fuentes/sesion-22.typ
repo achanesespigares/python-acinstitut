@@ -2,7 +2,7 @@
 #import "../comun-diapos.typ": *
 #show: diapos.with(sesion: 22, tema: "Sesión 22 · Comprensiones y el else de los bucles")
 
-#portada([Comprensiones y el #raw("else") de los bucles], subtitulo: [Construir listas, diccionarios y conjuntos en una línea, y saber cuándo un bucle terminó sin #raw("break").], kicker: "Sesión 22 · Módulo 2", firma: [Antonio Chanes Espigares · CC BY-NC-SA 4.0])
+#portada([Comprensiones y el #raw("else") de los bucles], subtitulo: [Construir listas, diccionarios y conjuntos en una línea, y saber cuándo un bucle terminó sin #raw("break").], kicker: "Sesión 22 · Módulo 2", firma: [Antonio Chanes Espigares · CC BY-NC-ND 4.0])
 
 == Hoy
 

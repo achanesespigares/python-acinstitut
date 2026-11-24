@@ -2,7 +2,7 @@
 #import "../comun-diapos.typ": *
 #show: diapos.with(sesion: 12, tema: "Sesión 12 · Diccionarios")
 
-#portada([Diccionarios], subtitulo: [Guardar datos por nombre en vez de por posición, y contar con un diccionario.], kicker: "Sesión 12 · Módulo 1", firma: [Antonio Chanes Espigares · CC BY-NC-SA 4.0])
+#portada([Diccionarios], subtitulo: [Guardar datos por nombre en vez de por posición, y contar con un diccionario.], kicker: "Sesión 12 · Módulo 1", firma: [Antonio Chanes Espigares · CC BY-NC-ND 4.0])
 
 == Hoy
 

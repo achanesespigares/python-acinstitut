@@ -2,7 +2,7 @@
 #import "../comun-diapos.typ": *
 #show: diapos.with(sesion: 26, tema: "Sesión 26 · Cadenas a fondo")
 
-#portada([Cadenas a fondo], subtitulo: [Trabajar con códigos de caracteres, comparar cadenas y usar los métodos de comprobación y troceado.], kicker: "Sesión 26 · Módulo 2", firma: [Antonio Chanes Espigares · CC BY-NC-SA 4.0])
+#portada([Cadenas a fondo], subtitulo: [Trabajar con códigos de caracteres, comparar cadenas y usar los métodos de comprobación y troceado.], kicker: "Sesión 26 · Módulo 2", firma: [Antonio Chanes Espigares · CC BY-NC-ND 4.0])
 
 == Hoy
 
