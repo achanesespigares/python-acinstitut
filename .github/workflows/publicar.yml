@@ -39,7 +39,7 @@ jobs:
       - name: Copiar los bancos de preguntas a la web
         run: |
           cp -r datos _build/html/datos
-          cp herramientas/trazar.py herramientas/laboratorio.py _build/html/datos/
+          cp herramientas/trazar.py herramientas/laboratorio.py herramientas/diagrama.py widgets/diagrama.js _build/html/datos/
       - name: Copiar las diapositivas de cada sesión
         run: |
           mkdir -p _build/html/diapositivas

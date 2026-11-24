@@ -32,6 +32,9 @@ const ESTILOS = `
 .tz-puente a{ font:600 13px/1.2 var(--titulo); color:var(--acento); text-decoration:none; border-bottom:1.5px solid currentColor; }
 .tz-puente a:hover{ color:var(--oscuro); }
 
+.tz .dgc{ --dg-tinta:var(--tinta); --dg-sub:var(--sub); --dg-mut:var(--banda); --dg-fondo:#fff; --dg-suave:var(--suave); --dg-acento:var(--acento); --dg-acento-f:var(--acento); --dg-banda:var(--banda); --dg-mono:var(--mono); --dg-titulo:var(--titulo); --dg-texto:var(--texto); }
+.tz-dg{ display:flex; flex-wrap:wrap; gap:20px; align-content:flex-start; padding:10px 12px 14px; max-height:70vh; overflow:auto; background:#fff; }
+.tz-dgcaja[hidden]{ display:none; }
 pre.tz-codigo{ margin:0; font:400 14px/1.85 var(--mono); overflow-x:auto; background:var(--fondo); padding:6px 0; border:0; border-radius:0; }
 .tz .ln{ display:flex; align-items:center; white-space:pre; padding-right:12px; border-left:4px solid transparent; }
 .tz .ln .fl{ width:20px; flex:none; text-align:center; font-size:11px; color:transparent; }
@@ -251,6 +254,10 @@ const PLANTILLA = `
         <div class="tz-barra"><span>Programa</span><span class="tz-linea">listo</span></div>
         <pre class="tz-codigo" aria-label="Código del programa"></pre>
       </div>
+      <div class="tz-caja tz-dgcaja" hidden>
+        <div class="tz-barra"><span>Diagrama de flujo</span><span>se ilumina lo que se ejecuta</span></div>
+        <div class="dgc tz-dg" aria-label="Diagrama de flujo del programa"></div>
+      </div>
       <p class="tz-leyenda"><b>▶</b> se acaba de ejecutar <span>▷ la siguiente</span></p>
       <p class="tz-narr" aria-live="polite"></p>
     </div>
@@ -287,9 +294,10 @@ const PLANTILLA = `
     <button type="button" class="tz-b prim tz-sigue">Paso ▶</button>
     <button type="button" class="tz-b tz-play">Reproducir</button>
     <button type="button" class="tz-b tz-reinicia">Reiniciar</button>
+    <button type="button" class="tz-b tz-dgb" aria-pressed="false" hidden title="Dibuja el diagrama de flujo del programa y sigue en él la ejecución (tecla D)">Diagrama de flujo</button>
     <button type="button" class="tz-b tz-proy" aria-pressed="false" title="Pantalla completa para proyectar en clase (tecla F)">Proyectar</button>
     <span class="tz-cuenta"></span>
-    <span class="tz-teclas">→ paso · ← atrás · P reproducir · Inicio reiniciar · Esc salir</span>
+    <span class="tz-teclas">→ paso · ← atrás · P reproducir · Inicio reiniciar · D diagrama · Esc salir</span>
     <label class="tz-toggle"><input type="checkbox" class="tz-pred"> Modo predicción</label>
   </div>
 </div>`;
@@ -554,6 +562,19 @@ function programaDelEnlace() {
   return { codigo: q.get("codigo") || "", entradas: q.get("entradas") || "" };
 }
 
+// ── Diagrama de flujo ───────────────────────────────────────────────────────────────────────
+// El dibujo es común con «Mirar y ver» (widgets/diagrama.js; la publicación lo copia en <web>/datos/).
+// Se descarga la primera vez que alguien lo pide.
+let DG_CARGA = null;
+function cargaDiagrama() {
+  return DG_CARGA || (DG_CARGA = fetch(new URL("../datos/diagrama.js", import.meta.url))
+    .then(r => { if (!r.ok) throw new Error("No encuentro diagrama.js"); return r.text(); })
+    .then(t => new Function(t + "\nreturn DG;")())
+    .catch(e => { DG_CARGA = null; throw e; }));
+}
+const DG_CLAVE = "acinstitut-diagrama";
+const dgPreferido = () => { try { return localStorage.getItem(DG_CLAVE) === "1"; } catch (e) { return false; } };
+
 let LAB = null;   // { worker, listo }: un solo Python por página, cargado la primera vez
 function trabajadorLab(PYODIDE) {
   // Worker de módulo: Pyodide 314 ya no admite los workers clásicos (importScripts)
@@ -581,11 +602,11 @@ function preparaLab() {
   if (LAB) return LAB.listo;
   const leer = n => fetch(new URL("../datos/" + n, import.meta.url)).then(r => { if (!r.ok) throw new Error("No encuentro " + n); return r.text(); });
   let w = null;
-  const listo = Promise.all([leer("trazar.py"), leer("laboratorio.py"), basePyodide()]).then(([t, l, base]) => new Promise((res, rej) => {
+  const listo = Promise.all([leer("trazar.py"), leer("laboratorio.py"), leer("diagrama.py"), basePyodide()]).then(([t, l, d, base]) => new Promise((res, rej) => {
     w = trabajadorLab(base); LAB.worker = w;
     w.onmessage = e => e.data.tipo === "listo" ? res() : rej(new Error(e.data.error));
     w.onerror = ev => rej(new Error(ev.message || "No se ha podido cargar Python"));
-    w.postMessage({ tipo: "cargar", fuentes: { "trazar.py": t, "laboratorio.py": l } });
+    w.postMessage({ tipo: "cargar", fuentes: { "trazar.py": t, "laboratorio.py": l, "diagrama.py": d } });
   }));
   LAB = { worker: null, listo };
   listo.catch(() => { if (w) w.terminate(); LAB = null; });
@@ -749,6 +770,21 @@ function renderTraza({ model, el }) {
     q(".tz").appendChild(pie);
   }
   const P = D.pasos, L = D.codigo.split("\n"), lista = C.lista, cab = C.cabecera;
+  // Diagrama de flujo: el bloque de la línea que se acaba de ejecutar se ilumina (y se marca la siguiente)
+  const dgB = q(".tz-dgb"), dgCaja = q(".tz-dgcaja"), dgEl = q(".tz-dg"), conDiagrama = !!(D.diagrama && !D.diagrama.error);
+  let dgObj = null;
+  const dgPasos = P.map(p => ({ l: p.linea }));
+  const dgPinta = () => { if (dgObj && !dgCaja.hidden) dgObj.pinta(dgEl, dgPasos, k, { hecha: true }); };
+  const dgPon = (on, guarda) => {
+    dgB.setAttribute("aria-pressed", on ? "true" : "false"); dgCaja.hidden = !on;
+    if (guarda) { try { localStorage.setItem(DG_CLAVE, on ? "1" : "0"); } catch (e) { /* sin almacenamiento */ } }
+    if (!on) return;
+    cargaDiagrama().then(DG => {
+      if (!dgObj) { dgObj = DG.crea(D.diagrama); dgEl.innerHTML = "<style>" + DG.CSS + "</style>" + dgObj.html; dgObj.conecta(dgEl); }
+      dgPinta();
+    }).catch(() => { dgEl.innerHTML = '<p class="dge">No se ha podido cargar el diagrama. Comprueba la conexión y vuelve a pulsar el botón.</p>'; });
+  };
+  if (conDiagrama) { dgB.hidden = false; dgB.addEventListener("click", () => dgPon(dgCaja.hidden, true)); }
   const columnas = C.columnas.concat(C.fila_en === "comprobacion" ? ["¿sigue?"] : []);
   // valor tal como lo escribe Python (True, 4.0, 'texto'), si la traza lo trae
   const rep = (p, n) => (p.repr && n in p.repr) ? p.repr[n] : pyVal(p.estado[n]);
@@ -1291,6 +1327,7 @@ function renderTraza({ model, el }) {
     q(".tz-sigue").disabled = fin;
     q(".tz-sigue").textContent = oculto ? "Revelar" : "Paso ▶";
     if (fin) para();
+    dgPinta();
   }
 
   function avanza() {
@@ -1335,12 +1372,14 @@ function renderTraza({ model, el }) {
     const acciones = { ArrowRight: () => q(".tz-sigue").click(), PageDown: () => q(".tz-sigue").click(),
       ArrowLeft: () => q(".tz-atras").click(), PageUp: () => q(".tz-atras").click(),
       Home: () => q(".tz-reinicia").click(), p: () => q(".tz-play").click(), P: () => q(".tz-play").click(),
-      f: () => proy.isConnected && proy.click(), F: () => proy.isConnected && proy.click() };
+      f: () => proy.isConnected && proy.click(), F: () => proy.isConnected && proy.click(),
+      d: () => conDiagrama && dgB.click(), D: () => conDiagrama && dgB.click() };
     if (acciones[e.key] && !e.ctrlKey && !e.metaKey && !e.altKey) { e.preventDefault(); acciones[e.key](); }
   });
   const alRedimensionar = () => pinta();
   window.addEventListener("resize", alRedimensionar);
   pinta();
+  if (conDiagrama && dgPreferido()) dgPon(true, false);
   return () => { para(); window.removeEventListener("resize", alRedimensionar); document.removeEventListener("fullscreenchange", alCambiarPantalla); };
 }
 
