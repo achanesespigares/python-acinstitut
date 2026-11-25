@@ -84,7 +84,14 @@ project:
         - file: capitulos/curso-proyecto-2.md
 site:
   template: book-theme
+  # Vuelta al hub (regla hub ↔ satélites de antonychanes.com). Mientras el dominio no esté
+  # conectado apunta a la dirección provisional de Vercel; luego, a https://antonychanes.com.
+  nav:
+    - title: antonychanes.com
+      url: https://antonychanes-hub.vercel.app
   options:
     logo_text: ac | institut · Python
+    # La vuelta al hub se abre en la misma pestaña (sin icono de enlace externo).
+    internal_domains: antonychanes-hub.vercel.app
     style: estilo/ac-institut.css
     folders: true

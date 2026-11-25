@@ -16,3 +16,20 @@ article p strong{ color:var(--ac-tinta); }
 article header .text-lg, .myst-fm-block-subtitle{ color:var(--ac-acento); font-family:"Montserrat",Arial,sans-serif; font-weight:500; }
 /* bloques de cita como la caja «atención» del sistema */
 article blockquote{ border-left:4px solid var(--ac-acento); background:var(--ac-suave); font-style:normal; }
+
+/* Vuelta al hub antonychanes.com (regla hub ↔ satélites): monograma «ac» + nombre, en la barra de arriba.
+   El tema solo lo muestra en ordenador; en móvil y tableta también se queda a la vista (sin abrir el menú). */
+a[href*="antonychanes"].myst-hub, .myst-top-nav-item a[href*="antonychanes"], .myst-primary-sidebar-topnav a[href*="antonychanes"]{
+  font-family:"Montserrat",Arial,sans-serif; font-weight:500; letter-spacing:-.01em; color:var(--ac-tinta); }
+.myst-top-nav-item a[href*="antonychanes"]::before, .myst-primary-sidebar-topnav a[href*="antonychanes"]::before{
+  content:"ac"; display:inline-flex; align-items:center; justify-content:center; flex:none;
+  width:26px; height:26px; margin-right:8px; border:1px solid currentColor; border-radius:50%;
+  font:500 12px/1 "Montserrat",Arial,sans-serif; letter-spacing:0; }
+@media (max-width:1023px){
+  div:has(> .myst-top-nav-item a[href*="antonychanes"]){ display:block !important; flex-grow:0; margin-left:auto; }
+}
+@media (max-width:520px){
+  /* en pantallas estrechas, solo el monograma (el nombre sigue disponible para lectores de pantalla) */
+  .myst-top-nav-item a[href*="antonychanes"]{ font-size:0; }
+  .myst-top-nav-item a[href*="antonychanes"]::before{ font-size:12px; margin-right:0; }
+}
